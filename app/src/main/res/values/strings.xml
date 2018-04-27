@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ProductSampleMgt</string>
+
+    <string name="link_login">http://1.1.1.1/login</string>
+</resources>
