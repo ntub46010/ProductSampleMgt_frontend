@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context="com.vincent.psm.LoginActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,22 +16,36 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/edtAccount"
-            style="@style/edt_login"
-            android:drawableStart="@drawable/icon_account"
-            android:hint="User"
-            android:inputType="text"
-            android:text="10346010"/>
+        <LinearLayout
+            style="@style/lay_login_field">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/icon_account"/>
+            <EditText
+                android:id="@+id/edtAccount"
+                style="@style/edt_login_field"
+                android:hint="User"
+                android:inputType="text"
+                android:text="10346010"/>
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/edtPassword"
-            style="@style/edt_login"
-            android:layout_marginTop="5dp"
-            android:drawableStart="@drawable/icon_password"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:text="111111"/>
+        <LinearLayout
+            style="@style/lay_login_field"
+            android:layout_marginTop="10dp">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/icon_password"/>
+            <EditText
+                android:id="@+id/edtPassword"
+                style="@style/edt_login_field"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:text="111111"/>
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/chkAutoLogin"
@@ -41,22 +55,26 @@
             android:layout_gravity="center"
             android:text="自動登入"/>
 
-        <Button
-            android:id="@+id/btnLogin"
-            style="@style/btn_login"
-            android:layout_marginTop="25dp"
-            android:text="log in"
-            android:textSize="23sp"
-            android:background="@drawable/btn_login"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/btn_login"
+                android:layout_marginTop="25dp"
+                android:text="log in"
+                android:textSize="23sp"
+                android:background="@drawable/btn_login"/>
+            <ProgressBar
+                android:id="@+id/prgBar"
+                style="@style/prg_normal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </FrameLayout>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/prgBar"
-        style="@style/prg_normal"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
