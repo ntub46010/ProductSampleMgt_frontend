@@ -14,6 +14,13 @@
         <item name="android:layout_gravity">center_horizontal|center_vertical</item>
     </style>
 
+    <style name="fab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <!--<item name="app:fabSize">normal</item>-->
+    </style>
+
     <style name="lay_login_field">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">45dp</item>
@@ -38,6 +45,43 @@
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="btn_main_function">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:background">@color/blue1</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:drawableTint">#FFFFFF</item>
+    </style>
+
+    <style name="img_product">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">160dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="txt_product_title">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:maxLines">3</item>
+    </style>
+
+    <style name="txt_product_info">
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
 </resources>

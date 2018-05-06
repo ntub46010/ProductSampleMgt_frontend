@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_PASSWORD;
+import static com.vincent.psm.data.DataHelper.KEY_USER_INFO;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Context context;
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 prgBar.setVisibility(View.INVISIBLE);
                 Intent it  = new Intent(LoginActivity.this, MainActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("JSON", result);
+                bundle.putString(KEY_USER_INFO, result);
                 it.putExtras(bundle);
                 startActivity(it);
             }

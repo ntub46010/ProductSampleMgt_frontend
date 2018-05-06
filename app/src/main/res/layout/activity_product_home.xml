@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProductHomeActivity">
+
+    <include
+        layout="@layout/content_product_display"
+        android:paddingBottom="35dp"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_search"
+        style="@style/fab"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/icon_arrow_upward"/>
+
+</android.support.design.widget.CoordinatorLayout>
