@@ -56,12 +56,11 @@ public class ProductHomeActivity extends AppCompatActivity {
         prgBar = findViewById(R.id.prgBar);
         FloatingActionButton fabSearch = findViewById(R.id.fab_search);
 
-
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                loadData();
             }
         });
 

@@ -16,8 +16,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
+import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
+import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_PASSWORD;
+import static com.vincent.psm.data.DataHelper.KEY_STATUS;
+import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_USER_INFO;
+import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Context context;
@@ -43,13 +49,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         MyOkHttp conn = new MyOkHttp(LoginActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(final String result) {
+                try {
+                    JSONObject resObj = new JSONObject(result);
+                    if (resObj.getBoolean(KEY_STATUS)) {
+                        if (resObj.getBoolean(KEY_SUCCESS)) {
+                            JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
+                            loginUserId = obj.getString(KEY_ID);
+                            Intent it  = new Intent(LoginActivity.this, MainActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
+                            bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
+                            it.putExtras(bundle);
+                            startActivity(it);
+                        }else {
+                            Toast.makeText(context, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (JSONException e) {
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
                 btnLogin.setVisibility(View.VISIBLE);
                 prgBar.setVisibility(View.INVISIBLE);
-                Intent it  = new Intent(LoginActivity.this, MainActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(KEY_USER_INFO, result);
-                it.putExtras(bundle);
-                startActivity(it);
             }
         });
         try {

@@ -18,7 +18,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">bottom|end</item>
-        <!--<item name="app:fabSize">normal</item>-->
+        <item name="android:layout_margin">@dimen/fab_margin</item>
     </style>
 
     <style name="lay_login_field">
@@ -50,7 +50,7 @@
     <style name="btn_main_function">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">120dp</item>
-        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
         <item name="android:paddingTop">15dp</item>
         <item name="android:background">@color/blue1</item>
         <item name="android:textSize">18sp</item>

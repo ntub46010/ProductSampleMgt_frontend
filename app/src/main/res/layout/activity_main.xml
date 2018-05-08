@@ -10,9 +10,10 @@
     tools:context="com.vincent.psm.MainActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txtGreeting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:textSize="18sp"
         android:text="AAA"/>
 
@@ -26,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginEnd="1.5dp">
+            android:layout_marginEnd="2dp">
             <Button
                 android:id="@+id/btn1"
                 style="@style/btn_main_function"
@@ -36,19 +37,39 @@
                 android:id="@+id/btn3"
                 style="@style/btn_main_function"
                 android:drawableTop="@drawable/fun_product_home"
+                android:text="購物車"/>
+            <Button
+                android:id="@+id/btn5"
+                style="@style/btn_main_function"
+                android:drawableTop="@drawable/fun_product_home"
                 android:text="通知"/>
+            <Button
+                android:id="@+id/btn10"
+                style="@style/btn_main_function"
+                android:drawableTop="@drawable/fun_product_home"
+                android:text="推播測試"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="1.5dp">
+            android:layout_marginStart="2dp">
             <Button
                 android:id="@+id/btn2"
                 style="@style/btn_main_function"
                 android:drawableTop="@drawable/fun_product_home"
                 android:text="商品管理"/>
+            <Button
+                android:id="@+id/btn4"
+                style="@style/btn_main_function"
+                android:drawableTop="@drawable/fun_product_home"
+                android:text="訂單"/>
+            <Button
+                android:id="@+id/btn11"
+                style="@style/btn_main_function"
+                android:drawableTop="@drawable/fun_product_home"
+                android:text="上傳圖片測試"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

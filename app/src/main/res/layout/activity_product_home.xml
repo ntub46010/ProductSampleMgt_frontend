@@ -14,7 +14,7 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_search"
         style="@style/fab"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/icon_arrow_upward"/>
+        app:srcCompat="@drawable/icon_arrow_upward"
+        app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

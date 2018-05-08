@@ -28,7 +28,7 @@
             style="@style/txt_product_info"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:textColor="#EE0000"/>
+            android:textColor="#FF444444"/>
 
         <TextView
             android:id="@+id/txtProductPrice"
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="31dp"
             android:textSize="16sp"
-            android:textColor="#FF444444"/>
+            android:textColor="#EE0000"/>
 
     </LinearLayout>
 
