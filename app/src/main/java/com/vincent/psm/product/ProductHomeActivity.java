@@ -1,4 +1,4 @@
-package com.vincent.psm;
+package com.vincent.psm.product;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.vincent.psm.R;
 import com.vincent.psm.adapter.ProductDisplayAdapter;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
@@ -36,6 +37,7 @@ public class ProductHomeActivity extends AppCompatActivity {
     private Context context;
     private RecyclerView recyProduct;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton fabTop, fabSearch;
     private ProgressBar prgBar;
 
     private MyOkHttp conn;
@@ -54,13 +56,26 @@ public class ProductHomeActivity extends AppCompatActivity {
         recyProduct = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         prgBar = findViewById(R.id.prgBar);
-        FloatingActionButton fabSearch = findViewById(R.id.fab_search);
+        fabTop = findViewById(R.id.fab_top);
+        fabSearch = findViewById(R.id.fab_search);
 
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData();
+                loadData(false);
+            }
+        });
+
+        fabTop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    adapter.destroy(false);
+                    recyProduct.scrollToPosition(0);
+                }catch (Exception e) {
+                    Toast.makeText(context, "沒有商品，不能往上", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -70,17 +85,22 @@ public class ProductHomeActivity extends AppCompatActivity {
 
             }
         });
+
+        fabTop.setVisibility(View.INVISIBLE);
+        fabSearch.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (!isShown)
-            loadData();
+            loadData(true);
     }
 
-    private void loadData() {
+    private void loadData(boolean showPrgBar) {
         isShown = false;
+        if (showPrgBar)
+            prgBar.setVisibility(View.VISIBLE);
         conn = new MyOkHttp(ProductHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(String result) {
@@ -107,6 +127,8 @@ public class ProductHomeActivity extends AppCompatActivity {
                                         obj.getString(KEY_PRICE)
                                 ));
                             }
+                        }else {
+                            Toast.makeText(context, "沒有商品", Toast.LENGTH_SHORT).show();
                         }
                         showData();
                     }else {
@@ -115,7 +137,6 @@ public class ProductHomeActivity extends AppCompatActivity {
                 }catch (JSONException e) {
                     Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-                prgBar.setVisibility(View.GONE);
             }
         });
         conn.execute(getString(R.string.link_list_products));
@@ -130,8 +151,11 @@ public class ProductHomeActivity extends AppCompatActivity {
         recyProduct.setAdapter(adapter);
         swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.setRefreshing(false);
-        recyProduct.setVisibility(View.VISIBLE);
 
+        recyProduct.setVisibility(View.VISIBLE);
+        fabTop.setVisibility(View.VISIBLE);
+        fabSearch.setVisibility(View.VISIBLE);
+        prgBar.setVisibility(View.GONE);
         tiles = null;
         isShown = true;
     }
@@ -146,6 +170,7 @@ public class ProductHomeActivity extends AppCompatActivity {
     public void onDestroy() {
         adapter.destroy(true);
         adapter = null;
+        System.gc();
         super.onDestroy();
     }
 }

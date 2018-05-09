@@ -7,6 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.vincent.psm.product.ProductHomeActivity;
+import com.vincent.psm.product.ProductMgtActivity;
+
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, ProductHomeActivity.class));
                 break;
             case R.id.btn2:
+                startActivity(new Intent(this, ProductMgtActivity.class));
                 break;
             case R.id.btn3:
                 break;

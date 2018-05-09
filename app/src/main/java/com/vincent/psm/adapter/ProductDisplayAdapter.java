@@ -1,7 +1,9 @@
 package com.vincent.psm.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,9 +16,13 @@ import android.widget.TextView;
 import com.vincent.psm.R;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.GetBitmapTask;
+import com.vincent.psm.product.ProductDetailActivity;
 import com.vincent.psm.structure.ImageDownloadQueue;
 
 import java.util.ArrayList;
+
+import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_NAME;
 
 public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAdapter.DataViewHolder> {
     private Context context;
@@ -55,15 +61,12 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*
                     Intent it = new Intent(context, ProductDetailActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString(KEY_PRODUCT_ID, ((Book) tiles.get(position)).getId());
-                    bundle.putString(KEY_TITLE, ((Book) tiles.get(position)).getTitle());
-                    bundle.putString(KEY_ANYWAY, "0");
+                    bundle.putString(KEY_ID, tiles.get(position).getId());
+                    bundle.putString(KEY_NAME, tiles.get(position).getName());
                     it.putExtras(bundle);
                     context.startActivity(it);
-                    */
                 }
             });
         }
