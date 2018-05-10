@@ -25,5 +25,8 @@ public class DataHelper {
     public static final String KEY_Stock = "Stock";
     public static final String KEY_SAFE_STOCK = "SafeStock";
 
+
     public static final String KEY_PRODUCTS = "Products";
+    public static final String KEY_MATERIALS = "Materials";
+    public static final String KEY_COLORS = "Colors";
 }

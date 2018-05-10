@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="bg_header">#3F51B5</color>
+
     <color name="blue1">#CBDDE2</color>
     <color name="card_product">#C0CBDDE2</color> <!--商品首頁清單-->
 

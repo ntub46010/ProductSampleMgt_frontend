@@ -3,14 +3,23 @@
     <string name="firebase_server_key" translatable="false">key=AAAAZ1H5PwU:APA91bExOtTXhSdu4m8912dq6Qg5xuOMH76iO3MvtlvIrW7ObpeXb6AmXveyoy-c41AsymRFA4jLmrxJ8UU_horOUUGGLft6Luu87lI5kreFxKqUerH6d58VzyF9Gh7-EK8h2edmLKT_</string>
     <string name="firebase_cloud_messaging_url">https://fcm.googleapis.com/fcm/send</string>
 
-    <string name="link_image">http://111.250.18.215:8181/images/</string>
-    <string name="link_login">http://111.250.18.215:8181/login</string>
-    <string name="link_list_products">http://111.250.18.215:8181/list_products</string>
-    <string name="link_show_product_detail">http://111.250.18.215:8181/show_product_detail</string>
+    <string name="link_image">http://111.250.2.173:8181/images/</string>
+    <string name="link_login">http://111.250.2.173:8181/login</string>
+    <string name="link_list_products">http://111.250.2.173:8181/list_products</string>
+    <string name="link_show_product_detail">http://111.250.2.173:8181/show_product_detail</string>
+    <string name="link_show_specification">http://111.250.2.173:8181/show_specification</string>
 
-    <string name="link_upload_avatar">http://111.250.18.215:8181/upload_avatar</string>
+    <string name="link_upload_avatar">http://111.250.2.173:8181/upload_avatar</string>
 
     <string name="hint_upload_photo" formatted="false">上傳中，長按取消… (%1s/%2s)</string>
     <string name="txt_product_size">%1s x %2s x %3s mm</string>
     <string name="txt_greeting">您好，%1s，使用身份是%2s</string>
+
+    <array name="ary_text">
+        <item>A</item>
+        <item>BB</item>
+        <item>CCC</item>
+        <item>DDDD</item>
+        <item>EEEEE</item>
+    </array>
 </resources>
