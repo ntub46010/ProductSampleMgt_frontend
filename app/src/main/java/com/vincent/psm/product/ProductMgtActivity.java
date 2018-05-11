@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
@@ -24,16 +23,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_ONSALE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
-import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
-import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
-import static com.vincent.psm.data.DataHelper.KEY_THICK;
-import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
 public class ProductMgtActivity extends AppCompatActivity {
     private Context context;
@@ -47,6 +43,7 @@ public class ProductMgtActivity extends AppCompatActivity {
     private StockListAdapter adapter;
 
     private boolean isShown = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +69,8 @@ public class ProductMgtActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 //跳出商品編輯畫面
-                /*
-                Book book = (Book) adapter.getItem(position);
-                bookId = book.getId();
-                bookTitle = book.getTitle();
-                TextView textView = (TextView) dialog.findViewById(R.id.txtBookTitle);
-                textView.setText(bookTitle);
-                dialog.show();
-                */
+                adapter.pressPosition = position;
+                adapter.dialog.show();
             }
         });
 
@@ -139,7 +130,13 @@ public class ProductMgtActivity extends AppCompatActivity {
                 }
             }
         });
-        conn.execute(getString(R.string.link_list_products));
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_ONSALE, false);
+            conn.execute(getString(R.string.link_list_products), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showData() {

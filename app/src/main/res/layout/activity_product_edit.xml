@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".product.ProductEditActivity">
+
+    <include layout="@layout/content_checking_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/layProductPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/layout_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imgProduct"
+                    style="@style/img_product_gallery"
+                    android:src="@drawable/icon_add_image"
+                    android:background="#DDDDDD"
+                    android:scaleType="centerInside"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        style="@style/txt_goods_detail_title"
+                        android:text="編號："/>
+                    <TextView
+                        android:id="@+id/txtId"
+                        style="@style/txt_goods_detail_content"/>
+                </LinearLayout>
+
+                <include layout="@layout/content_product_edit_info"/>
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/prgBar"
+                style="@style/prg_normal"/>
+
+        </FrameLayout>
+
+    </ScrollView>
+
+</LinearLayout>

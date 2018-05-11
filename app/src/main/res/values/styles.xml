@@ -96,6 +96,14 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="img_product_gallery">
+        <item name="android:layout_width">135dp</item>
+        <item name="android:layout_height">180dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
     <style name="txt_goods_detail_title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -115,6 +123,22 @@
         <item name="android:textColor">#555555</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="img_member_setting_list">
+        <item name="android:layout_width">43dp</item>
+        <item name="android:layout_height">43dp</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
+    <style name="txt_member_setting_list">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
 </resources>

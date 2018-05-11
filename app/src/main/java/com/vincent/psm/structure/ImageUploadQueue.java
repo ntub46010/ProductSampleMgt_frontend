@@ -146,6 +146,7 @@ public class ImageUploadQueue extends Queue {
 
     @Override
     public void destroy() {
+        cancelUpload();
         for (int i = 0; i < size(); i++)
             ((ImageChild) get(i)).setBitmap(null);
 

@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_ONSALE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
@@ -139,7 +140,13 @@ public class ProductHomeActivity extends AppCompatActivity {
                 }
             }
         });
-        conn.execute(getString(R.string.link_list_products));
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_ONSALE, true);
+            conn.execute(getString(R.string.link_list_products), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showData() {
@@ -163,7 +170,8 @@ public class ProductHomeActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        conn.cancel();
+        if (conn != null)
+            conn.cancel();
     }
 
     @Override

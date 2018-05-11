@@ -1,9 +1,7 @@
 package com.vincent.psm.product;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -24,9 +21,8 @@ import android.widget.Toast;
 
 import com.vincent.psm.R;
 import com.vincent.psm.data.AlbumImageProvider;
-import com.vincent.psm.data.ImageChild;
 import com.vincent.psm.data.Tile;
-import com.vincent.psm.data.Verifier;
+import com.vincent.psm.network_helper.GetBitmapTask;
 import com.vincent.psm.network_helper.MyOkHttp;
 import com.vincent.psm.structure.ImageUploadQueue;
 
@@ -47,6 +43,7 @@ import static com.vincent.psm.data.DataHelper.KEY_MATERIALS;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRICE;
+import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_INFO;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
@@ -55,11 +52,12 @@ import static com.vincent.psm.data.DataHelper.KEY_Stock;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
-public class ProductPostActivity extends AppCompatActivity {
+public class ProductEditActivity extends AppCompatActivity {
     private Context context;
 
     private FrameLayout layProductPost;
     private ImageView imgProduct;
+    private TextView txtId;
     private RadioButton rdoSelectMaterial, rdoNewMaterial, rdoSelectColor, rdoNewColor;
     private Spinner spnMaterial, spnColor;
     private EditText edtName, edtMaterial, edtColor, edtLength, edtWidth, edtThick, edtPrice, edtPs, edtStock, edtSafeStock;
@@ -67,24 +65,28 @@ public class ProductPostActivity extends AppCompatActivity {
 
     private AlbumImageProvider provider;
     private MyOkHttp conDownLoad, conUpload;
+    private GetBitmapTask getBitmap;
     private ArrayList<String> materials, colors;
     private ImageUploadQueue queue;
     private Dialog dlgUpload;
 
     private Tile tile;
-    private String material, color;
+    private String material, color, id;
 
     private boolean isShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product_post);
+        setContentView(R.layout.activity_product_edit);
         context = this;
+
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString(KEY_ID);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         TextView txtBarTitle = toolbar.findViewById(R.id.txtToolbarTitle);
-        txtBarTitle.setText("新增產品");
+        txtBarTitle.setText("編輯產品");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -96,6 +98,7 @@ public class ProductPostActivity extends AppCompatActivity {
 
         layProductPost = findViewById(R.id.layProductPost);
         imgProduct = findViewById(R.id.imgProduct);
+        txtId = findViewById(R.id.txtId);
         rdoSelectMaterial = findViewById(R.id.rdoSelectMaterial);
         rdoNewMaterial = findViewById(R.id.rdoNewMaterial);
         rdoSelectColor = findViewById(R.id.rdoSelectColor);
@@ -118,7 +121,7 @@ public class ProductPostActivity extends AppCompatActivity {
         imgProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                provider = new AlbumImageProvider(ProductPostActivity.this, 3, 4, 600, 800, new AlbumImageProvider.TaskListener() {
+                provider = new AlbumImageProvider(ProductEditActivity.this, 3, 4, 600, 800, new AlbumImageProvider.TaskListener() {
                     @Override
                     public void onFinished(Bitmap bitmap) {
                         imgProduct.setImageBitmap(bitmap);
@@ -155,13 +158,12 @@ public class ProductPostActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postProduct();
+                //postProduct();
             }
         });
 
         edtMaterial.setEnabled(false);
         edtColor.setEnabled(false);
-
     }
 
     @Override
@@ -175,13 +177,14 @@ public class ProductPostActivity extends AppCompatActivity {
         layProductPost.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownLoad = new MyOkHttp(ProductPostActivity.this, new MyOkHttp.TaskListener() {
+        conDownLoad = new MyOkHttp(ProductEditActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(String result) {
                 try {
                     JSONObject resObj = new JSONObject(result);
                     if (resObj.getBoolean(KEY_STATUS)) {
                         if(resObj.getBoolean(KEY_SUCCESS)) {
+                            //載入規格清單
                             JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
                             JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
                             materials = new ArrayList<>();
@@ -193,6 +196,31 @@ public class ProductPostActivity extends AppCompatActivity {
                                 materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
                             for (int i=0; i<aryColor.length(); i++)
                                 colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+
+                            //載入產品詳情
+                            JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                            tile = new Tile(
+                                    objProduct.getString(KEY_ID),
+                                    objProduct.getString(KEY_PHOTO),
+                                    objProduct.getString(KEY_NAME),
+                                    objProduct.getString(KEY_MATERIAL),
+                                    objProduct.getString(KEY_COLOR),
+                                    objProduct.getString(KEY_LENGTH),
+                                    objProduct.getString(KEY_WIDTH),
+                                    objProduct.getString(KEY_THICK),
+                                    objProduct.getString(KEY_PRICE),
+                                    objProduct.getString(KEY_PS),
+                                    objProduct.getString(KEY_Stock),
+                                    objProduct.getString(KEY_SAFE_STOCK)
+                            );
+
+                            getBitmap = new GetBitmapTask(getString(R.string.link_image), new GetBitmapTask.TaskListener() {
+                                @Override
+                                public void onFinished() {
+                                    showData();
+                                }
+                            });
+                            getBitmap.execute(tile);
 
                             showData();
                         }else {
@@ -206,159 +234,37 @@ public class ProductPostActivity extends AppCompatActivity {
                 }
             }
         });
-        conDownLoad.execute(getString(R.string.link_show_specification));
-    }
-
-    private void showData() {
-        spnMaterial.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, materials));
-        spnColor.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, colors));
-
-        layProductPost.setVisibility(View.VISIBLE);
-        prgBar.setVisibility(View.GONE);
-        isShown = true;
-    }
-
-    private void postProduct() {
-        if (!isInfoValid())
-            return;
-
-        prepareDialog();
-
-        String[] fileNames = new String[1];
-        fileNames[0] = "";
-        queue = new ImageUploadQueue(getResources(), context, getString(R.string.link_upload_image));
-        queue.enqueueFromRear(new ImageChild(provider.getImage(), true));
-        queue.startUpload(fileNames, null, null, new ImageUploadQueue.TaskListener() {
-            @Override
-            public void onFinished(String[] fileNames) {
-                tile.setImgURL(fileNames[0]);
-                uploadProduct();
-            }
-        });
-    }
-
-    private void uploadProduct() {
-        conUpload = new MyOkHttp(ProductPostActivity.this, new MyOkHttp.TaskListener() {
-            @Override
-            public void onFinished(String result) {
-                dlgUpload.dismiss();
-                try {
-                    JSONObject resObj = new JSONObject(result);
-
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            Intent it = new Intent(context, ProductDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString(KEY_ID, tile.getId());
-                            bundle.putString(KEY_NAME, tile.getName());
-                            it.putExtras(bundle);
-                            startActivity(it);
-                        }else {
-                            Toast.makeText(context, "刊登失敗", Toast.LENGTH_SHORT).show();
-                        }
-                    }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                    }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         try {
             JSONObject reqObj = new JSONObject();
-            reqObj.put(KEY_NAME, tile.getName());
-            reqObj.put(KEY_MATERIAL, tile.getMaterial());
-            reqObj.put(KEY_COLOR, tile.getColor());
-            reqObj.put(KEY_LENGTH , tile. getLength());
-            reqObj.put(KEY_WIDTH, tile.getWidth());
-            reqObj.put(KEY_THICK, tile.getThick());
-            reqObj.put(KEY_Stock, tile.getStock());
-            reqObj.put(KEY_SAFE_STOCK, tile.getSafeStock());
-            reqObj.put(KEY_PRICE, tile.getPrice());
-            reqObj.put(KEY_PHOTO, tile.getPhoto());
-            reqObj.put(KEY_PS, tile.getPs());
-            conUpload.execute(getString(R.string.link_post_product), reqObj.toString());
+            reqObj.put(KEY_ID, id);
+            conDownLoad.execute(getString(R.string.link_show_editing_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private boolean isInfoValid() {
-        Verifier v = new Verifier(context);
-        StringBuffer errMsg = new StringBuffer();
+    private void showData() {
+        //材質、顏色清單
+        spnMaterial.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, materials));
+        spnColor.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, colors));
 
-        String material = rdoSelectMaterial.isChecked() ? this.material : edtMaterial.getText().toString();
-        String color = rdoSelectColor.isChecked() ? this.color : edtColor.getText().toString();
+        //產品資料
+        imgProduct.setImageBitmap(tile.getImg());
+        edtName.setText(tile.getName());
+        edtPrice.setText(tile.getPrice());
+        txtId.setText(tile.getId());
+        edtMaterial.setText(tile.getMaterial());
+        edtColor.setText(tile.getColor());
+        edtLength.setText(tile.getLength());
+        edtWidth.setText(tile.getWidth());
+        edtThick.setText(tile.getThick());
+        edtPs.setText(tile.getPs());
+        edtStock.setText(tile.getStock());
+        edtSafeStock.setText(tile.getSafeStock());
 
-        tile = null;
-        tile = new Tile(
-                null,
-                "",
-                edtName.getText().toString(),
-                material,
-                color,
-                edtLength.getText().toString(),
-                edtWidth.getText().toString(),
-                edtThick.getText().toString(),
-                edtPrice.getText().toString(),
-                edtPs.getText().toString(),
-                edtStock.getText().toString(),
-                edtSafeStock.getText().toString()
-        );
-
-        if (provider.getImage() == null)
-            errMsg.append(getString(R.string.chkSelect, "圖片"));
-
-        errMsg.append(v.chkTitle(tile.getName()));
-        errMsg.append(v.chkMaterial(tile.getMaterial()));
-        errMsg.append(v.chkColor(tile.getColor()));
-        errMsg.append(v.chkLength(tile.getLength()));
-        errMsg.append(v.chkWidth(tile.getWidth()));
-        errMsg.append(v.chkThick(tile.getThick()));
-        errMsg.append(v.chkPrice(tile.getPrice()));
-        errMsg.append(v.chkPs(tile.getPs()));
-        errMsg.append(v.chkStock(tile.getStock()));
-        errMsg.append(v.chkSafeStock(tile.getSafeStock()));
-
-        if (errMsg.length() != 0) {
-            v.getDialog("新增產品", errMsg.substring(0, errMsg.length() - 1)).show();
-            return false;
-        }else {
-            tile.setPrice(String.valueOf(Integer.parseInt(tile.getPrice()))); //避免有人開頭輸入一堆0
-            return true;
-        }
-    }
-
-    private void prepareDialog() {
-        dlgUpload = new Dialog(context);
-        dlgUpload.setContentView(R.layout.dlg_uploading);
-        dlgUpload.setCancelable(false);
-        TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);
-        txtUploadHint.setText("上傳中，長按取消...");
-
-        LinearLayout layUpload = dlgUpload.findViewById(R.id.layUpload);
-        layUpload.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
-                msgbox.setTitle("新增商品")
-                        .setMessage("確定取消上傳嗎？")
-                        .setNegativeButton("否", null)
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                try {
-                                    queue.cancelUpload();
-                                    Toast.makeText(context, "上傳已取消", Toast.LENGTH_SHORT).show();
-                                    dlgUpload.dismiss();
-                                }catch (NullPointerException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).show();
-                return true;
-            }
-        });
+        layProductPost.setVisibility(View.VISIBLE);
+        prgBar.setVisibility(View.GONE);
+        isShown = true;
     }
 
     public void onRadioSelect(View v) {
@@ -399,6 +305,8 @@ public class ProductPostActivity extends AppCompatActivity {
             conDownLoad.cancel();
         if (conUpload != null)
             conUpload.cancel();
+        if (getBitmap != null)
+            getBitmap.cancel(true);
         if (queue != null)
             queue.destroy();
 
@@ -412,5 +320,4 @@ public class ProductPostActivity extends AppCompatActivity {
         else
             super.onActivityResult(requestCode, resultCode, data);
     }
-
 }

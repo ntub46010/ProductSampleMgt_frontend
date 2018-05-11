@@ -5,9 +5,11 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,13 +40,13 @@ import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private Context context;
-    private CoordinatorLayout layProductDetail;
+    private FrameLayout layProductDetail;
     private ImageView imgProduct;
     private TextView txtProductName, txtPrice, txtId, txtMaterial, txtColor, txtSize, txtPs, txtStock, txtSafeStock;
     private ProgressBar prgBar;
     private FloatingActionButton fabCart;
 
-    private String id, name;
+    private String id;
 
     private MyOkHttp conn;
     private GetBitmapTask getBitmap;
@@ -60,7 +62,17 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString(KEY_ID);
-        name = bundle.getString(KEY_NAME);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(bundle.getString(KEY_NAME));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         layProductDetail = findViewById(R.id.layProductDetail);
         imgProduct = findViewById(R.id.imgProduct);
@@ -84,13 +96,13 @@ public class ProductDetailActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (!isShown)
-            loadData(true);
+            loadData();
     }
 
-    private void loadData(boolean showPrgBar) {
+    private void loadData() {
         isShown = false;
-        if (showPrgBar)
-            prgBar.setVisibility(View.VISIBLE);
+        prgBar.setVisibility(View.VISIBLE);
+
         conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(String result) {
