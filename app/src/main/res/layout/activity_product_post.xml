@@ -16,12 +16,26 @@
         android:layout_height="wrap_content">
 
         <FrameLayout
-            android:id="@+id/layProductPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/layout_padding">
 
-            <include layout="@layout/content_product_edit_info"/>
+            <LinearLayout
+                android:id="@+id/layProductPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imgProduct"
+                    style="@style/img_product_gallery"
+                    android:src="@drawable/icon_add_image"
+                    android:background="#DDDDDD"
+                    android:scaleType="centerInside"/>
+
+                <include layout="@layout/content_product_edit_info"/>
+
+            </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/prgBar"

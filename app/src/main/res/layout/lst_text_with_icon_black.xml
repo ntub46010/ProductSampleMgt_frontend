@@ -8,11 +8,11 @@
 
     <ImageView
         android:id="@+id/imgIcon"
-        style="@style/img_member_setting_list"/>
+        style="@style/img_list_mgt_option"/>
 
     <TextView
         android:id="@+id/txtTitle"
-        style="@style/txt_member_setting_list"
+        style="@style/txt_list_mgt_option"
         android:textColor="#333333"/>
 
 </LinearLayout>

@@ -40,7 +40,8 @@
         <activity android:name=".product.ProductDetailActivity" />
         <activity android:name=".product.ProductMgtActivity" />
         <activity android:name=".product.ProductPostActivity" />
-        <activity android:name=".product.ProductEditActivity"></activity>
+        <activity android:name=".product.ProductEditActivity" />
+        <activity android:name=".CartHomeActivity"></activity>
     </application>
 
 </manifest>

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, ProductMgtActivity.class));
                 break;
             case R.id.btn3:
+                startActivity(new Intent(this, CartHomeActivity.class));
                 break;
             case R.id.btn4:
                 break;

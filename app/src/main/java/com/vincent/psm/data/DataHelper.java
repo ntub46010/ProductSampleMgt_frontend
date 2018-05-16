@@ -1,8 +1,13 @@
 package com.vincent.psm.data;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.widget.SimpleAdapter;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +19,7 @@ public class DataHelper {
 
     public static final String KEY_STATUS = "Status";
     public static final String KEY_SUCCESS = "Success";
+    public static final String KEY_EDIT_MODE = "EditMode";
 
     public static final String KEY_ACCOUNT = "Account";
     public static final String KEY_PASSWORD = "Password";
@@ -38,6 +44,18 @@ public class DataHelper {
     public static final String KEY_PRODUCTS = "Products";
     public static final String KEY_MATERIALS = "Materials";
     public static final String KEY_COLORS = "Colors";
+
+    public static String getMD5(String s) {
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(s.getBytes(), 0, s.length());
+            BigInteger i = new BigInteger(1, m.digest());
+            return String.format("%1$032x", i).toUpperCase();
+        }catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     public static SimpleAdapter getSimpleAdapter(Context context, int layoutId, int layoutIconId, int layoutTitleId, int[] icon, String[] title) {
         List<Map<String, Object>> list = new ArrayList<>();

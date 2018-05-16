@@ -58,12 +58,13 @@ import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 public class ProductPostActivity extends AppCompatActivity {
     private Context context;
 
-    private FrameLayout layProductPost;
+    private LinearLayout layProductPost;
     private ImageView imgProduct;
     private RadioButton rdoSelectMaterial, rdoNewMaterial, rdoSelectColor, rdoNewColor;
     private Spinner spnMaterial, spnColor;
     private EditText edtName, edtMaterial, edtColor, edtLength, edtWidth, edtThick, edtPrice, edtPs, edtStock, edtSafeStock;
     private ProgressBar prgBar;
+    private ImageView btnSubmit;
 
     private AlbumImageProvider provider;
     private MyOkHttp conDownLoad, conUpload;
@@ -113,7 +114,7 @@ public class ProductPostActivity extends AppCompatActivity {
         edtMaterial = findViewById(R.id.edtMaterial);
         edtColor = findViewById(R.id.edtColor);
         prgBar = findViewById(R.id.prgBar);
-        ImageView btnSubmit = findViewById(R.id.btnSubmit);
+        btnSubmit = findViewById(R.id.btnSubmit);
 
         imgProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +162,7 @@ public class ProductPostActivity extends AppCompatActivity {
 
         edtMaterial.setEnabled(false);
         edtColor.setEnabled(false);
-
+        btnSubmit.setVisibility(View.GONE);
     }
 
     @Override
@@ -215,6 +216,7 @@ public class ProductPostActivity extends AppCompatActivity {
 
         layProductPost.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
+        btnSubmit.setVisibility(View.VISIBLE);
         isShown = true;
     }
 
@@ -223,6 +225,7 @@ public class ProductPostActivity extends AppCompatActivity {
             return;
 
         prepareDialog();
+        dlgUpload.show();
 
         String[] fileNames = new String[1];
         fileNames[0] = "";
@@ -253,6 +256,7 @@ public class ProductPostActivity extends AppCompatActivity {
                             bundle.putString(KEY_NAME, tile.getName());
                             it.putExtras(bundle);
                             startActivity(it);
+                            finish();
                         }else {
                             Toast.makeText(context, "刊登失敗", Toast.LENGTH_SHORT).show();
                         }
@@ -303,7 +307,8 @@ public class ProductPostActivity extends AppCompatActivity {
                 edtPrice.getText().toString(),
                 edtPs.getText().toString(),
                 edtStock.getText().toString(),
-                edtSafeStock.getText().toString()
+                edtSafeStock.getText().toString(),
+                true
         );
 
         if (provider.getImage() == null)

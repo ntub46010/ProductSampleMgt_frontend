@@ -13,39 +13,70 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/layProductPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/layout_padding">
+            android:paddingStart="@dimen/layout_padding"
+            android:paddingEnd="@dimen/layout_padding">
 
             <LinearLayout
+                android:id="@+id/layProductPost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imgProduct"
-                    style="@style/img_product_gallery"
-                    android:src="@drawable/icon_add_image"
-                    android:background="#DDDDDD"
-                    android:scaleType="centerInside"/>
+                <RadioGroup
+                    android:id="@+id/rgpEditMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <RadioButton
+                        android:id="@+id/rdoNormal"
+                        style="@style/rdo_edt_product_mode"
+                        android:text="一般編輯"
+                        android:checked="true"/>
+                    <RadioButton
+                        android:id="@+id/rdoOnStock"
+                        style="@style/rdo_edt_product_mode"
+                        android:text="上架"/>
+                    <RadioButton
+                        android:id="@+id/rdoOffStock"
+                        style="@style/rdo_edt_product_mode"
+                        android:text="下架"/>
+                </RadioGroup>
 
                 <LinearLayout
+                    android:id="@+id/layEditContent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        style="@style/txt_goods_detail_title"
-                        android:text="編號："/>
-                    <TextView
-                        android:id="@+id/txtId"
-                        style="@style/txt_goods_detail_content"/>
-                </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <include layout="@layout/content_product_edit_info"/>
+                    <ImageView
+                        android:id="@+id/imgProduct"
+                        style="@style/img_product_gallery"
+                        android:src="@drawable/icon_add_image"
+                        android:background="#DDDDDD"
+                        android:scaleType="fitCenter"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/txt_goods_detail_title"
+                            android:text="編號："/>
+                        <TextView
+                            android:id="@+id/txtId"
+                            style="@style/txt_goods_detail_content"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/content_product_edit_info"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

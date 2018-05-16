@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.vincent.psm.data.DataHelper;
 import com.vincent.psm.network_helper.MyOkHttp;
 
 import org.json.JSONException;
@@ -77,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ACCOUNT, account);
-            reqObj.put(KEY_PASSWORD, password);
+            reqObj.put(KEY_PASSWORD, DataHelper.getMD5(password));
             conn.execute(getString(R.string.link_login), reqObj.toString());
         } catch (JSONException e) {
             e.printStackTrace();

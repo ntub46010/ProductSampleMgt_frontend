@@ -1,16 +1,14 @@
 package com.vincent.psm.product;
 
 import android.content.Context;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +25,7 @@ import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIAL;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.KEY_ONSALE;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_INFO;
@@ -40,7 +39,7 @@ import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private Context context;
-    private FrameLayout layProductDetail;
+    private ScrollView layProductDetail;
     private ImageView imgProduct;
     private TextView txtProductName, txtPrice, txtId, txtMaterial, txtColor, txtSize, txtPs, txtStock, txtSafeStock;
     private ProgressBar prgBar;
@@ -86,7 +85,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtStock = findViewById(R.id.txtStock);
         txtSafeStock = findViewById(R.id.txtSafeStock);
         prgBar = findViewById(R.id.prgBar);
-        fabCart = findViewById(R.id.fab_cart);
+        fabCart = findViewById(R.id.fabCart);
 
         layProductDetail.setVisibility(View.INVISIBLE);
         fabCart.setVisibility(View.INVISIBLE);
@@ -128,7 +127,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                                     obj.getString(KEY_PRICE),
                                     obj.getString(KEY_PS),
                                     obj.getString(KEY_Stock),
-                                    obj.getString(KEY_SAFE_STOCK)
+                                    obj.getString(KEY_SAFE_STOCK),
+                                    obj.getInt(KEY_ONSALE) == 1
                             );
                             getBitmap = new GetBitmapTask(getString(R.string.link_image), new GetBitmapTask.TaskListener() {
                                 @Override

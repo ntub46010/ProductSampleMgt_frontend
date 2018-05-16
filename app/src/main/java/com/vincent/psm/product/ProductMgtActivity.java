@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -50,8 +51,19 @@ public class ProductMgtActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_mgt);
         context = this;
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("產品管理");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        lstProduct = findViewById(R.id.lstProduct);
+        lstProduct = findViewById(R.id.lstCart);
         fabPost = findViewById(R.id.fab_post);
         prgBar = findViewById(R.id.prgBar);
 
@@ -115,7 +127,8 @@ public class ProductMgtActivity extends AppCompatActivity {
                                 tiles.add(new Tile(
                                         obj.getString(KEY_ID),
                                         obj.getString(KEY_PHOTO),
-                                        obj.getString(KEY_NAME)
+                                        obj.getString(KEY_NAME),
+                                        obj.getInt(KEY_ONSALE) == 1
                                 ));
                             }
                             showData();
@@ -141,7 +154,7 @@ public class ProductMgtActivity extends AppCompatActivity {
 
     private void showData() {
         adapter = new StockListAdapter(getResources(), context, tiles, R.layout.lst_stock, 10);
-        adapter.setBackgroundColor(R.color.lst_stock);
+        //adapter.setBackgroundColor(R.color.lst_stock_onsale);
         lstProduct.setAdapter(adapter);
 
         tiles = null;

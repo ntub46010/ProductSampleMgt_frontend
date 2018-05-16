@@ -3,12 +3,14 @@ package com.vincent.psm.data;
 public class Tile extends ImageObj {
     private String id, name, length, width, thick, price;
     private String material, color, ps, stock, safeStock;
+    boolean onSale = false;
 
     //商品管理
-    public Tile(String id, String photo, String name) {
+    public Tile(String id, String photo, String name, boolean onSale) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
+        this.onSale = onSale;
     }
 
     //商品列表
@@ -23,7 +25,7 @@ public class Tile extends ImageObj {
     }
 
     //新增商品、商品詳情
-    public Tile(String id, String photo, String name, String material, String color, String length, String width, String thick, String price, String ps, String stock, String safeStock) {
+    public Tile(String id, String photo, String name, String material, String color, String length, String width, String thick, String price, String ps, String stock, String safeStock, boolean onSale) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
@@ -36,6 +38,7 @@ public class Tile extends ImageObj {
         this.ps = ps;
         this.stock = stock;
         this.safeStock = safeStock;
+        this.onSale = onSale;
     }
 
     public String getId() {
@@ -84,6 +87,10 @@ public class Tile extends ImageObj {
 
     public String getSafeStock() {
         return safeStock;
+    }
+
+    public boolean getOnSale() {
+        return onSale;
     }
 
     public void setPrice(String price) {

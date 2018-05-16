@@ -7,19 +7,38 @@
     android:layout_height="match_parent"
     tools:context=".product.ProductHomeActivity">
 
-    <include
-        layout="@layout/content_product_display"
-        android:paddingBottom="35dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/toolbar"
+            android:paddingEnd="65dp"
+            app:titleTextColor="#FFFFFF"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar">
+
+            <include
+                layout="@layout/content_product_display"
+                android:paddingBottom="35dp"/>
+
+        </FrameLayout>
+
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_top"
+        android:id="@+id/fabTop"
         style="@style/fab"
         android:layout_marginEnd="80dp"
         app:srcCompat="@drawable/icon_arrow_upward"
         app:fabSize="normal"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_search"
+        android:id="@+id/fabSearch"
         style="@style/fab"
         android:layout_marginEnd="@dimen/fab_margin"
         app:srcCompat="@drawable/icon_search"

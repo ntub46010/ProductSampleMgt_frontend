@@ -18,13 +18,13 @@
             app:titleTextColor="#FFFFFF"/>
 
         <FrameLayout
-            android:id="@+id/layProductDetail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/layout_padding"
             android:layout_below="@id/toolbar">
 
             <ScrollView
+                android:id="@+id/layProductDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -135,7 +135,7 @@
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_cart"
+        android:id="@+id/fabCart"
         style="@style/fab"
         android:layout_marginEnd="26dp"
         app:srcCompat="@drawable/icon_cart"

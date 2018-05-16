@@ -77,7 +77,11 @@ public class StockListAdapter extends BaseAdapter {
         TextView txtId = convertView.findViewById(R.id.txtId);
         TextView txtName = convertView.findViewById(R.id.txtProductName);
 
-        linearLayout.setBackgroundColor(res.getColor(backgroundColor));
+        if (tiles.get(i).getOnSale())
+            linearLayout.setBackgroundColor(res.getColor(R.color.lst_stock_onsale));
+        else
+            linearLayout.setBackgroundColor(res.getColor(R.color.lst_stock_offsale));
+
         imgBookPic.setImageBitmap(tiles.get(i).getImg());
         txtId.setText(tiles.get(i).getId());
         txtName.setText(tiles.get(i).getName());
@@ -121,8 +125,8 @@ public class StockListAdapter extends BaseAdapter {
 
         String[] textGroup = {"查看", "編輯"};
         int[] iconGroup = {
-                R.drawable.icon_account,
-                R.drawable.icon_account
+                R.drawable.icon_check,
+                R.drawable.icon_edit
         };
 
         ListView listView = dialog.findViewById(R.id.lstOptions);

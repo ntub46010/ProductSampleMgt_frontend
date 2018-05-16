@@ -9,5 +9,6 @@
     <color name="blue1">#CBDDE2</color>
     <color name="card_product">#C0CBDDE2</color> <!--商品首頁清單-->
 
-    <color name="lst_stock">#FAFAFA</color><!--商品管理清單-->
+    <color name="lst_stock_onsale">#FAFAFA</color><!--商品管理清單-->
+    <color name="lst_stock_offsale">#DDDDDD</color>
 </resources>
