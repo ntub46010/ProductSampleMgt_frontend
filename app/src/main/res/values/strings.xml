@@ -11,6 +11,10 @@
     <string name="link_post_product">http://111.250.14.190:8181/post_product</string>
     <string name="link_show_editing_product">http://111.250.14.190:8181/show_editing_product</string>
     <string name="link_edit_product">http://111.250.14.190:8181/edit_product</string>
+    <string name="link_create_cart">http://111.250.14.190:8181/create_cart</string>
+    <string name="link_list_carts">http://111.250.14.190:8181/list_carts</string>
+    <string name="link_show_cart">http://111.250.14.190:8181/show_cart</string>
+    <string name="link_add_cart_item">http://111.250.14.190:8181/add_cart_item</string>
 
     <string name="link_upload_avatar">http://111.250.14.190:8181/upload_avatar</string>
     <string name="link_upload_image">http://111.250.14.190:8181/upload_image</string>
@@ -19,12 +23,11 @@
     <string name="txt_product_size">%1s x %2s x %3s mm</string>
     <string name="txt_greeting">您好，%1s，使用身份是%2s</string>
 
-    <string name="chkTitle">產品名稱為1~30字\n</string>
-    <string name="chkMaterial">材質為1~20字\n</string>
-    <string name="chkColor">顏色為1~20字\n</string>
     <string name="chkNumber">請確認%1s是否正確\n</string>
     <string name="chkPrice">價格格式錯誤\n</string>
-    <string name="chkPs">備註長度最多100字\n</string>
     <string name="chkSelect">%1s未選擇</string>
+    <string name="chk_cart_name">購物車名稱為1~30字\n</string>
+    <string name="chk_range_words">%1s為%2s~%3s字\n</string>
+    <string name="chk_max_words">%1s最多%2s字\n</string>
 
 </resources>

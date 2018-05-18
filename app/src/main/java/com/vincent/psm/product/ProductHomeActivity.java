@@ -99,8 +99,8 @@ public class ProductHomeActivity extends AppCompatActivity {
             }
         });
 
-        fabTop.setVisibility(View.INVISIBLE);
-        fabSearch.setVisibility(View.INVISIBLE);
+        fabTop.hide();
+        fabSearch.hide();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class ProductHomeActivity extends AppCompatActivity {
                                 ));
                             }
                         }else {
-                            Toast.makeText(context, "沒有商品", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
                         }
                         showData();
                     }else {
@@ -172,8 +172,8 @@ public class ProductHomeActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(false);
 
         recyProduct.setVisibility(View.VISIBLE);
-        fabTop.setVisibility(View.VISIBLE);
-        fabSearch.setVisibility(View.VISIBLE);
+        fabTop.show();
+        fabSearch.show();
         prgBar.setVisibility(View.GONE);
         tiles = null;
         isShown = true;

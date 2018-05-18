@@ -20,6 +20,9 @@ public class Verifier {
     private String lowerPrice = "1", upperPrice = "7"; //0~9,999,999 NT
     private String lowerPs = "0", upperPs = "100";
     private String lowerStock = "1", upperStock = "10"; //0~9,999,999,999 NT
+    private String lowerCustomerName = "0", upperCustomerName = "50";
+    private String lowerCustomerPhone = "0", upperCustomerPhone = "15";
+    private String lowerContactName = "0", upperContactName = "20";
 
     private String ptnProductName = String.format(ptnText, lowerProductName, upperProductName);
     private String ptnMaterial = String.format(ptnText, lowerMaterial, upperMaterial);
@@ -29,6 +32,9 @@ public class Verifier {
     private String ptnPrice = String.format(ptnNumber, lowerPrice, upperPrice);
     private String ptnPs = String.format(ptnText, lowerPs, upperPs);
     private String ptnStock = String.format(ptnNumber, lowerStock, upperStock);
+    private String ptnCustomerName = String.format(ptnText, lowerCustomerName, upperCustomerName);
+    private String ptnCustomerPhone = String.format(ptnText, lowerCustomerPhone, upperCustomerPhone);
+    private String ptnContactName = String.format(ptnText, lowerContactName, upperContactName);
 
     public Verifier(Context context) {
         this.c = context;
@@ -38,6 +44,7 @@ public class Verifier {
         return new AlertDialog.Builder(c)
                 .setTitle(title)
                 .setMessage(msg)
+                .setCancelable(true)
                 .setPositiveButton("確定", null);
     }
 
@@ -45,7 +52,7 @@ public class Verifier {
         if (Pattern.matches(ptnProductName, s))
             return "";
         else
-            return c.getString(R.string.chkTitle);
+            return c.getString(R.string.chk_range_words, "產品名稱", String.valueOf(lowerProductName), String.valueOf(upperProductName));
     }
 
     public String chkMaterial(String s) {
@@ -54,7 +61,7 @@ public class Verifier {
         else if(s.equals("請選擇"))
             return c.getString(R.string.chkSelect, "材質");
         else
-            return c.getString(R.string.chkMaterial);
+            return c.getString(R.string.chk_range_words, "材質", String.valueOf(lowerMaterial), String.valueOf(upperMaterial));
     }
 
     public String chkColor(String s) {
@@ -63,7 +70,7 @@ public class Verifier {
         else if(s.equals("請選擇"))
             return c.getString(R.string.chkSelect, "顏色");
         else
-            return c.getString(R.string.chkColor);
+            return c.getString(R.string.chk_range_words, "顏色", String.valueOf(lowerColor), String.valueOf(upperColor));
     }
 
     public String chkLength(String s) {
@@ -98,7 +105,7 @@ public class Verifier {
         if (Pattern.matches(ptnPs, s))
             return "";
         else
-            return c.getString(R.string.chkPs);
+            return c.getString(R.string.chk_max_words, "備註", String.valueOf(upperPs));
     }
 
     public String chkStock(String s) {
@@ -113,5 +120,40 @@ public class Verifier {
             return "";
         else
             return c.getString(R.string.chkNumber, "安全庫存量");
+    }
+
+    public String chkCartName(String s) {
+        if (Pattern.matches(ptnProductName, s))
+            return "";
+        else
+            return c.getString(R.string.chk_cart_name);
+    }
+
+    public String chkCustomerName(String s) {
+        if (Pattern.matches(ptnCustomerName, s))
+            return "";
+        else
+            return c.getString(R.string.chk_max_words, "客戶名稱", String.valueOf(upperCustomerName));
+    }
+
+    public String chkCustomerPhone(String s) {
+        if (Pattern.matches(ptnCustomerPhone, s))
+            return "";
+        else
+            return c.getString(R.string.chk_max_words, "客戶電話", String.valueOf(upperCustomerPhone));
+    }
+
+    public String chkContactName(String s) {
+        if (Pattern.matches(ptnContactName, s))
+            return "";
+        else
+            return c.getString(R.string.chk_max_words, "聯絡人名稱", String.valueOf(upperContactName));
+    }
+
+    public String chkContactPhone(String s) {
+        if (Pattern.matches(ptnCustomerPhone, s))
+            return "";
+        else
+            return c.getString(R.string.chk_max_words, "聯絡人電話", String.valueOf(upperCustomerPhone));
     }
 }

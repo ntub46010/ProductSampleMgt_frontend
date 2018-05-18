@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.vincent.psm.R;
 import com.vincent.psm.data.AlbumImageProvider;
-import com.vincent.psm.data.ImageChild;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
@@ -44,7 +43,7 @@ import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
-import static com.vincent.psm.data.DataHelper.KEY_Stock;
+import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
@@ -242,6 +241,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
         msgbox = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
                 .setMessage("確定取消上傳嗎？")
+                .setCancelable(true)
                 .setNegativeButton("否", null)
                 .setPositiveButton("是", new DialogInterface.OnClickListener() {
                     @Override
@@ -275,7 +275,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
         reqObj.put(KEY_LENGTH , tile. getLength());
         reqObj.put(KEY_WIDTH, tile.getWidth());
         reqObj.put(KEY_THICK, tile.getThick());
-        reqObj.put(KEY_Stock, tile.getStock());
+        reqObj.put(KEY_STOCK, tile.getStock());
         reqObj.put(KEY_SAFE_STOCK, tile.getSafeStock());
         reqObj.put(KEY_PRICE, tile.getPrice());
         reqObj.put(KEY_PHOTO, tile.getPhoto());
