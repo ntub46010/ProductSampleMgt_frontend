@@ -21,7 +21,7 @@ import com.vincent.psm.data.DataHelper;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.GetBitmapTask;
 import com.vincent.psm.product.ProductDetailActivity;
-import com.vincent.psm.product.ProductEditActivity;
+import com.vincent.psm.product.ProductUpdateActivity;
 import com.vincent.psm.structure.ImageDownloadQueue;
 
 import java.util.ArrayList;
@@ -156,7 +156,7 @@ public class StockListAdapter extends BaseAdapter {
                         break;
 
                     case "編輯":
-                        it = new Intent(context, ProductEditActivity.class);
+                        it = new Intent(context, ProductUpdateActivity.class);
                         bundle = new Bundle();
                         bundle.putString(KEY_ID, tiles.get(pressPosition).getId());
                         bundle.putString(KEY_NAME, tiles.get(pressPosition).getName());

@@ -14,8 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:textSize="18sp"
-        android:text="AAA"/>
+        android:textSize="18sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,7 +31,7 @@
                 android:id="@+id/btn1"
                 style="@style/btn_main_function"
                 android:drawableTop="@drawable/fun_product_home"
-                android:text="瀏覽商品"/>
+                android:text="瀏覽產品"/>
             <Button
                 android:id="@+id/btn3"
                 style="@style/btn_main_function"
@@ -59,7 +58,7 @@
                 android:id="@+id/btn2"
                 style="@style/btn_main_function"
                 android:drawableTop="@drawable/fun_product_home"
-                android:text="商品管理"/>
+                android:text="產品管理"/>
             <Button
                 android:id="@+id/btn4"
                 style="@style/btn_main_function"

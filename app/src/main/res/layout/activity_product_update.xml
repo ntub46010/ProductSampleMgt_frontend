@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".product.ProductEditActivity">
+    tools:context=".product.ProductUpdateActivity">
 
     <include layout="@layout/content_checking_toolbar" />
 
