@@ -38,7 +38,7 @@ import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
-import static com.vincent.psm.data.DataHelper.KEY_Stock;
+import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
@@ -131,7 +131,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
                                     objProduct.getString(KEY_THICK),
                                     objProduct.getString(KEY_PRICE),
                                     objProduct.getString(KEY_PS),
-                                    objProduct.getString(KEY_Stock),
+                                    objProduct.getString(KEY_STOCK),
                                     objProduct.getString(KEY_SAFE_STOCK),
                                     objProduct.getInt(KEY_ONSALE) == 1
                             );

@@ -21,6 +21,7 @@ import com.vincent.psm.structure.ImageDownloadQueue;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.Comma;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 
@@ -106,10 +107,17 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
 
         dataViewHolder.position = i;
 
-        dataViewHolder.imgProduct.setImageBitmap((tiles.get(i)).getImg()); //不用加Book，因為是父類別的方法
+        dataViewHolder.imgProduct.setImageBitmap((tiles.get(i)).getImg());
         dataViewHolder.txtProductName.setText((tiles.get(i)).getName());
-        dataViewHolder.txtProductSize.setText(context.getString(R.string.txt_product_size, (tiles.get(i)).getLength(), (tiles.get(i)).getWidth(), (tiles.get(i)).getThick()));
-        dataViewHolder.txtProductPrice.setText("$ " + (tiles.get(i)).getPrice());
+
+        if (tiles.get(i).getLength() != null) { //產品首頁
+            dataViewHolder.txtProductSize.setText(context.getString(R.string.txt_product_size, (tiles.get(i)).getLength(), (tiles.get(i)).getWidth(), (tiles.get(i)).getThick()));
+            dataViewHolder.txtProductPrice.setText("$ " + Comma(tiles.get(i).getPrice()));
+        }else if (tiles.get(i).getSubTotal() != -1) { //購物車明細
+            dataViewHolder.txtProductSize.setText(Comma(String.valueOf(tiles.get(i).getAmount())) + " 個");
+            dataViewHolder.txtProductPrice.setText("$ " + Comma(String.valueOf(tiles.get(i).getSubTotal())));
+        }
+
         lastPosition = i;
     }
 
