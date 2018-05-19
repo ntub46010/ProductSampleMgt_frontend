@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,59 +15,10 @@
         android:layout_marginBottom="10dp"
         android:textSize="18sp"/>
 
-    <LinearLayout
+    <GridView
+        android:id="@+id/grdFunction"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginEnd="2dp">
-            <Button
-                android:id="@+id/btn1"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="瀏覽產品"/>
-            <Button
-                android:id="@+id/btn3"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="購物車"/>
-            <Button
-                android:id="@+id/btn5"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="通知"/>
-            <Button
-                android:id="@+id/btn10"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="推播測試"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="2dp">
-            <Button
-                android:id="@+id/btn2"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="產品管理"/>
-            <Button
-                android:id="@+id/btn4"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="訂單"/>
-            <Button
-                android:id="@+id/btn11"
-                style="@style/btn_main_function"
-                android:drawableTop="@drawable/fun_product_home"
-                android:text="上傳圖片測試"/>
-        </LinearLayout>
-    </LinearLayout>
+        android:numColumns="2"/>
+
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.vincent.psm.Cart;
+package com.vincent.psm.cart;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -42,8 +42,10 @@ import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
+import static com.vincent.psm.data.DataHelper.KEY_CREATE_TIME;
 import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
 import static com.vincent.psm.data.DataHelper.defaultCartId;
+import static com.vincent.psm.data.DataHelper.defaultCartName;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class CartHomeActivity extends AppCompatActivity {
@@ -120,6 +122,7 @@ public class CartHomeActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     defaultCartId = cart.getId();
+                                    defaultCartName = cart.getCartName();
                                 }
                             })
                             .setNegativeButton("否", null)
@@ -174,7 +177,8 @@ public class CartHomeActivity extends AppCompatActivity {
                                         obj.getString(KEY_CART_NAME),
                                         obj.getInt(KEY_TOTAL),
                                         obj.getString(KEY_SALES_NAME),
-                                        obj.getString(KEY_SALES_ID)
+                                        obj.getString(KEY_SALES_ID),
+                                        obj.getString(KEY_CREATE_TIME)
                                 ));
                             }
                             showData();
@@ -215,7 +219,7 @@ public class CartHomeActivity extends AppCompatActivity {
         edtContactPhone = layout.findViewById(R.id.edtContactPhone);
 
         AlertDialog.Builder dlgCreateCart = new AlertDialog.Builder(this);
-        dlgCreateCart.setTitle("新增購物車");
+        dlgCreateCart.setTitle("建立購物車");
         dlgCreateCart.setMessage("請輸入購物車資料");
         dlgCreateCart.setView(layout);
         dlgCreateCart.setPositiveButton("確定", new DialogInterface.OnClickListener() {
@@ -244,6 +248,7 @@ public class CartHomeActivity extends AppCompatActivity {
                     JSONObject resObj = new JSONObject(result);
                     if (resObj.getBoolean(KEY_STATUS)) {
                         if (resObj.getBoolean(KEY_SUCCESS)) {
+                            Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
                             loadData(true);
                         }else {
                             Toast.makeText(context, "建立購物車失敗", Toast.LENGTH_SHORT).show();

@@ -80,8 +80,8 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
 
     @Override
     public ProductDisplayAdapter.DataViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        // 顯示資料物件來自 R.layout.card_book 中
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_book, viewGroup, false);
+        // 顯示資料物件來自 R.layout.card_product 中
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_product, viewGroup, false);
         ProductDisplayAdapter.DataViewHolder dataViewHolder = new ProductDisplayAdapter.DataViewHolder(view);
         return dataViewHolder;
     }

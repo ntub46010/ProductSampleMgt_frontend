@@ -147,4 +147,11 @@
         <item name="android:layout_marginEnd">5dp</item>
     </style>
 
+    <style name="edt_create_cart">
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:hint">(選填)</item>
+    </style>
+
 </resources>

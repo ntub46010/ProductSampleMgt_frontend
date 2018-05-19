@@ -17,6 +17,7 @@ public class DataHelper {
     public static String loginUserId = "ntub46010";
     public static byte authority = 2;
     public static String defaultCartId = "";
+    public static String defaultCartName = "";
 
     public static final String KEY_STATUS = "Status";
     public static final String KEY_SUCCESS = "Success";
@@ -40,6 +41,7 @@ public class DataHelper {
     public static final String KEY_PS = "Ps";
     public static final String KEY_STOCK = "Stock";
     public static final String KEY_SAFE_STOCK = "SafeStock";
+    public static final String KEY_CART_AMOUNT = "CartAmount";
     public static final String KEY_CART_NAME = "CartName";
     public static final String KEY_CUSTOMER_NAME = "CustomerName";
     public static final String KEY_CUSTOMER_PHONE = "CustomerPhone";
@@ -50,6 +52,7 @@ public class DataHelper {
     public static final String KEY_SALES_NAME = "SalesName";
     public static final String KEY_TOTAL = "Total";
     public static final String KEY_CART_INFO = "CartInfo";
+    public static final String KEY_CREATE_TIME = "CreateTime";
     public static final String KEY_AMOUNT = "Amount";
     public static final String KEY_SUBTOTAL = "SubTotal";
     public static final String KEY_CART_ID = "CartId";

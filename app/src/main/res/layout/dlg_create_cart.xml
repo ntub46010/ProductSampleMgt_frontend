@@ -11,7 +11,8 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtCartName"
-            android:layout_width="200dp"/>
+            style="@style/edt_create_cart"
+            android:hint=""/>
     </TableRow>
     <TableRow>
         <TextView
@@ -19,7 +20,7 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtCustomerName"
-            android:layout_width="200dp"/>
+            style="@style/edt_create_cart"/>
     </TableRow>
     <TableRow>
         <TextView
@@ -27,7 +28,7 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtCustomerPhone"
-            android:layout_width="200dp"/>
+            style="@style/edt_create_cart"/>
     </TableRow>
     <TableRow>
         <TextView
@@ -35,7 +36,7 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtContactPerson"
-            android:layout_width="200dp"/>
+            style="@style/edt_create_cart"/>
     </TableRow>
     <TableRow>
         <TextView
@@ -43,7 +44,7 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtContactPhone"
-            android:layout_width="200dp"/>
+            style="@style/edt_create_cart"/>
     </TableRow>
 
 </TableLayout>

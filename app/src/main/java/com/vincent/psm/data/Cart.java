@@ -4,14 +4,16 @@ public class Cart {
     private String id, cartName, salesName, salesId;
     private String customerName, customerPhone, contactPerson, contactPhone;
     private int total;
+    private String createTime;
 
     //購物車首頁
-    public Cart(String id, String cartName, int total, String salesName, String salesId) {
+    public Cart(String id, String cartName, int total, String salesName, String salesId, String createTime) {
         this.id = id;
         this.cartName = cartName;
         this.total = total;
         this.salesName = salesName;
         this.salesId = salesId;
+        this.createTime = createTime;
     }
 
     //新增購物車
@@ -21,6 +23,16 @@ public class Cart {
         this.customerPhone = customerPhone;
         this.contactPerson = contactPerson;
         this.contactPhone = contactPhone;
+    }
+
+    //購物車摘要
+    public Cart(String salesName, String customerName, String customerPhone, String contactPerson, String contactPhone, int total) {
+        this.salesName = salesName;
+        this.customerName = customerName;
+        this.customerPhone = customerPhone;
+        this.contactPerson = contactPerson;
+        this.contactPhone = contactPhone;
+        this.total = total;
     }
 
     public String getId() {
@@ -59,6 +71,8 @@ public class Cart {
         return salesId;
     }
 
-
+    public String getCreateTime() {
+        return createTime;
+    }
 
 }

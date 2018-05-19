@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -24,10 +26,12 @@ import com.vincent.psm.network_helper.MyOkHttp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.vincent.psm.data.DataHelper.Comma;
 import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_COLOR;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_CART_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIAL;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
@@ -44,6 +48,7 @@ import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 import static com.vincent.psm.data.DataHelper.defaultCartId;
+import static com.vincent.psm.data.DataHelper.defaultCartName;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private Context context;
@@ -54,7 +59,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private FloatingActionButton fabCart;
 
     private String id;
-    private int amount = 0;
+    private int cartAmount = 0, amount = 0;
 
     private MyOkHttp conDownload, conUpload;
     private GetBitmapTask getBitmap;
@@ -130,6 +135,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                     JSONObject resObj = new JSONObject(result);
                     if (resObj.getBoolean(KEY_STATUS)) {
                         if (resObj.getBoolean(KEY_SUCCESS)) {
+                            //檢查是否在購物車
+                            cartAmount = resObj.getInt(KEY_CART_AMOUNT);
+
+                            //產品詳情
                             JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
                             tile = new Tile(
                                     obj.getString(KEY_ID),
@@ -167,6 +176,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ID, id);
+            reqObj.put(KEY_CART_ID, defaultCartId);
             conDownload.execute(getString(R.string.link_show_product_detail), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -180,7 +190,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtId.setText(tile.getId());
         txtMaterial.setText(tile.getMaterial());
         txtColor.setText(tile.getColor());
-        txtSize.setText(String.format("%s x %s x %s mm", tile.getLength(), tile.getWidth(), tile.getThick()));
+        txtSize.setText(getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));
         txtPs.setText(tile.getPs());
         txtStock.setText(tile.getStock());
         txtSafeStock.setText(tile.getSafeStock());
@@ -202,19 +212,22 @@ public class ProductDetailActivity extends AppCompatActivity {
         edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("加入項目")
-                .setMessage("請輸入數量")
-                .setView(edtAmount)
+        alert.setTitle("加入項目至：" + defaultCartName)
+                .setMessage("請輸入數量，若要從購物車移除，則輸入0\n\n目前數量：" + Comma(String.valueOf(cartAmount)))
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         amount = Integer.valueOf(edtAmount.getText().toString());
-                        uploadToCart();
+                        if (amount <= Integer.valueOf(tile.getStock()))
+                            uploadToCart();
+                        else
+                            Toast.makeText(context, "超出庫存量", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("取消", null)
-                .show();
-
+                .setNegativeButton("取消", null);
+        AlertDialog dialog = alert.create();
+        dialog.setView(edtAmount, 40, 0, 40, 0);
+        dialog.show();
     }
 
     private void uploadToCart() {
@@ -230,9 +243,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                     JSONObject resObj = new JSONObject(result);
                     if (resObj.getBoolean(KEY_STATUS)) {
                         if(resObj.getBoolean(KEY_SUCCESS)) {
-                            Toast.makeText(context, "已放進購物車", Toast.LENGTH_SHORT).show();
+                            cartAmount = amount; //更新車內已有數量
+                            if (cartAmount != 0)
+                                Toast.makeText(context, "購物車已更新", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(context, "已從購物車移除", Toast.LENGTH_SHORT).show();
                         }else {
-                            Toast.makeText(context, "加入到購物車失敗", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
                         }
                     }else {
                         Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();

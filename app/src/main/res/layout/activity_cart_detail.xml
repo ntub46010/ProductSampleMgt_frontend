@@ -6,22 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Cart.CartDetailActivity">
+    tools:context=".cart.CartDetailActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/toolbar"
-            android:paddingEnd="65dp"
-            app:titleTextColor="#FFFFFF"/>
+        <FrameLayout
+            android:id="@+id/layToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/content_checking_toolbar" />
+
+        </FrameLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar">
+            android:layout_below="@id/layToolbar">
 
             <view
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,7 +55,7 @@
         android:id="@+id/fabInfo"
         style="@style/fab"
         android:layout_marginEnd="80dp"
-        app:srcCompat="@drawable/icon_arrow_upward"
+        app:srcCompat="@drawable/icon_infomation"
         app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

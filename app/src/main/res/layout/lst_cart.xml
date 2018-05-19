@@ -34,7 +34,7 @@
             android:textColor="#FF0000"
             android:text="$ 9,999,999,999"/>
         <TextView
-            android:id="@+id/txtDate"
+            android:id="@+id/txtCreateTime"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.5"

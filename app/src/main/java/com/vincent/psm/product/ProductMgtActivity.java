@@ -133,7 +133,7 @@ public class ProductMgtActivity extends AppCompatActivity {
                             }
                             showData();
                         }else {
-                            Toast.makeText(context, "沒有商品", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
                         }
                     }else {
                         Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
