@@ -6,7 +6,7 @@ import android.content.res.Resources;
 
 import com.vincent.psm.broadcast_helper.manager.FirebaseUserManager;
 
-public class PSNApplication extends Application {
+public class PSMApplication extends Application {
     private static Context APPLICATION;
     private static Resources RESOURCE;
 

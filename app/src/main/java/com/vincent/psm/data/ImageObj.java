@@ -2,25 +2,25 @@ package com.vincent.psm.data;
 
 import android.graphics.Bitmap;
 
-import com.vincent.psm.network_helper.GetBitmapTask;
+import com.vincent.psm.network_helper.ImageDownloader;
 
 public class ImageObj {
     protected String imgURL, imgURL2, imgURL3, imgURL4, imgURL5;
     public Bitmap img, img2, img3, img4, img5;
-    private GetBitmapTask getBitmap;
+    private ImageDownloader imageDownloader;
     private boolean isStartDownload = false;
 
     public ImageObj() {
 
     }
 
-    public void setGetBitmap(GetBitmapTask getBitmap) {
-        this.getBitmap = getBitmap;
+    public void setImageDownloader(ImageDownloader imageDownloader) {
+        this.imageDownloader = imageDownloader;
     }
 
     public void startDownloadImage() {
         isStartDownload = true;
-        getBitmap.execute(this);
+        imageDownloader.execute(this);
     }
 
     public boolean isStartDownload() {
@@ -28,8 +28,8 @@ public class ImageObj {
     }
 
     public void cancelDownloadImage() {
-        if (getBitmap != null)
-            getBitmap.cancel(true);
+        if (imageDownloader != null)
+            imageDownloader.cancel(true);
     }
 
     public String getImgURL() {

@@ -116,39 +116,34 @@ public class ProductHomeActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
         conn = new MyOkHttp(ProductHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            tiles = new ArrayList<>();
-                            JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                            for (int i=0; i<ary.length(); i++) {
-                                JSONObject obj = ary.getJSONObject(i);
-                                tiles.add(new Tile(
-                                        obj.getString(KEY_ID),
-                                        obj.getString(KEY_PHOTO),
-                                        obj.getString(KEY_NAME),
-                                        obj.getString(KEY_LENGTH),
-                                        obj.getString(KEY_WIDTH),
-                                        obj.getString(KEY_THICK),
-                                        obj.getString(KEY_PRICE)
-                                ));
-                            }
-                        }else {
-                            Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        tiles = new ArrayList<>();
+                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                        for (int i=0; i<ary.length(); i++) {
+                            JSONObject obj = ary.getJSONObject(i);
+                            tiles.add(new Tile(
+                                    obj.getString(KEY_ID),
+                                    obj.getString(KEY_PHOTO),
+                                    obj.getString(KEY_NAME),
+                                    obj.getString(KEY_LENGTH),
+                                    obj.getString(KEY_WIDTH),
+                                    obj.getString(KEY_THICK),
+                                    obj.getString(KEY_PRICE)
+                            ));
                         }
-                        showData();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                    showData();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

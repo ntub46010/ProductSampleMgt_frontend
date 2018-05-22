@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class DataHelper {
     public static String loginUserId = "ntub46010";
+    public static ArrayList<String> tokens = null;
+    public static int currentTokenIndex = -1;
     public static byte authority = 2;
     public static String defaultCartId = "";
     public static String defaultCartName = "";

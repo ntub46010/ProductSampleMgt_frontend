@@ -25,7 +25,7 @@ public class ImageDownloadQueue extends Queue {
     @Override
     protected void onDequeue(Object obj) {
         ((ImageObj) obj).cancelDownloadImage(); //取消下載
-        ((ImageObj) obj).setGetBitmap(null); //清除下載器
+        ((ImageObj) obj).setImageDownloader(null); //清除下載器
         ((ImageObj) obj).setImg(null); //清除圖片
     }
 
@@ -38,7 +38,7 @@ public class ImageDownloadQueue extends Queue {
         //取消所有下載，並清除圖片
         for (int i = 0; i < size(); i++) {
             ((ImageObj) get(i)).cancelDownloadImage();
-            ((ImageObj) get(i)).setGetBitmap(null);
+            ((ImageObj) get(i)).setImageDownloader(null);
             ((ImageObj) get(i)).setImg(null);
         }
         clear();

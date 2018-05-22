@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -20,7 +18,7 @@ import android.widget.Toast;
 
 import com.vincent.psm.R;
 import com.vincent.psm.data.Tile;
-import com.vincent.psm.network_helper.GetBitmapTask;
+import com.vincent.psm.network_helper.ImageDownloader;
 import com.vincent.psm.network_helper.MyOkHttp;
 
 import org.json.JSONException;
@@ -62,7 +60,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private int cartAmount = 0, amount = 0;
 
     private MyOkHttp conDownload, conUpload;
-    private GetBitmapTask getBitmap;
+    private ImageDownloader imageLoader;
     private Tile tile;
 
     private boolean isShown = false;
@@ -125,51 +123,46 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         conDownload = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if (resObj.getBoolean(KEY_SUCCESS)) {
-                            //檢查是否在購物車
-                            cartAmount = resObj.getInt(KEY_CART_AMOUNT);
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        //檢查是否在購物車
+                        cartAmount = resObj.getInt(KEY_CART_AMOUNT);
 
-                            //產品詳情
-                            JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                            tile = new Tile(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_PHOTO),
-                                    obj.getString(KEY_NAME),
-                                    obj.getString(KEY_MATERIAL),
-                                    obj.getString(KEY_COLOR),
-                                    obj.getString(KEY_LENGTH),
-                                    obj.getString(KEY_WIDTH),
-                                    obj.getString(KEY_THICK),
-                                    obj.getString(KEY_PRICE),
-                                    obj.getString(KEY_PS),
-                                    obj.getString(KEY_STOCK),
-                                    obj.getString(KEY_SAFE_STOCK),
-                                    obj.getInt(KEY_ONSALE) == 1
-                            );
-                            getBitmap = new GetBitmapTask(getString(R.string.link_image), new GetBitmapTask.TaskListener() {
-                                @Override
-                                public void onFinished() {
-                                    showData();
-                                }
-                            });
-                            getBitmap.execute(tile);
-                        }else {
-                            Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
-                        }
+                        //產品詳情
+                        JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                        tile = new Tile(
+                                obj.getString(KEY_ID),
+                                obj.getString(KEY_PHOTO),
+                                obj.getString(KEY_NAME),
+                                obj.getString(KEY_MATERIAL),
+                                obj.getString(KEY_COLOR),
+                                obj.getString(KEY_LENGTH),
+                                obj.getString(KEY_WIDTH),
+                                obj.getString(KEY_THICK),
+                                obj.getString(KEY_PRICE),
+                                obj.getString(KEY_PS),
+                                obj.getString(KEY_STOCK),
+                                obj.getString(KEY_SAFE_STOCK),
+                                obj.getInt(KEY_ONSALE) == 1
+                        );
+                        imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
+                            @Override
+                            public void onFinished() {
+                                showData();
+                            }
+                        });
+                        imageLoader.execute(tile);
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -233,29 +226,24 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void uploadToCart() {
         conUpload = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException{
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            cartAmount = amount; //更新車內已有數量
-                            if (cartAmount != 0)
-                                Toast.makeText(context, "購物車已更新", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(context, "已從購物車移除", Toast.LENGTH_SHORT).show();
-                        }else {
-                            Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
-                        }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        cartAmount = amount; //更新車內已有數量
+                        if (cartAmount != 0)
+                            Toast.makeText(context, "購物車已更新", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(context, "已從購物車移除", Toast.LENGTH_SHORT).show();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -277,8 +265,8 @@ public class ProductDetailActivity extends AppCompatActivity {
             conDownload.cancel();
         if (conUpload != null)
             conUpload.cancel();
-        if (getBitmap != null)
-            getBitmap.cancel(true);
+        if (imageLoader != null)
+            imageLoader.cancel(true);
     }
 
     @Override

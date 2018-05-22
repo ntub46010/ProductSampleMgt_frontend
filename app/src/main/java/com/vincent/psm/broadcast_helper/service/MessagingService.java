@@ -10,13 +10,13 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.vincent.psm.broadcast_helper.PSNApplication;
+import com.vincent.psm.broadcast_helper.PSMApplication;
 import com.vincent.psm.broadcast_helper.data.KeyData;
 import com.vincent.psm.broadcast_helper.manager.NotificationManager;
 
 import java.util.Map;
 
-public class PSNMessagingService extends FirebaseMessagingService {
+public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -32,19 +32,19 @@ public class PSNMessagingService extends FirebaseMessagingService {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Glide.with(PSNApplication.getAPPLICATION())
+                    Glide.with(PSMApplication.getAPPLICATION())
                             .load(photo)
                             .asBitmap()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    NotificationManager.getInstance().generateNotification(PSNApplication.getAPPLICATION(), bitmap, title, message);
+                                    NotificationManager.getInstance().generateNotification(PSMApplication.getAPPLICATION(), bitmap, title, message);
                                 }
 
                                 @Override
                                 public void onLoadFailed(Exception e, Drawable errorDrawable) {
                                     super.onLoadFailed(e, errorDrawable);
-                                    NotificationManager.getInstance().generateNotification(PSNApplication.getAPPLICATION(), title, message);
+                                    NotificationManager.getInstance().generateNotification(PSMApplication.getAPPLICATION(), title, message);
                                 }
                             });
                 }

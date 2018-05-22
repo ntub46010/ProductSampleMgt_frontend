@@ -8,7 +8,7 @@ import com.vincent.psm.data.ImageObj;
 
 import java.net.URL;
 
-public class GetBitmapTask extends AsyncTask<ImageObj, Void, Void> { //用來下載一個ImageObj的一張圖片
+public class ImageDownloader extends AsyncTask<ImageObj, Void, Void> { //用來下載一個ImageObj的一張圖片
     private String linkPrefix;
     private TaskListener taskListener;
 
@@ -17,7 +17,7 @@ public class GetBitmapTask extends AsyncTask<ImageObj, Void, Void> { //用來下
         void onFinished();
     }
 
-    public GetBitmapTask(String linkPrefix, TaskListener taskListener) { //這個物件會被指定給父類別ImageObj，由它啟動startDownloadImage()
+    public ImageDownloader(String linkPrefix, TaskListener taskListener) { //這個物件會被指定給父類別ImageObj，由它啟動startDownloadImage()
         this.linkPrefix = linkPrefix;
         this.taskListener = taskListener;
     }

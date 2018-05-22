@@ -11,14 +11,19 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.vincent.psm.adapter.MainFunctionAdapter;
 import com.vincent.psm.cart.CartHomeActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 import com.vincent.psm.product.ProductMgtActivity;
 
+import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.currentTokenIndex;
+import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class MainActivity extends AppCompatActivity {
     private Context context;
@@ -62,14 +67,24 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 break;
             case 4:
+                Toast.makeText(context, String.valueOf(currentTokenIndex), Toast.LENGTH_SHORT).show();
                 break;
             case 5:
+                break;
+            case 6:
                 AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
                 msgbox.setTitle(getString(R.string.app_name))
                         .setMessage("確定要登出嗎")
                         .setPositiveButton("是", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child(DATABASE_USERS)
+                                        .child(loginUserId)
+                                        .child("deviceList")
+                                        .child(String.valueOf(currentTokenIndex))
+                                        .removeValue(); //刪除原本token
+
                                 writeAutoLoginRecord();
                                 finish();
                             }
@@ -77,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton("否", null)
                         .show();
                 break;
-            case 6:
+            case 7:
                 context.startActivity(new Intent(context, BroadcastActivity.class));
                 break;
-            case 7:
+            case 8:
                 context.startActivity(new Intent(context, ImageUploadActivity.class));
                 break;
         }

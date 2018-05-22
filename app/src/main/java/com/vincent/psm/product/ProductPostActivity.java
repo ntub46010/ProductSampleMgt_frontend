@@ -48,32 +48,32 @@ public class ProductPostActivity extends ProductEditActivity {
 
         conDownLoad = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
-                            JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
-                            materials = new ArrayList<>();
-                            colors = new ArrayList<>();
-                            materials.add("請選擇");
-                            colors.add("請選擇");
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    prgBar.setVisibility(View.GONE);
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
+                        JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
+                        materials = new ArrayList<>();
+                        colors = new ArrayList<>();
+                        materials.add("請選擇");
+                        colors.add("請選擇");
 
-                            for (int i=0; i<aryMaterial.length(); i++)
-                                materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
-                            for (int i=0; i<aryColor.length(); i++)
-                                colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+                        for (int i=0; i<aryMaterial.length(); i++)
+                            materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
+                        for (int i=0; i<aryColor.length(); i++)
+                            colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
 
-                            showData();
-                        }else {
-                            Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
-                        }
+                        showData();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    e.printStackTrace();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -114,29 +114,24 @@ public class ProductPostActivity extends ProductEditActivity {
     protected void uploadProduct() {
         conUpload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
+            public void onFinished(JSONObject resObj) throws JSONException {
                 dlgUpload.dismiss();
-                try {
-                    JSONObject resObj = new JSONObject(result);
 
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                            Intent it = new Intent(context, ProductDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString(KEY_ID, obj.getString(KEY_ID));
-                            bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
-                            it.putExtras(bundle);
-                            startActivity(it);
-                            finish();
-                        }else {
-                            Toast.makeText(context, "刊登失敗", Toast.LENGTH_SHORT).show();
-                        }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                        Intent it = new Intent(context, ProductDetailActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(KEY_ID, obj.getString(KEY_ID));
+                        bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
+                        it.putExtras(bundle);
+                        startActivity(it);
+                        finish();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "刊登失敗", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

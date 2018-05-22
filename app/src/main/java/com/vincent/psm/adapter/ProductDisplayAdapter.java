@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.vincent.psm.R;
 import com.vincent.psm.data.Tile;
-import com.vincent.psm.network_helper.GetBitmapTask;
+import com.vincent.psm.network_helper.ImageDownloader;
 import com.vincent.psm.product.ProductDetailActivity;
 import com.vincent.psm.structure.ImageDownloadQueue;
 
@@ -131,7 +131,7 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
     }
 
     private void setGetBitmapTask(final int i, final DataViewHolder dataViewHolder) {
-        tiles.get(i).setGetBitmap(new GetBitmapTask(res.getString(R.string.link_image), new GetBitmapTask.TaskListener() {
+        tiles.get(i).setImageDownloader(new ImageDownloader(res.getString(R.string.link_image), new ImageDownloader.TaskListener() {
             @Override
             public void onFinished() {
                 dataViewHolder.imgProduct.setImageBitmap(tiles.get(i).getImg());

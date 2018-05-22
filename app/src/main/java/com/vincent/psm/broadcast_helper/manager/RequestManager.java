@@ -1,7 +1,6 @@
 package com.vincent.psm.broadcast_helper.manager;
 
 import android.app.Activity;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,7 +16,10 @@ import com.vincent.psm.network_helper.MyOkHttp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.vincent.psm.data.DataHelper.tokens;
 
 public class RequestManager {
     private static RequestManager FIREBASE_D2D_MANAGER = null;
@@ -112,7 +114,7 @@ public class RequestManager {
 
             MyOkHttp conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
                 @Override
-                public void onFinished(String result) {
+                public void onFinished(JSONObject resObj) {
 
                 }
             });
@@ -127,5 +129,33 @@ public class RequestManager {
         }catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getTokensById(final String userId) {
+        this.databaseRefUsers.child(FirebaseUser.DATABASE_USERS).child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final FirebaseUser user = dataSnapshot.getValue(FirebaseUser.class);
+
+                if (user == null || user.getDeviceList() == null || user.getDeviceList().size() == 0) {
+                    tokens = null; //當該user不存在，也設為null作為判斷
+                    return;
+                }
+
+                if (user.getDeviceList() != null) {
+                    tokens = new ArrayList<>();
+                    for (Device device : user.getDeviceList()) {
+                        if (device.getDevice() == null) {
+                            continue;
+                        }
+                        tokens.add(device.getToken());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 }

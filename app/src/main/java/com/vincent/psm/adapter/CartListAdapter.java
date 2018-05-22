@@ -50,7 +50,7 @@ public class CartListAdapter extends BaseAdapter {
 
         txtCartName.setText(carts.get(position).getCartName());
         txtTotal.setText("$ " + Comma(String.valueOf(carts.get(position).getTotal())));
-        txtCreateTime.setText(carts.get(position).getCreateTime());
+        txtCreateTime.setText(carts.get(position).getCreateTime().replace("-", "/"));
         txtSalesName.setText(carts.get(position).getSalesName());
 
         return view;

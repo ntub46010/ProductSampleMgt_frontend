@@ -159,37 +159,32 @@ public class CartHomeActivity extends AppCompatActivity {
         carts = new ArrayList<>();
         conDownload = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if (resObj.getBoolean(KEY_SUCCESS)) {
-                            JSONArray ary = resObj.getJSONArray(KEY_CARTS);
-                            for (int i = 0; i < ary.length(); i++) {
-                                JSONObject obj = ary.getJSONObject(i);
-                                carts.add(new Cart(
-                                        obj.getString(KEY_ID),
-                                        obj.getString(KEY_CART_NAME),
-                                        obj.getInt(KEY_TOTAL),
-                                        obj.getString(KEY_SALES_NAME),
-                                        obj.getString(KEY_SALES_ID),
-                                        obj.getString(KEY_CREATE_TIME)
-                                ));
-                            }
-                            showData();
-                        }else {
-                            Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        JSONArray ary = resObj.getJSONArray(KEY_CARTS);
+                        for (int i = 0; i < ary.length(); i++) {
+                            JSONObject obj = ary.getJSONObject(i);
+                            carts.add(new Cart(
+                                    obj.getString(KEY_ID),
+                                    obj.getString(KEY_CART_NAME),
+                                    obj.getInt(KEY_TOTAL),
+                                    obj.getString(KEY_SALES_NAME),
+                                    obj.getString(KEY_SALES_ID),
+                                    obj.getString(KEY_CREATE_TIME)
+                            ));
                         }
+                        showData();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -219,17 +214,17 @@ public class CartHomeActivity extends AppCompatActivity {
         edtContactPhone = layout.findViewById(R.id.edtContactPhone);
 
         AlertDialog.Builder dlgCreateCart = new AlertDialog.Builder(this);
-        dlgCreateCart.setTitle("建立購物車");
-        dlgCreateCart.setMessage("請輸入購物車資料");
-        dlgCreateCart.setView(layout);
-        dlgCreateCart.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+        dlgCreateCart.setTitle("建立購物車")
+                .setMessage("請輸入購物車資料")
+                .setView(layout)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 uploadNewCart();
             }
-        });
-        dlgCreateCart.setNegativeButton("取消", null);
-        dlgCreateCart.show();
+        })
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     private void uploadNewCart() {
@@ -238,26 +233,21 @@ public class CartHomeActivity extends AppCompatActivity {
 
         conUpload = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if (resObj.getBoolean(KEY_SUCCESS)) {
-                            Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
-                            loadData(true);
-                        }else {
-                            Toast.makeText(context, "建立購物車失敗", Toast.LENGTH_SHORT).show();
-                        }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+                        loadData(true);
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "建立購物車失敗", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

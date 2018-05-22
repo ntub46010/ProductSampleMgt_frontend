@@ -8,19 +8,19 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
 
     <application
-        android:name=".broadcast_helper.PSNApplication"
+        android:name=".broadcast_helper.PSMApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".broadcast_helper.service.PSNInstanceIdService">
+        <service android:name=".broadcast_helper.service.InstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".broadcast_helper.service.PSNMessagingService">
+        <service android:name=".broadcast_helper.service.MessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

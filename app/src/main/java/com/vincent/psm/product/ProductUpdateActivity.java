@@ -3,7 +3,6 @@ package com.vincent.psm.product;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -13,7 +12,7 @@ import android.widget.Toast;
 import com.vincent.psm.R;
 import com.vincent.psm.data.ImageChild;
 import com.vincent.psm.data.Tile;
-import com.vincent.psm.network_helper.GetBitmapTask;
+import com.vincent.psm.network_helper.ImageDownloader;
 import com.vincent.psm.network_helper.MyOkHttp;
 import com.vincent.psm.structure.ImageUploadQueue;
 
@@ -48,7 +47,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
     private TextView txtId;
     private RadioButton rdoOnStock, rdoOffStock;
 
-    private GetBitmapTask getBitmap;
+    private ImageDownloader imageLoader;
 
     private byte editMode = 1;
 
@@ -101,58 +100,58 @@ public class ProductUpdateActivity extends ProductEditActivity {
 
         conDownLoad = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            //載入規格清單
-                            JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
-                            JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
-                            materials = new ArrayList<>();
-                            colors = new ArrayList<>();
-                            materials.add("請選擇");
-                            colors.add("請選擇");
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    prgBar.setVisibility(View.GONE);
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        //載入規格清單
+                        JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
+                        JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
+                        materials = new ArrayList<>();
+                        colors = new ArrayList<>();
+                        materials.add("請選擇");
+                        colors.add("請選擇");
 
-                            for (int i=0; i<aryMaterial.length(); i++)
-                                materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
-                            for (int i=0; i<aryColor.length(); i++)
-                                colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+                        for (int i=0; i<aryMaterial.length(); i++)
+                            materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
+                        for (int i=0; i<aryColor.length(); i++)
+                            colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
 
-                            //載入產品詳情
-                            JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                            tile = new Tile(
-                                    objProduct.getString(KEY_ID),
-                                    objProduct.getString(KEY_PHOTO),
-                                    objProduct.getString(KEY_NAME),
-                                    objProduct.getString(KEY_MATERIAL),
-                                    objProduct.getString(KEY_COLOR),
-                                    objProduct.getString(KEY_LENGTH),
-                                    objProduct.getString(KEY_WIDTH),
-                                    objProduct.getString(KEY_THICK),
-                                    objProduct.getString(KEY_PRICE),
-                                    objProduct.getString(KEY_PS),
-                                    objProduct.getString(KEY_STOCK),
-                                    objProduct.getString(KEY_SAFE_STOCK),
-                                    objProduct.getInt(KEY_ONSALE) == 1
-                            );
-                            photo = objProduct.getString(KEY_PHOTO);
+                        //載入產品詳情
+                        JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                        tile = new Tile(
+                                objProduct.getString(KEY_ID),
+                                objProduct.getString(KEY_PHOTO),
+                                objProduct.getString(KEY_NAME),
+                                objProduct.getString(KEY_MATERIAL),
+                                objProduct.getString(KEY_COLOR),
+                                objProduct.getString(KEY_LENGTH),
+                                objProduct.getString(KEY_WIDTH),
+                                objProduct.getString(KEY_THICK),
+                                objProduct.getString(KEY_PRICE),
+                                objProduct.getString(KEY_PS),
+                                objProduct.getString(KEY_STOCK),
+                                objProduct.getString(KEY_SAFE_STOCK),
+                                objProduct.getInt(KEY_ONSALE) == 1
+                        );
+                        photo = objProduct.getString(KEY_PHOTO);
 
-                            getBitmap = new GetBitmapTask(getString(R.string.link_image), new GetBitmapTask.TaskListener() {
-                                @Override
-                                public void onFinished() {
-                                    showData();
-                                }
-                            });
-                            getBitmap.execute(tile);
-                        }else {
-                            Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
-                        }
+                        imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
+                            @Override
+                            public void onFinished() {
+                                showData();
+                            }
+                        });
+                        imageLoader.execute(tile);
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    e.printStackTrace();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -235,33 +234,28 @@ public class ProductUpdateActivity extends ProductEditActivity {
     protected void uploadProduct() {
         conUpload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
+            public void onFinished(JSONObject resObj) throws JSONException{
                 dlgUpload.dismiss();
-                try {
-                    JSONObject resObj = new JSONObject(result);
 
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            if (editMode == 1 || editMode == 2) {
-                                Intent it = new Intent(context, ProductDetailActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putString(KEY_ID, tile.getId());
-                                bundle.putString(KEY_NAME, tile.getName());
-                                it.putExtras(bundle);
-                                startActivity(it);
-                                Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
-                            }else if (editMode == 3) {
-                                Toast.makeText(context, "下架成功", Toast.LENGTH_SHORT).show();
-                            }
-                            finish();
-                        }else {
-                            Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        if (editMode == 1 || editMode == 2) {
+                            Intent it = new Intent(context, ProductDetailActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(KEY_ID, tile.getId());
+                            bundle.putString(KEY_NAME, tile.getName());
+                            it.putExtras(bundle);
+                            startActivity(it);
+                            Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+                        }else if (editMode == 3) {
+                            Toast.makeText(context, "下架成功", Toast.LENGTH_SHORT).show();
                         }
+                        finish();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -277,8 +271,8 @@ public class ProductUpdateActivity extends ProductEditActivity {
 
     @Override
     public void onDestroy() {
-        if (getBitmap != null)
-            getBitmap.cancel(true);
+        if (imageLoader != null)
+            imageLoader.cancel(true);
 
         super.onDestroy();
     }

@@ -11,9 +11,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import com.vincent.psm.R;
 import com.vincent.psm.adapter.ProductDisplayAdapter;
 import com.vincent.psm.data.Cart;
 import com.vincent.psm.data.Tile;
+import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
 import com.vincent.psm.product.ProductHomeActivity;
 
@@ -61,8 +65,9 @@ public class CartDetailActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fabAdd, fabInfo;
     private ProgressBar prgBar;
+    private EditText edtCartName, edtCustomerName, edtCustomerPhone, edtContactPerson, edtContactPhone;
 
-    private MyOkHttp conDownload, conUpload;
+    private MyOkHttp conDownload, conUpdate, conDelete;
     private Cart cart;
     private ArrayList<Tile> tiles;
     private ProductDisplayAdapter adapter;
@@ -124,43 +129,13 @@ public class CartDetailActivity extends AppCompatActivity {
                 startActivity(new Intent(context, ProductHomeActivity.class));
             }
         });
-        fabAdd.hide();
 
         fabInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
-                msgbox.setTitle("購物車摘要")
-                        .setMessage(getString(R.string.cart_info,
-                                cart.getSalesName(),
-                                cart.getCustomerName(),
-                                cart.getCustomerPhone(),
-                                cart.getContactPerson(),
-                                cart.getContactPhone(),
-                                "$ " + Comma(String.valueOf(cart.getTotal()))))
-                        .setCancelable(true)
-                        .setPositiveButton("確定", null)
-                        .setNegativeButton("刪除購物車", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                AlertDialog.Builder dlgDelete = new AlertDialog.Builder(context);
-                                dlgDelete.setTitle("刪除購物車")
-                                        .setMessage("真的要刪除購物車：" + cartName + "\n此舉無法復原")
-                                        .setCancelable(true)
-                                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                deleteCart();
-                                            }
-                                        })
-                                        .setNegativeButton("否", null)
-                                        .show();
-                            }
-                        })
-                        .show();
+                showCartInfo();
             }
         });
-        fabInfo.hide();
     }
 
     @Override
@@ -172,54 +147,52 @@ public class CartDetailActivity extends AppCompatActivity {
 
     private void loadData(boolean showPrgBar) {
         isShown = false;
+        fabAdd.hide();
+        fabInfo.hide();
+        btnSubmit.setVisibility(View.GONE);
         if (showPrgBar)
             prgBar.setVisibility(View.VISIBLE);
 
         tiles = new ArrayList<>();
         conDownload = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if(resObj.getBoolean(KEY_SUCCESS)) {
-                            //購物車摘要
-                            JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
-                            cart = new Cart(
-                                    objCartInfo.getString(KEY_SALES_NAME),
-                                    objCartInfo.getString(KEY_CUSTOMER_NAME),
-                                    objCartInfo.getString(KEY_CUSTOMER_PHONE),
-                                    objCartInfo.getString(KEY_CONTACT_PERSON),
-                                    objCartInfo.getString(KEY_CONTACT_PHONE),
-                                    objCartInfo.getInt(KEY_TOTAL)
-                            );
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        //購物車摘要
+                        JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
+                        cart = new Cart(
+                                objCartInfo.getString(KEY_SALES_NAME),
+                                objCartInfo.getString(KEY_CUSTOMER_NAME),
+                                objCartInfo.getString(KEY_CUSTOMER_PHONE),
+                                objCartInfo.getString(KEY_CONTACT_PERSON),
+                                objCartInfo.getString(KEY_CONTACT_PHONE),
+                                objCartInfo.getInt(KEY_TOTAL)
+                        );
 
-                            //購物車明細
-                            JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                            for (int i = 0; i < ary.length(); i++) {
-                                JSONObject obj = ary.getJSONObject(i);
-                                tiles.add(new Tile(
-                                        obj.getString(KEY_ID),
-                                        obj.getString(KEY_PHOTO),
-                                        obj.getString(KEY_NAME),
-                                        obj.getInt(KEY_AMOUNT),
-                                        obj.getInt(KEY_SUBTOTAL)
-                                ));
-                            }
-                            showData();
-                        }else {
-                            Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
+                        //購物車明細
+                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                        for (int i = 0; i < ary.length(); i++) {
+                            JSONObject obj = ary.getJSONObject(i);
+                            tiles.add(new Tile(
+                                    obj.getString(KEY_ID),
+                                    obj.getString(KEY_PHOTO),
+                                    obj.getString(KEY_NAME),
+                                    obj.getInt(KEY_AMOUNT),
+                                    obj.getInt(KEY_SUBTOTAL)
+                            ));
                         }
+                        showData();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -245,34 +218,155 @@ public class CartDetailActivity extends AppCompatActivity {
 
         fabAdd.show();
         fabInfo.show();
+        btnSubmit.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
-        //tiles = null;
+        recyProduct.setVisibility(View.VISIBLE);
+        tiles = null;
         isShown = true;
     }
 
-    private void deleteCart() {
-        conUpload = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+    private void showCartInfo() {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_cart_summary, null);
+        TextView txtSales = layout.findViewById(R.id.txtSales);
+        TextView txtCustomerName = layout.findViewById(R.id.txtCustomerName);
+        TextView txtCustomerPhone = layout.findViewById(R.id.txtCustomerPhone);
+        TextView txtContactPerson = layout.findViewById(R.id.txtContactPerson);
+        TextView txtContactPhone = layout.findViewById(R.id.txtContactPhone);
+        TextView txtTotal = layout.findViewById(R.id.txtTotal);
+
+        txtSales.setText(cart.getSalesName());
+        txtCustomerName.setText(cart.getCustomerName());
+        txtCustomerPhone.setText(cart.getCustomerPhone());
+        txtContactPerson.setText(cart.getContactPerson());
+        txtContactPhone.setText(cart.getContactPhone());
+        txtTotal.setText("$ " + Comma(String.valueOf(cart.getTotal())));
+
+        AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+        msgbox.setTitle("購物車摘要")
+                .setView(layout)
+                .setCancelable(true)
+                .setPositiveButton("確定", null)
+                .setNegativeButton("編輯摘要", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        prepareEditCartInfo();
+                    }
+                })
+                .setNeutralButton("刪除購物車", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        prepareDeleteCart();
+                    }
+                })
+                .show();
+    }
+
+    private void prepareEditCartInfo() {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_create_cart, null);
+
+        edtCartName = layout.findViewById(R.id.edtCartName);
+        edtCustomerName = layout.findViewById(R.id.edtCustomerName);
+        edtCustomerPhone = layout.findViewById(R.id.edtCustomerPhone);
+        edtContactPerson = layout.findViewById(R.id.edtContactPerson);
+        edtContactPhone = layout.findViewById(R.id.edtContactPhone);
+
+        edtCartName.setText(cartName);
+        edtCustomerName.setText(cart.getCustomerName());
+        edtCustomerPhone.setText(cart.getCustomerPhone());
+        edtContactPerson.setText(cart.getContactPerson());
+        edtContactPhone.setText(cart.getContactPhone());
+
+        AlertDialog.Builder dlgCreateCart = new AlertDialog.Builder(context);
+        dlgCreateCart.setTitle("編輯購物車")
+                .setMessage("請輸入購物車資料")
+                .setView(layout)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateCartInfo();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void prepareDeleteCart() {
+        AlertDialog.Builder dlgDelete = new AlertDialog.Builder(context);
+        dlgDelete.setTitle("刪除購物車")
+                .setMessage("真的要刪除購物車：" + cartName + "\n此舉無法復原")
+                .setCancelable(true)
+                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteCart();
+                    }
+                })
+                .setNegativeButton("否", null)
+                .show();
+    }
+
+    private void updateCartInfo() {
+        if (!isInfoValid())
+            return;
+
+        conUpdate = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(String result) {
-                if (result == null) {
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+                        cartName = cart.getCartName();
+                        recyProduct.setVisibility(View.INVISIBLE);
+                        adapter.destroy(false);
+                        loadData(true);
+                    }else {
+                        Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_CART_ID, cartId);
+            reqObj.put(KEY_CART_NAME, cart.getCartName());
+            reqObj.put(KEY_CUSTOMER_NAME, cart.getCustomerName());
+            reqObj.put(KEY_CUSTOMER_PHONE, cart.getCustomerPhone());
+            reqObj.put(KEY_CONTACT_PERSON, cart.getContactPerson());
+            reqObj.put(KEY_CONTACT_PHONE, cart.getContactPhone());
+            conUpdate.execute(getString(R.string.link_edit_cart), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteCart() {
+        conDelete = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+            @Override
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
-                try {
-                    JSONObject resObj = new JSONObject(result);
-                    if (resObj.getBoolean(KEY_STATUS)) {
-                        if (resObj.getBoolean(KEY_SUCCESS)) {
-                            Toast.makeText(context, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
-                            finish();
-                        }else {
-                            Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
-                        }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        if (cartId.equals(defaultCartId))
+                            defaultCartId = "";
+                        Toast.makeText(context, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
+                        finish();
                     }else {
-                        Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e) {
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -280,9 +374,36 @@ public class CartDetailActivity extends AppCompatActivity {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_CART_ID, cartId);
             reqObj.put(KEY_SALES_ID, loginUserId);
-            conUpload.execute(getString(R.string.link_delete_cart), reqObj.toString());
+            conDelete.execute(getString(R.string.link_delete_cart), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private boolean isInfoValid() {
+        Verifier v = new Verifier(context);
+        StringBuffer errMsg = new StringBuffer();
+
+        cart = null;
+        cart = new Cart(
+                edtCartName.getText().toString(),
+                edtCustomerName.getText().toString(),
+                edtCustomerPhone.getText().toString(),
+                edtContactPerson.getText().toString(),
+                edtContactPhone.getText().toString()
+        );
+
+        errMsg.append(v.chkCartName(cart.getCartName()));
+        errMsg.append(v.chkCustomerName(cart.getCustomerName()));
+        errMsg.append(v.chkCustomerPhone(cart.getCustomerName()));
+        errMsg.append(v.chkContactName(cart.getContactPerson()));
+        errMsg.append(v.chkContactPhone(cart.getContactPhone()));
+
+        if (errMsg.length() != 0) {
+            v.getDialog("購物車資料錯誤", errMsg.substring(0, errMsg.length() - 1)).show();
+            return false;
+        }else {
+            return true;
         }
     }
 
@@ -290,8 +411,10 @@ public class CartDetailActivity extends AppCompatActivity {
     public void onDestroy() {
         if (conDownload != null)
             conDownload.cancel();
-        if (conUpload != null)
-            conUpload.cancel();
+        if (conUpdate != null)
+            conUpdate.cancel();
+        if (conDelete != null)
+            conDelete.cancel();
         if (adapter != null) {
             adapter.destroy(true);
             adapter = null;

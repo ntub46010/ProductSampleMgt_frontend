@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.NetworkOnMainThreadException;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -18,14 +21,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MyOkHttp {
-    // 宣告一個接收回傳結果的程式必須實作的介面
-    public interface TaskListener { void onFinished(String result); }
-    private TaskListener taskListener;
-
     private Activity activity;
     private OkHttpClient client;
     private Map<String, String> header = null;
     private Call call;
+
+    // 宣告一個接收回傳結果的程式必須實作的介面
+    public interface TaskListener {
+        void onFinished(JSONObject resObj) throws JSONException;
+    }
+
+    private TaskListener taskListener;
 
     public MyOkHttp(Activity activity, TaskListener taskListener) {
         this.activity = activity;
@@ -83,6 +89,46 @@ public class MyOkHttp {
                         @Override
                         public void run() {
                             try {
+                                JSONObject resObj = new JSONObject(response.body().string());
+                                taskListener.onFinished(resObj);
+                            }catch (JSONException | IOException | NetworkOnMainThreadException e) {
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }catch (NetworkOnMainThreadException e) {
+                    Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                //連線失敗
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //連線失敗
+                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /*
+    private void sendRequest() {
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, final Response response) {
+                //連線成功
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
                                 taskListener.onFinished(response.body().string());
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -110,6 +156,7 @@ public class MyOkHttp {
             }
         });
     }
+    */
 
     public void setHeader(Map<String, String> header) {
         this.header = header;
