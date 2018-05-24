@@ -10,23 +10,25 @@
     <string name="sp_login_password">LoginPassword</string>
     <string name="sp_token">Token</string>
 
-    <string name="link_image">http://111.250.10.157:8181/images/</string>
-    <string name="link_login">http://111.250.10.157:8181/login</string>
-    <string name="link_list_products">http://111.250.10.157:8181/list_products</string>
-    <string name="link_show_product_detail">http://111.250.10.157:8181/show_product_detail</string>
-    <string name="link_show_specification">http://111.250.10.157:8181/show_specification</string>
-    <string name="link_post_product">http://111.250.10.157:8181/post_product</string>
-    <string name="link_show_editing_product">http://111.250.10.157:8181/show_editing_product</string>
-    <string name="link_edit_product">http://111.250.10.157:8181/edit_product</string>
-    <string name="link_create_cart">http://111.250.10.157:8181/create_cart</string>
-    <string name="link_list_carts">http://111.250.10.157:8181/list_carts</string>
-    <string name="link_show_cart">http://111.250.10.157:8181/show_cart</string>
-    <string name="link_add_cart_item">http://111.250.10.157:8181/add_cart_item</string>
-    <string name="link_edit_cart">http://111.250.10.157:8181/edit_cart</string>
-    <string name="link_delete_cart">http://111.250.10.157:8181/delete_cart</string>
+    <string name="link_image">http://111.250.21.90:8181/images/</string>
+    <string name="link_login">http://111.250.21.90:8181/login</string>
+    <string name="link_list_products">http://111.250.21.90:8181/list_products</string>
+    <string name="link_show_product_detail">http://111.250.21.90:8181/show_product_detail</string>
+    <string name="link_show_specification">http://111.250.21.90:8181/show_specification</string>
+    <string name="link_post_product">http://111.250.21.90:8181/post_product</string>
+    <string name="link_show_editing_product">http://111.250.21.90:8181/show_editing_product</string>
+    <string name="link_edit_product">http://111.250.21.90:8181/edit_product</string>
+    <string name="link_create_cart">http://111.250.21.90:8181/create_cart</string>
+    <string name="link_list_carts">http://111.250.21.90:8181/list_carts</string>
+    <string name="link_show_cart">http://111.250.21.90:8181/show_cart</string>
+    <string name="link_add_cart_item">http://111.250.21.90:8181/add_cart_item</string>
+    <string name="link_edit_cart">http://111.250.21.90:8181/edit_cart</string>
+    <string name="link_delete_cart">http://111.250.21.90:8181/delete_cart</string>
+    <string name="link_show_customers">http://111.250.21.90:8181/show_customers</string>
+    <string name="link_show_contacts">http://111.250.21.90:8181/show_contacts</string>
 
-    <string name="link_upload_avatar">http://111.250.10.157:8181/upload_avatar</string>
-    <string name="link_upload_image">http://111.250.10.157:8181/upload_image</string>
+    <string name="link_upload_avatar">http://111.250.21.90:8181/upload_avatar</string>
+    <string name="link_upload_image">http://111.250.21.90:8181/upload_image</string>
 
     <string name="hint_upload_photo" formatted="false">上傳中，長按取消… (%1s/%2s)</string>
     <string name="txt_product_size">%1s x %2s x %3s mm</string>
@@ -39,5 +41,9 @@
     <string name="chk_cart_name">購物車名稱為1~30字\n</string>
     <string name="chk_range_words">%1s為%2s~%3s字\n</string>
     <string name="chk_max_words">%1s最多%2s字\n</string>
+
+    <array name="ary_names">
+        <item>請選擇...</item>
+    </array>
 
 </resources>

@@ -63,7 +63,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
     protected ArrayAdapter<String> adpMaterial, adpColor;
 
     protected AlbumImageProvider provider;
-    protected MyOkHttp conDownLoad, conUpload;
+    protected MyOkHttp conDownload, conUpload;
     protected ArrayList<String> materials, colors;
     protected ImageUploadQueue queue;
     protected Dialog dlgUpload;
@@ -316,8 +316,8 @@ public abstract class ProductEditActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        if (conDownLoad != null)
-            conDownLoad.cancel();
+        if (conDownload != null)
+            conDownload.cancel();
         if (conUpload != null)
             conUpload.cancel();
         if (queue != null) {

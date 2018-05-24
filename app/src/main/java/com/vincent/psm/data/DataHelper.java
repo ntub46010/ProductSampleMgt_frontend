@@ -59,12 +59,16 @@ public class DataHelper {
     public static final String KEY_SUBTOTAL = "SubTotal";
     public static final String KEY_CART_ID = "CartId";
     public static final String KEY_PRODUCT_ID = "ProductId";
+    public static final String KEY_CUSTOMER_ADDRESS = "CustomerPhone";
+
 
 
     public static final String KEY_PRODUCTS = "Products";
     public static final String KEY_MATERIALS = "Materials";
     public static final String KEY_COLORS = "Colors";
     public static final String KEY_CARTS = "Carts";
+    public static final String KEY_CUSTOMERS = "Customers";
+    public static final String KEY_CONTACT_PERSONS = "ContactPersons";
 
     public static String getMD5(String s) {
         try {

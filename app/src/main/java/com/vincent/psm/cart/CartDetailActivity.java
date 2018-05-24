@@ -26,6 +26,7 @@ import com.vincent.psm.data.Cart;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
+import com.vincent.psm.order.ConvertOrderActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 
 import org.json.JSONArray;
@@ -67,7 +68,7 @@ public class CartDetailActivity extends AppCompatActivity {
     private ProgressBar prgBar;
     private EditText edtCartName, edtCustomerName, edtCustomerPhone, edtContactPerson, edtContactPhone;
 
-    private MyOkHttp conDownload, conUpdate, conDelete;
+    private MyOkHttp conDownload, conUpdate, conDelete, conConvert;
     private Cart cart;
     private ArrayList<Tile> tiles;
     private ProductDisplayAdapter adapter;
@@ -106,9 +107,10 @@ public class CartDetailActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                prepareOrder();
             }
         });
+        btnSubmit.setImageResource(R.drawable.icon_arrow_right);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -380,6 +382,19 @@ public class CartDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void prepareOrder() {
+        Intent it = new Intent(context, ConvertOrderActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_SALES_NAME, cart.getSalesName());
+        bundle.putString(KEY_CUSTOMER_NAME, cart.getCustomerName());
+        bundle.putString(KEY_CUSTOMER_PHONE, cart.getCustomerPhone());
+        bundle.putString(KEY_CONTACT_PERSON, cart.getContactPerson());
+        bundle.putString(KEY_CONTACT_PHONE, cart.getContactPhone());
+        bundle.putInt(KEY_TOTAL, cart.getTotal());
+        it.putExtras(bundle);
+        startActivity(it);
+    }
+
     private boolean isInfoValid() {
         Verifier v = new Verifier(context);
         StringBuffer errMsg = new StringBuffer();
@@ -415,6 +430,8 @@ public class CartDetailActivity extends AppCompatActivity {
             conUpdate.cancel();
         if (conDelete != null)
             conDelete.cancel();
+        if (conConvert != null)
+            conConvert.cancel();
         if (adapter != null) {
             adapter.destroy(true);
             adapter = null;

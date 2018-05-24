@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 break;
             case 4:
-                Toast.makeText(context, String.valueOf(currentTokenIndex), Toast.LENGTH_SHORT).show();
                 break;
             case 5:
                 break;

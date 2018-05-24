@@ -32,8 +32,8 @@ public class ProductPostActivity extends ProductEditActivity {
     protected void onCreate(Bundle savedInstanceState) {
         layout = R.layout.activity_product_post;
         toolbarTitle = "新增產品";
-        super.onCreate(savedInstanceState);
         context = this;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ProductPostActivity extends ProductEditActivity {
         layEditContent.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownLoad = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conDownload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -55,7 +55,7 @@ public class ProductPostActivity extends ProductEditActivity {
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
                         JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
                         JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
                         materials = new ArrayList<>();
@@ -77,7 +77,7 @@ public class ProductPostActivity extends ProductEditActivity {
                 }
             }
         });
-        conDownLoad.execute(getString(R.string.link_show_specification));
+        conDownload.execute(getString(R.string.link_show_specification));
     }
 
     @Override

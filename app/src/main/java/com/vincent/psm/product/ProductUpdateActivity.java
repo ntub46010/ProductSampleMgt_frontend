@@ -98,7 +98,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         layProductPost.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownLoad = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conDownload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -158,7 +158,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ID, id);
-            conDownLoad.execute(getString(R.string.link_show_editing_product), reqObj.toString());
+            conDownload.execute(getString(R.string.link_show_editing_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
