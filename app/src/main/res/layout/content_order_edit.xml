@@ -60,7 +60,7 @@
                 android:id="@+id/rdoSelectContact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"/>
+                android:onClick="onRadioSelect"/>
             <Spinner
                 android:id="@+id/spnContact"
                 android:layout_width="match_parent"
@@ -68,18 +68,22 @@
                 android:layout_toEndOf="@id/rdoSelectContact"
                 android:layout_alignTop="@id/rdoSelectContact"
                 android:layout_alignBaseline="@id/rdoSelectContact"
-                android:entries="@array/ary_names"/>
+                android:entries="@array/ary_default_choice"/>
             <RadioButton
                 android:id="@+id/rdoNewContact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rdoSelectContact"/>
+                android:layout_below="@id/rdoSelectContact"
+                android:checked="true"
+                android:onClick="onRadioSelect"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="5dp"
                 android:layout_toEndOf="@id/rdoNewContact"
                 android:layout_below="@id/spnContact"
+                android:layout_alignBaseline="@id/rdoSelectContact"
                 android:paddingStart="3dp">
                 <EditText
                     android:id="@+id/edtContactName"
@@ -129,6 +133,7 @@
             <EditText
                 android:id="@+id/edtDeliverFee"
                 style="@style/edt_goods_post_content"
+                android:hint="預設為0"
                 android:inputType="number"/>
         </LinearLayout>
     </LinearLayout>

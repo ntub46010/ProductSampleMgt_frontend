@@ -59,7 +59,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private String id;
     private int cartAmount = 0, amount = 0;
 
-    private MyOkHttp conDownload, conUpload;
+    private MyOkHttp conn;
     private ImageDownloader imageLoader;
     private Tile tile;
 
@@ -121,7 +121,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         isShown = false;
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownload = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -170,7 +170,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ID, id);
             reqObj.put(KEY_CART_ID, defaultCartId);
-            conDownload.execute(getString(R.string.link_show_product_detail), reqObj.toString());
+            conn.execute(getString(R.string.link_show_product_detail), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -224,7 +224,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void uploadToCart() {
-        conUpload = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 if (resObj.length() == 0) {
@@ -252,7 +252,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             reqObj.put(KEY_CART_ID, defaultCartId);
             reqObj.put(KEY_PRODUCT_ID, tile.getId());
             reqObj.put(KEY_AMOUNT, amount);
-            conUpload.execute(getString(R.string.link_add_cart_item), reqObj.toString());
+            conn.execute(getString(R.string.link_add_cart_item), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -261,10 +261,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        if (conDownload != null)
-            conDownload.cancel();
-        if (conUpload != null)
-            conUpload.cancel();
+        if (conn != null)
+            conn.cancel();
         if (imageLoader != null)
             imageLoader.cancel(true);
     }

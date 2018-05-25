@@ -78,6 +78,10 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
         return tiles.size();
     }
 
+    public Tile getItem(int position) {
+        return tiles.get(position);
+    }
+
     @Override
     public ProductDisplayAdapter.DataViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // 顯示資料物件來自 R.layout.card_product 中

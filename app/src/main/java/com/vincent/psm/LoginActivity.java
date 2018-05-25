@@ -41,6 +41,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CheckBox chkAutoLogin;
     private ProgressBar prgBar;
 
+    private MyOkHttp conn;
+
     private SharedPreferences sp;
     private Intent it;
     private boolean waitingForToken = true;
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void login(final String account, final String password) {
-        MyOkHttp conn = new MyOkHttp(LoginActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(LoginActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 if (resObj.getBoolean(KEY_STATUS)) {
@@ -192,6 +194,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 login(edtAcc.getText().toString(), edtPwd.getText().toString());
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (conn != null)
+            conn.cancel();
+        super.onDestroy();
     }
 }
 ;

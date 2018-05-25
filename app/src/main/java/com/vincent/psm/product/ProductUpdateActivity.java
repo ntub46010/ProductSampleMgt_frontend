@@ -98,7 +98,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         layProductPost.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -158,7 +158,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ID, id);
-            conDownload.execute(getString(R.string.link_show_editing_product), reqObj.toString());
+            conn.execute(getString(R.string.link_show_editing_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -232,7 +232,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
 
     @Override
     protected void uploadProduct() {
-        conUpload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 dlgUpload.dismiss();
@@ -263,7 +263,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
             setUploadReqObj();
             reqObj.put(KEY_EDIT_MODE, editMode);
             reqObj.put(KEY_ID, tile.getId());
-            conUpload.execute(getString(R.string.link_edit_product), reqObj.toString());
+            conn.execute(getString(R.string.link_edit_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }

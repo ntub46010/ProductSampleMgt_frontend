@@ -163,7 +163,8 @@ public class MyOkHttp {
     }
 
     public void cancel() {
-        client.dispatcher().cancelAll();
+        if (client != null)
+            client.dispatcher().cancelAll();
     }
 
 }

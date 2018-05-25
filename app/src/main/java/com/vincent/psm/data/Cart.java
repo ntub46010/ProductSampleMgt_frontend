@@ -1,10 +1,15 @@
 package com.vincent.psm.data;
 
 public class Cart {
-    private String id, cartName, salesName, salesId;
-    private String customerName, customerPhone, contactPerson, contactPhone;
-    private int total;
+    private String id, cartName, salesName;
+    protected String salesId;
+    protected String customerName, customerPhone, contactPerson, contactPhone;
+    protected int total;
     private String createTime;
+
+    public Cart() {
+
+    }
 
     //購物車首頁
     public Cart(String id, String cartName, int total, String salesName, String salesId, String createTime) {

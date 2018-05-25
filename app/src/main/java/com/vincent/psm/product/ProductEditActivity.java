@@ -63,7 +63,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
     protected ArrayAdapter<String> adpMaterial, adpColor;
 
     protected AlbumImageProvider provider;
-    protected MyOkHttp conDownload, conUpload;
+    protected MyOkHttp conn;
     protected ArrayList<String> materials, colors;
     protected ImageUploadQueue queue;
     protected Dialog dlgUpload;
@@ -209,7 +209,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
         );
 
         if (provider != null && provider.getImage() == null)
-            errMsg.append(getString(R.string.chkSelect, "圖片"));
+            errMsg.append(getString(R.string.chk_is_empty, "圖片"));
 
         errMsg.append(v.chkTitle(tile.getName()));
         errMsg.append(v.chkMaterial(tile.getMaterial()));
@@ -316,10 +316,8 @@ public abstract class ProductEditActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        if (conDownload != null)
-            conDownload.cancel();
-        if (conUpload != null)
-            conUpload.cancel();
+        if (conn != null)
+            conn.cancel();
         if (queue != null) {
             queue.destroy();
             queue = null;

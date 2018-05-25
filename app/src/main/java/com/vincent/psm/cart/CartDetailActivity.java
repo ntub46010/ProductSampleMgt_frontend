@@ -48,6 +48,7 @@ import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
+import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
@@ -68,7 +69,7 @@ public class CartDetailActivity extends AppCompatActivity {
     private ProgressBar prgBar;
     private EditText edtCartName, edtCustomerName, edtCustomerPhone, edtContactPerson, edtContactPhone;
 
-    private MyOkHttp conDownload, conUpdate, conDelete, conConvert;
+    private MyOkHttp conn;
     private Cart cart;
     private ArrayList<Tile> tiles;
     private ProductDisplayAdapter adapter;
@@ -156,7 +157,7 @@ public class CartDetailActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
 
         tiles = new ArrayList<>();
-        conDownload = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -201,7 +202,7 @@ public class CartDetailActivity extends AppCompatActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_CART_ID, cartId);
-            conDownload.execute(getString(R.string.link_show_cart), reqObj.toString());
+            conn.execute(getString(R.string.link_show_cart), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -313,7 +314,7 @@ public class CartDetailActivity extends AppCompatActivity {
         if (!isInfoValid())
             return;
 
-        conUpdate = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -343,14 +344,14 @@ public class CartDetailActivity extends AppCompatActivity {
             reqObj.put(KEY_CUSTOMER_PHONE, cart.getCustomerPhone());
             reqObj.put(KEY_CONTACT_PERSON, cart.getContactPerson());
             reqObj.put(KEY_CONTACT_PHONE, cart.getContactPhone());
-            conUpdate.execute(getString(R.string.link_edit_cart), reqObj.toString());
+            conn.execute(getString(R.string.link_edit_cart), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void deleteCart() {
-        conDelete = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -376,13 +377,27 @@ public class CartDetailActivity extends AppCompatActivity {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_CART_ID, cartId);
             reqObj.put(KEY_SALES_ID, loginUserId);
-            conDelete.execute(getString(R.string.link_delete_cart), reqObj.toString());
+            conn.execute(getString(R.string.link_delete_cart), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     private void prepareOrder() {
+        //產生產品陣列的JSON
+        JSONArray ary = new JSONArray();
+        try {
+            JSONObject obj;
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                obj = new JSONObject();
+                obj.put(KEY_ID, adapter.getItem(i).getId());
+                obj.put(KEY_AMOUNT, adapter.getItem(i).getAmount());
+                ary.put(obj);
+            }
+        }catch (JSONException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         Intent it = new Intent(context, ConvertOrderActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SALES_NAME, cart.getSalesName());
@@ -391,6 +406,7 @@ public class CartDetailActivity extends AppCompatActivity {
         bundle.putString(KEY_CONTACT_PERSON, cart.getContactPerson());
         bundle.putString(KEY_CONTACT_PHONE, cart.getContactPhone());
         bundle.putInt(KEY_TOTAL, cart.getTotal());
+        bundle.putString(KEY_PRODUCTS_JSON, ary.toString());
         it.putExtras(bundle);
         startActivity(it);
     }
@@ -424,14 +440,8 @@ public class CartDetailActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        if (conDownload != null)
-            conDownload.cancel();
-        if (conUpdate != null)
-            conUpdate.cancel();
-        if (conDelete != null)
-            conDelete.cancel();
-        if (conConvert != null)
-            conConvert.cancel();
+        if (conn != null)
+            conn.cancel();
         if (adapter != null) {
             adapter.destroy(true);
             adapter = null;

@@ -56,7 +56,7 @@ public class CartHomeActivity extends AppCompatActivity {
     private FloatingActionButton fabCreate;
     private ProgressBar prgBar;
 
-    private MyOkHttp conDownload, conUpload;
+    private MyOkHttp conn;
     private ArrayList<Cart> carts;
     private CartListAdapter adapter;
     private Cart cart;
@@ -157,7 +157,7 @@ public class CartHomeActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
 
         carts = new ArrayList<>();
-        conDownload = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -188,7 +188,7 @@ public class CartHomeActivity extends AppCompatActivity {
                 }
             }
         });
-        conDownload.execute(getString(R.string.link_list_carts));
+        conn.execute(getString(R.string.link_list_carts));
     }
 
     private void showData() {
@@ -231,7 +231,7 @@ public class CartHomeActivity extends AppCompatActivity {
         if (!isInfoValid())
             return;
 
-        conUpload = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -259,7 +259,7 @@ public class CartHomeActivity extends AppCompatActivity {
             reqObj.put(KEY_CONTACT_PERSON, cart.getContactPerson());
             reqObj.put(KEY_CONTACT_PHONE, cart.getContactPhone());
             reqObj.put(KEY_SALES, loginUserId);
-            conUpload.execute(getString(R.string.link_create_cart), reqObj.toString());
+            conn.execute(getString(R.string.link_create_cart), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -280,7 +280,7 @@ public class CartHomeActivity extends AppCompatActivity {
 
         errMsg.append(v.chkCartName(cart.getCartName()));
         errMsg.append(v.chkCustomerName(cart.getCustomerName()));
-        errMsg.append(v.chkCustomerPhone(cart.getCustomerName()));
+        errMsg.append(v.chkCustomerPhone(cart.getCustomerPhone()));
         errMsg.append(v.chkContactName(cart.getContactPerson()));
         errMsg.append(v.chkContactPhone(cart.getContactPhone()));
 
@@ -294,10 +294,8 @@ public class CartHomeActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        if (conDownload != null)
-            conDownload.cancel();
-        if (conUpload != null)
-            conUpload.cancel();
+        if (conn != null)
+            conn.cancel();
         super.onDestroy();
     }
 }

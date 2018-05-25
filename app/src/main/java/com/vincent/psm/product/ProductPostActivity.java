@@ -46,7 +46,7 @@ public class ProductPostActivity extends ProductEditActivity {
         layEditContent.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conDownload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -77,7 +77,7 @@ public class ProductPostActivity extends ProductEditActivity {
                 }
             }
         });
-        conDownload.execute(getString(R.string.link_show_specification));
+        conn.execute(getString(R.string.link_show_specification));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class ProductPostActivity extends ProductEditActivity {
 
     @Override
     protected void uploadProduct() {
-        conUpload = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 dlgUpload.dismiss();
@@ -137,7 +137,7 @@ public class ProductPostActivity extends ProductEditActivity {
         });
         try {
             setUploadReqObj();
-            conUpload.execute(getString(R.string.link_post_product), reqObj.toString());
+            conn.execute(getString(R.string.link_post_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }
