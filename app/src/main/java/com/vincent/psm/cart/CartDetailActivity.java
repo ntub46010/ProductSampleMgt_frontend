@@ -231,7 +231,7 @@ public class CartDetailActivity extends AppCompatActivity {
     private void showCartInfo() {
         LayoutInflater inflater = LayoutInflater.from(context);
         TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_cart_summary, null);
-        TextView txtSales = layout.findViewById(R.id.txtSales);
+        TextView txtSales = layout.findViewById(R.id.txtSalesName);
         TextView txtCustomerName = layout.findViewById(R.id.txtCustomerName);
         TextView txtCustomerPhone = layout.findViewById(R.id.txtCustomerPhone);
         TextView txtContactPerson = layout.findViewById(R.id.txtContactPerson);

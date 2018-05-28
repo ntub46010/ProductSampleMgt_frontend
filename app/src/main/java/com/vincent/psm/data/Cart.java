@@ -1,7 +1,8 @@
 package com.vincent.psm.data;
 
 public class Cart {
-    private String id, cartName, salesName;
+    protected String id, salesName;
+    private String cartName;
     protected String salesId;
     protected String customerName, customerPhone, contactPerson, contactPhone;
     protected int total;

@@ -85,6 +85,7 @@ public class CartHomeActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         lstCart = findViewById(R.id.lstCart);
         fabCreate = findViewById(R.id.fabCreate);
+        prgBar = findViewById(R.id.prgBar);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -132,7 +133,6 @@ public class CartHomeActivity extends AppCompatActivity {
             }
         });
 
-        prgBar = findViewById(R.id.prgBar);
 
         fabCreate.setOnClickListener(new View.OnClickListener() {
             @Override

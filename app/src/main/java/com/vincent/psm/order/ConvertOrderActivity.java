@@ -28,7 +28,9 @@ import static com.vincent.psm.data.DataHelper.KEY_DELIVER_FEE;
 import static com.vincent.psm.data.DataHelper.KEY_DELIVER_PLACE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRE_DELIVER_DATE;
+import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
+import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_SALES;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
@@ -46,7 +48,6 @@ public class ConvertOrderActivity extends OrderEditActivity {
         toolbarTitle = "建立訂單";
         context = this;
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -213,14 +214,13 @@ public class ConvertOrderActivity extends OrderEditActivity {
             reqObj.put(KEY_CONTACT_PERSON, order.getContactPerson());
             reqObj.put(KEY_CONTACT_PHONE, order.getContactPhone());
             reqObj.put(KEY_DELIVER_FEE, order.getDeliverFee());
-            reqObj.put(KEY_TOTAL, order.getTotal());
+            reqObj.put(KEY_PRODUCT_TOTAL, order.getTotal());
             reqObj.put(KEY_PRE_DELIVER_DATE, order.getPredictDeliverDate());
             reqObj.put(KEY_DELIVER_PLACE, order.getDeliverPlace());
             reqObj.put(KEY_SALES, loginUserId);
             reqObj.put(KEY_PS, order.getPs());
-            reqObj.put(KEY_PRODUCTS_JSON, new JSONArray(productsJson));
-            Toast.makeText(context, reqObj.getString(KEY_PRODUCTS_JSON), Toast.LENGTH_LONG).show();
-            //conn.execute(getString(R.string.link_create_order), reqObj.toString());
+            reqObj.put(KEY_PRODUCTS, new JSONArray(productsJson));
+            conn.execute(getString(R.string.link_create_order), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }

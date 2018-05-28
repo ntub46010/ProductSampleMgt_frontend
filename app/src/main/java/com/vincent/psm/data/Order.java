@@ -1,9 +1,19 @@
 package com.vincent.psm.data;
 
 public class Order extends Cart {
-    private String customerAddress, predictDeliverDate, deliverPlace, ps;
+    private String customerAddress, predictDeliverDate, deliverPlace, ps, condition;
     private int deliverFee;
 
+    //訂單首頁
+    public Order(String id, String customerName, int productTotal, String predictDeliverDate, String condition) {
+        super.id = id;
+        super.customerName = customerName;
+        super.total = productTotal;
+        this.predictDeliverDate = predictDeliverDate;
+        this.condition = condition;
+    }
+
+    //建立訂單
     public Order(String customerName, String customerPhone, String customerAddress, String contactPerson, String contactPhone,
                  int productTotal, int deliverFee, String predictDeliverDate, String deliverPlace, String ps, String salesId) {
         super.customerName = customerName;
@@ -37,6 +47,10 @@ public class Order extends Cart {
 
     public int getDeliverFee() {
         return deliverFee;
+    }
+
+    public String getCondition() {
+        return condition;
     }
 
     public void setDeliverPlace(String deliverPlace) {

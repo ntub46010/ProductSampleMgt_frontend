@@ -61,14 +61,17 @@ public class DataHelper {
     public static final String KEY_PRODUCT_ID = "ProductId";
     public static final String KEY_CUSTOMER_ADDRESS = "CustomerAddress";
     public static final String KEY_DELIVER_FEE = "DeliverFee";
-    public static final String KEY_PRE_DELIVER_DATE = "PreDeliverDate";
+    public static final String KEY_PRE_DELIVER_DATE = "PredictDeliverDate";
     public static final String KEY_DELIVER_PLACE = "DeliverPlace";
-
+    public static final String KEY_PRODUCT_TOTAL = "ProductTotal";
+    public static final String KEY_ORDER_ID = "OrderId";
+    public static final String KEY_CONDITION = "Condition";
 
     public static final String KEY_PRODUCTS = "Products";
     public static final String KEY_MATERIALS = "Materials";
     public static final String KEY_COLORS = "Colors";
     public static final String KEY_CARTS = "Carts";
+    public static final String KEY_ORDERS = "Orders";
     public static final String KEY_CUSTOMERS = "Customers";
     public static final String KEY_CONTACTS = "Contacts";
     public static final String KEY_PRODUCTS_JSON = "ProductsJson";

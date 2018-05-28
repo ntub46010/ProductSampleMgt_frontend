@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.database.FirebaseDatabase;
 import com.vincent.psm.adapter.MainFunctionAdapter;
 import com.vincent.psm.cart.CartHomeActivity;
+import com.vincent.psm.order.OrderHomeActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 import com.vincent.psm.product.ProductMgtActivity;
 
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 context.startActivity(new Intent(context, CartHomeActivity.class));
                 break;
             case 3:
+                context.startActivity(new Intent(context, OrderHomeActivity.class));
                 break;
             case 4:
                 break;

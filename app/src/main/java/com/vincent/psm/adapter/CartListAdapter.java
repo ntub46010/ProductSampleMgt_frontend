@@ -46,7 +46,7 @@ public class CartListAdapter extends BaseAdapter {
         TextView txtCartName = view.findViewById(R.id.txtCartName);
         TextView txtTotal = view.findViewById(R.id.txtTotal);
         TextView txtCreateTime = view.findViewById(R.id.txtCreateTime);
-        TextView txtSalesName = view.findViewById(R.id.txtSales);
+        TextView txtSalesName = view.findViewById(R.id.txtSalesName);
 
         txtCartName.setText(carts.get(position).getCartName());
         txtTotal.setText("$ " + Comma(String.valueOf(carts.get(position).getTotal())));
