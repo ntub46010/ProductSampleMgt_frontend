@@ -51,7 +51,7 @@ public class RequestManager {
                     user = new FirebaseUser();
 
                 for (Device existingDevice : user.getDeviceList()) {
-                    if (existingDevice.getToken().equals(device.getToken())) {
+                    if (device.getToken().equals(existingDevice.getToken())) {
                         //已經註冊過該token
                         return;
                     }

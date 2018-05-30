@@ -62,10 +62,12 @@ public class DataHelper {
     public static final String KEY_CUSTOMER_ADDRESS = "CustomerAddress";
     public static final String KEY_DELIVER_FEE = "DeliverFee";
     public static final String KEY_PRE_DELIVER_DATE = "PredictDeliverDate";
+    public static final String KEY_ACT_DELIVER_DATE = "ActualDeliverDate";
     public static final String KEY_DELIVER_PLACE = "DeliverPlace";
     public static final String KEY_PRODUCT_TOTAL = "ProductTotal";
     public static final String KEY_ORDER_ID = "OrderId";
     public static final String KEY_CONDITION = "Condition";
+    public static final String KEY_ORDER_INFO = "OrderInfo";
 
     public static final String KEY_PRODUCTS = "Products";
     public static final String KEY_MATERIALS = "Materials";

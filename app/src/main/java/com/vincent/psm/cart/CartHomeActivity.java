@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.vincent.psm.data.DataHelper.KEY_CARTS;
+import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_CART_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
@@ -102,7 +103,7 @@ public class CartHomeActivity extends AppCompatActivity {
                 if (cart.getSalesId().equals(loginUserId)) {
                     Intent it = new Intent(context, CartDetailActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString(KEY_ID, cart.getId());
+                    bundle.putString(KEY_CART_ID, cart.getId());
                     bundle.putString(KEY_CART_NAME, cart.getCartName());
                     it.putExtras(bundle);
                     startActivity(it);
