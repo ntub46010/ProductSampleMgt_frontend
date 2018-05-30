@@ -83,7 +83,7 @@ public class CartDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart_detail);
         context = this;
         Bundle bundle = getIntent().getExtras();
-        cartId = bundle.getString(KEY_ID);
+        cartId = bundle.getString(KEY_CART_ID);
         cartName = bundle.getString(KEY_CART_NAME);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -166,9 +166,10 @@ public class CartDetailActivity extends AppCompatActivity {
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        //購物車摘要
-                        JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
+                    //購物車摘要
+                    JSONObject objCartInfo;
+                    if (resObj.has(KEY_CART_INFO)) {
+                        objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
                         cart = new Cart(
                                 objCartInfo.getString(KEY_SALES_NAME),
                                 objCartInfo.getString(KEY_CUSTOMER_NAME),
@@ -177,7 +178,13 @@ public class CartDetailActivity extends AppCompatActivity {
                                 objCartInfo.getString(KEY_CONTACT_PHONE),
                                 objCartInfo.getInt(KEY_TOTAL)
                         );
+                    }else {
+                        Toast.makeText(context, "購物車不存在", Toast.LENGTH_SHORT).show();
+                        prgBar.setVisibility(View.GONE);
+                        return;
+                    }
 
+                    if (resObj.getBoolean(KEY_SUCCESS)) { //若無KEY_CART_INFO，這裡也必定為false
                         //購物車明細
                         JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
                         for (int i = 0; i < ary.length(); i++) {
@@ -192,7 +199,8 @@ public class CartDetailActivity extends AppCompatActivity {
                         }
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "購物車內無產品", Toast.LENGTH_SHORT).show();
+                        showData();
                     }
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();

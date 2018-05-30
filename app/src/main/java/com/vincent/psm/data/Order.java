@@ -1,7 +1,7 @@
 package com.vincent.psm.data;
 
 public class Order extends Cart {
-    private String customerAddress, predictDeliverDate, deliverPlace, ps, condition;
+    private String customerAddress, predictDeliverDate, actualDeliverDate, deliverPlace, ps, condition;
     private int deliverFee;
 
     //訂單首頁
@@ -29,6 +29,24 @@ public class Order extends Cart {
         super.salesId = salesId;
     }
 
+    //訂單詳情
+    public Order(String id, String customerName, String customerPhone, String contactPerson, String contactPhone, int productTotal, int deliverFee,
+                 String condition, String predictDeliverDate, String actualDeliverDate, String deliverPlace, String ps, String salesName) {
+        super.id = id;
+        super.customerName = customerName;
+        super.customerPhone = customerPhone;
+        super.contactPerson = contactPerson;
+        super.contactPhone = contactPhone;
+        super.total = productTotal;
+        this.deliverFee = deliverFee;
+        this.condition = condition;
+        this.predictDeliverDate = predictDeliverDate;
+        this.actualDeliverDate = actualDeliverDate;
+        this.deliverPlace = deliverPlace;
+        this.ps = ps;
+        this.salesName = salesName;
+    }
+
     public String getCustomerAddress() {
         return customerAddress;
     }
@@ -51,6 +69,10 @@ public class Order extends Cart {
 
     public String getCondition() {
         return condition;
+    }
+
+    public String getActualDeliverDate() {
+        return actualDeliverDate;
     }
 
     public void setDeliverPlace(String deliverPlace) {

@@ -51,6 +51,17 @@ public class Tile extends ImageObj {
         this.onSale = onSale;
     }
 
+    public Tile(String id, String name, String length, String width, String thick, String price, int amount, int subTotal) {
+        this.id = id;
+        this.name = name;
+        this.length = length;
+        this.width = width;
+        this.thick = thick;
+        this.price = price;
+        this.amount = amount;
+        this.subTotal = subTotal;
+    }
+
     public String getId() {
         return id;
     }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:columnCount="3"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/txtId"
+        style="@style/txt_order_detail_title"
+        android:text="1234"/>
+    <TextView
+        android:id="@+id/txtProductName"
+        style="@style/txt_order_detail_title"
+        android:layout_columnSpan="2"
+        android:text="熊大磁磚"/>
+    <TextView
+        android:id="@+id/txtArea"
+        style="@style/txt_order_detail_title"
+        android:layout_columnSpan="3"
+        android:text="11 x 22 x 33 mm"/>
+    <TextView
+        android:id="@+id/txtAmount"
+        style="@style/txt_order_detail_title"
+        android:text="10"/>
+    <TextView
+        android:id="@+id/txtSubTotal"
+        style="@style/txt_order_detail_title"
+        android:text="$ 1,234"/>
+
+</GridLayout>

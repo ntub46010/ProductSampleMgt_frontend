@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,21 +7,143 @@
     android:layout_height="match_parent"
     tools:context=".order.OrderDetailActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/toolbar"
-        android:paddingEnd="65dp"
-        app:titleTextColor="#FFFFFF"/>
-
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
+        tools:context=".order.OrderDetailActivity">
 
-        <ProgressBar
-            android:id="@+id/prgBar"
-            style="@style/prg_normal"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/toolbar"
+            android:paddingEnd="65dp"
+            app:titleTextColor="#FFFFFF"/>
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/layOrderDetail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:padding="@dimen/layout_padding">
 
-</RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <GridLayout
+                    android:id="@+id/layOrderInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:columnCount="2">
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="客戶名稱："/>
+                    <TextView
+                        android:id="@+id/txtCustomerName"
+                        style="@style/txt_order_detail_content"
+                        android:text="丁丁公司"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="客戶電話："/>
+                    <TextView
+                        android:id="@+id/edtCustomerPhone"
+                        style="@style/txt_order_detail_content"
+                        android:text="0212345678"
+                        android:textColor="#0000FF"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="聯絡人："/>
+                    <TextView
+                        android:id="@+id/txtContactPerson"
+                        style="@style/txt_order_detail_content"
+                        android:text="鐵心蘭（0987654321#1234）"
+                        android:textColor="#0000FF"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="產品總金額："/>
+                    <TextView
+                        android:id="@+id/txtTotal"
+                        style="@style/txt_order_detail_content"
+                        android:text="$ 9,999,999,999"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="運費："/>
+                    <TextView
+                        android:id="@+id/txtDeliverFee"
+                        style="@style/txt_order_detail_content"
+                        android:text="$ 123,456"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="訂單狀態："/>
+                    <TextView
+                        android:id="@+id/txtCondition"
+                        style="@style/txt_order_detail_content"
+                        android:text="已完成"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="預計到貨日："/>
+                    <TextView
+                        android:id="@+id/txtPreDeliverDate"
+                        style="@style/txt_order_detail_content"
+                        android:text="2018/05/30 16:00"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="實際到貨日："/>
+                    <TextView
+                        android:id="@+id/txtActDeliverDate"
+                        style="@style/txt_order_detail_content"
+                        android:text="2018/05/30 16:00"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="送貨地點："/>
+                    <TextView
+                        android:id="@+id/txtDeliverPlace"
+                        style="@style/txt_order_detail_content"
+                        android:text="基隆市安樂區圈圈東路123號"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="備註："/>
+                    <TextView
+                        android:id="@+id/txtPs"
+                        style="@style/txt_order_detail_content"
+                        android:text="OOO"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:text="負責業務："/>
+                    <TextView
+                        android:id="@+id/txtSalesName"
+                        style="@style/txt_order_detail_content"
+                        android:text="鄭仲佑"
+                        android:textColor="#0000FF"/>
+                    <TextView
+                        style="@style/txt_order_detail_title"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:text="產品明細："/>
+
+                </GridLayout>
+
+                <ListView
+                    android:id="@+id/lstProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/prgBar"
+                style="@style/prg_normal"/>
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabUpdate"
+        style="@style/fab"
+        android:layout_marginEnd="@dimen/fab_margin"
+        app:srcCompat="@drawable/icon_edit"
+        app:fabSize="normal"/>
+
+</android.support.design.widget.CoordinatorLayout>
