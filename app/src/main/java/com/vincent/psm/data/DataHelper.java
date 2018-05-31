@@ -76,6 +76,7 @@ public class DataHelper {
     public static final String KEY_ORDERS = "Orders";
     public static final String KEY_CUSTOMERS = "Customers";
     public static final String KEY_CONTACTS = "Contacts";
+    public static final String KEY_CONDITIONS = "Conditions";
     public static final String KEY_PRODUCTS_JSON = "ProductsJson";
 
     public static String getMD5(String s) {

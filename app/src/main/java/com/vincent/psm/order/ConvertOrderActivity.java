@@ -1,5 +1,6 @@
 package com.vincent.psm.order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +28,7 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_DELIVER_FEE;
 import static com.vincent.psm.data.DataHelper.KEY_DELIVER_PLACE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRE_DELIVER_DATE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
@@ -99,9 +101,9 @@ public class ConvertOrderActivity extends OrderEditActivity {
 
     @Override
     protected void showData() {
+        //客戶清單
         aetCustomerName.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, customerNames));
         aetCustomerName.setThreshold(1);
-
         aetCustomerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -114,10 +116,11 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 }
                 edtCustomerPhone.setText(customers.get(index).getPhone());
                 edtCustomerAddress.setText(customers.get(index).getAddress());
-                loadContactData(customers.get(index).getId());
+                loadContactData(ConvertOrderActivity.this, customers.get(index).getId());
             }
         });
 
+        //購物車資料
         Bundle bundle = getIntent().getExtras();
         aetCustomerName.setText(bundle.getString(KEY_CUSTOMER_NAME));
         edtCustomerPhone.setText(bundle.getString(KEY_CUSTOMER_PHONE));
@@ -131,55 +134,6 @@ public class ConvertOrderActivity extends OrderEditActivity {
         btnSubmit.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
         isShown = true;
-    }
-
-    @Override
-    protected void loadContactData(int id) {
-        conn = new MyOkHttp(ConvertOrderActivity.this, new MyOkHttp.TaskListener() {
-            @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray aryContactPerson = resObj.getJSONArray(KEY_CONTACTS);
-
-                        contacts = new ArrayList<>();
-                        contactPersons = new ArrayList<>();
-                        contactPersons.add("請選擇");
-                        for (int i = 0; i < aryContactPerson.length(); i++) {
-                            JSONObject obj = aryContactPerson.getJSONObject(i);
-                            contacts.add(new Contact(
-                                    obj.getInt(KEY_ID),
-                                    obj.getString(KEY_CONTACT_PERSON),
-                                    obj.getString(KEY_CONTACT_PHONE)
-                            ));
-                            contactPersons.add(obj.getString(KEY_CONTACT_PERSON) + "／" + obj.getString(KEY_CONTACT_PHONE));
-                        }
-                        showContactData();
-                    }else {
-                        Toast.makeText(context, "沒有聯絡人", Toast.LENGTH_SHORT).show();
-                    }
-                }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        try {
-            JSONObject reqObj = new JSONObject();
-            reqObj.put(KEY_ID, id);
-            conn.execute(getString(R.string.link_show_contacts), reqObj.toString());
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void showContactData() {
-        adpContact = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, contactPersons);
-        spnContact.setAdapter(adpContact);
     }
 
     @Override
@@ -198,8 +152,14 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+                        Intent it = new Intent(context, OrderDetailActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(KEY_ORDER_ID, String.valueOf(resObj.getInt(KEY_ORDER_ID)));
+                        it.putExtras(bundle);
+                        startActivity(it);
+                        finish();
                     }else {
-                        Toast.makeText(context, "建立訂單失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "建立失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
@@ -207,18 +167,8 @@ public class ConvertOrderActivity extends OrderEditActivity {
             }
         });
         try {
-            JSONObject reqObj = new JSONObject();
-            reqObj.put(KEY_CUSTOMER_NAME, order.getCustomerName());
-            reqObj.put(KEY_CUSTOMER_PHONE, order.getCustomerPhone());
-            reqObj.put(KEY_CUSTOMER_ADDRESS, order.getCustomerAddress());
-            reqObj.put(KEY_CONTACT_PERSON, order.getContactPerson());
-            reqObj.put(KEY_CONTACT_PHONE, order.getContactPhone());
-            reqObj.put(KEY_DELIVER_FEE, order.getDeliverFee());
-            reqObj.put(KEY_PRODUCT_TOTAL, order.getTotal());
-            reqObj.put(KEY_PRE_DELIVER_DATE, order.getPredictDeliverDate());
-            reqObj.put(KEY_DELIVER_PLACE, order.getDeliverPlace());
+            setUploadReqObj();
             reqObj.put(KEY_SALES, loginUserId);
-            reqObj.put(KEY_PS, order.getPs());
             reqObj.put(KEY_PRODUCTS, new JSONArray(productsJson));
             conn.execute(getString(R.string.link_create_order), reqObj.toString());
         }catch (JSONException e) {

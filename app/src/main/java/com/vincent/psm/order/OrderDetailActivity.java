@@ -1,12 +1,15 @@
 package com.vincent.psm.order;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -18,6 +21,7 @@ import com.vincent.psm.adapter.OrderDetailListAdapter;
 import com.vincent.psm.data.Order;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
+import com.vincent.psm.product.ProductDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +39,7 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_DELIVER_FEE;
 import static com.vincent.psm.data.DataHelper.KEY_DELIVER_PLACE;
+import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
@@ -55,7 +60,7 @@ import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 public class OrderDetailActivity extends AppCompatActivity {
     private Context context;
 
-    private LinearLayout layOrderDetail;
+    private GridLayout layOrderInfo;
     private TextView txtCustomerName, txtCustomerPhone, txtContactPerson, txtProductTotal, txtDeliverFee, txtCondition,
                     txtPreDeliverDate, txtActDeliverDate, txtDeliverPlace, txtPs, txtSalesName;
     private ListView lstProduct;
@@ -76,7 +81,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
         context = this;
-        Bundle bundle = getIntent().getExtras();
+        final Bundle bundle = getIntent().getExtras();
         orderId = bundle.getString(KEY_ORDER_ID);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -90,7 +95,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             }
         });
 
-        layOrderDetail = findViewById(R.id.layOrderDetail);
+        layOrderInfo = findViewById(R.id.layOrderInfo);
         txtCustomerName = findViewById(R.id.txtCustomerName);
         txtCustomerPhone = findViewById(R.id.txtCustomerPhone);
         txtContactPerson = findViewById(R.id.txtContactPerson);
@@ -106,19 +111,25 @@ public class OrderDetailActivity extends AppCompatActivity {
         fabUpdate = findViewById(R.id.fabUpdate);
         prgBar = findViewById(R.id.prgBar);
 
-        layOrderDetail.setVisibility(View.INVISIBLE);
-
         lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                Intent it = new Intent(context, ProductDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_ID, ((Tile) adapter.getItem(position)).getId());
+                it.putExtras(bundle);
+                startActivity(it);
             }
         });
 
         fabUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent it = new Intent(context, OrderUpdateActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_ORDER_ID, orderId);
+                it.putExtras(bundle);
+                startActivity(it);
             }
         });
     }
@@ -132,6 +143,8 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private void loadData() {
         isShown = false;
+        fabUpdate.hide();
+        layOrderInfo.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
         conn = new MyOkHttp(OrderDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
@@ -199,8 +212,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtCustomerName.setText(order.getCustomerName());
         txtCustomerPhone.setText(order.getCustomerPhone());
         txtContactPerson.setText(getString(R.string.txt_contact, order.getContactPerson(), order.getContactPhone()));
-        txtProductTotal.setText(Comma(String.valueOf(order.getTotal())));
-        txtDeliverFee.setText(Comma(String.valueOf(order.getDeliverFee())));
+        txtProductTotal.setText("$ " + Comma(String.valueOf(order.getTotal())));
+        txtDeliverFee.setText("$ " + Comma(String.valueOf(order.getDeliverFee())));
         txtCondition.setText(order.getCondition());
         txtPreDeliverDate.setText(order.getPredictDeliverDate());
         txtActDeliverDate.setText(order.getActualDeliverDate());
@@ -213,7 +226,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         lstProduct.setAdapter(adapter);
 
         prgBar.setVisibility(View.GONE);
-        layOrderDetail.setVisibility(View.VISIBLE);
+        layOrderInfo.setVisibility(View.VISIBLE);
+        fabUpdate.show();
         isShown = true;
     }
 

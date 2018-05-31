@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".order.OrderUpdateActivity">
+
+    <include layout="@layout/content_checking_toolbar" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layEditContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp">
+                    <TextView
+                        style="@style/txt_goods_detail_title"
+                        android:text="訂單編號："/>
+                    <TextView
+                        android:id="@+id/txtId"
+                        style="@style/txt_goods_detail_content"
+                        android:text="1234"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp">
+                    <TextView
+                        style="@style/txt_goods_detail_title"
+                        android:text="訂單狀態："/>
+                    <Spinner
+                        android:id="@+id/spnOrderCondition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/ary_default_choice"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layActDeliverDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <TextView
+                        style="@style/txt_goods_detail_title"
+                        android:text="實際到貨日："/>
+                    <EditText
+                        android:id="@+id/edtActDeliverDate"
+                        style="@style/edt_goods_post_content"
+                        android:inputType="datetime"/>
+                </LinearLayout>
+
+                <include layout="@layout/content_order_edit" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/prgBar"
+            style="@style/prg_normal"/>
+
+    </FrameLayout>
+
+</LinearLayout>

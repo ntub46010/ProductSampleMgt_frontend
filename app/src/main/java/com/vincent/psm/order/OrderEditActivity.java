@@ -1,5 +1,6 @@
 package com.vincent.psm.order;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vincent.psm.R;
 import com.vincent.psm.data.Contact;
@@ -23,8 +25,26 @@ import com.vincent.psm.data.Order;
 import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_CONTACTS;
+import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
+import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
+import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_ADDRESS;
+import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
+import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
+import static com.vincent.psm.data.DataHelper.KEY_DELIVER_FEE;
+import static com.vincent.psm.data.DataHelper.KEY_DELIVER_PLACE;
+import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_PRE_DELIVER_DATE;
+import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
+import static com.vincent.psm.data.DataHelper.KEY_PS;
+import static com.vincent.psm.data.DataHelper.KEY_STATUS;
+import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public abstract class OrderEditActivity extends AppCompatActivity {
@@ -34,17 +54,20 @@ public abstract class OrderEditActivity extends AppCompatActivity {
 
     protected LinearLayout layEditContent;
     protected AutoCompleteTextView aetCustomerName;
-    protected EditText edtCustomerPhone, edtCustomerAddress, edtContactPerson, edtContactPhone, edtProductTotal, edtDeliverFee, edtPreDeliverDate, edtDeliverPlace, edtPs, edtSales;
+    protected EditText edtCustomerPhone, edtCustomerAddress, edtContactPerson, edtContactPhone, edtProductTotal, edtDeliverFee,
+                        edtPreDeliverDate, edtDeliverPlace, edtPs, edtSales;
     protected Spinner spnContact;
-    private RadioButton rdoSelectContact, rdoNewContact;
+    protected RadioButton rdoSelectContact, rdoNewContact;
 
     protected ProgressBar prgBar;
     protected ImageView btnSubmit;
 
     protected MyOkHttp conn;
+    protected JSONObject reqObj = new JSONObject();
 
     protected Order order;
     private String contactPerson, contactPhone;
+    protected String actualDeliverDate;
 
     protected ArrayList<String> customerNames, contactPersons;
     protected ArrayList<Customer> customers;
@@ -55,8 +78,6 @@ public abstract class OrderEditActivity extends AppCompatActivity {
 
     protected abstract void loadData();
     protected abstract void showData();
-    protected abstract void loadContactData(int id);
-    protected abstract void showContactData();
     protected abstract void uploadOrder();
 
     @Override
@@ -132,6 +153,53 @@ public abstract class OrderEditActivity extends AppCompatActivity {
             loadData();
     }
 
+    protected void loadContactData(Activity activity, int id) {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
+            @Override
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        JSONArray aryContactPerson = resObj.getJSONArray(KEY_CONTACTS);
+
+                        contacts = new ArrayList<>();
+                        contactPersons = new ArrayList<>();
+                        contactPersons.add("請選擇");
+                        for (int i = 0; i < aryContactPerson.length(); i++) {
+                            JSONObject obj = aryContactPerson.getJSONObject(i);
+                            contacts.add(new Contact(
+                                    obj.getInt(KEY_ID),
+                                    obj.getString(KEY_CONTACT_PERSON),
+                                    obj.getString(KEY_CONTACT_PHONE)
+                            ));
+                            contactPersons.add(obj.getString(KEY_CONTACT_PERSON) + "／" + obj.getString(KEY_CONTACT_PHONE));
+                        }
+                        showContactData();
+                    }else {
+                        Toast.makeText(context, "沒有聯絡人", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_ID, id);
+            conn.execute(getString(R.string.link_show_contacts), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showContactData() {
+        adpContact = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, contactPersons);
+        spnContact.setAdapter(adpContact);
+    }
+
     protected boolean isInfoValid() {
         Verifier v = new Verifier(context);
         StringBuffer errMsg = new StringBuffer();
@@ -156,9 +224,9 @@ public abstract class OrderEditActivity extends AppCompatActivity {
                 Integer.parseInt(productTotal),
                 Integer.parseInt(deliverFee),
                 edtPreDeliverDate.getText().toString(),
+                actualDeliverDate,
                 edtDeliverPlace.getText().toString(),
-                edtPs.getText().toString(),
-                loginUserId
+                edtPs.getText().toString()
         );
 
         errMsg.append(v.chkName("客戶名稱", order.getCustomerName()));
@@ -168,7 +236,7 @@ public abstract class OrderEditActivity extends AppCompatActivity {
         errMsg.append(v.chkPhone("聯絡人電話", order.getContactPhone()));
         errMsg.append(v.chkProductTotal(String.valueOf(order.getTotal())));
         errMsg.append(v.chkDeliverFee(String.valueOf(order.getDeliverFee())));
-        //預計到貨日暫略
+        //預計到貨日、實際到貨日暫略
         errMsg.append(v.chkAddress(order.getDeliverPlace()));
         errMsg.append(v.chkPs(order.getPs()));
 
@@ -183,6 +251,20 @@ public abstract class OrderEditActivity extends AppCompatActivity {
                 order.setDeliverPlace(order.getCustomerAddress());
             return true;
         }
+    }
+
+    protected void setUploadReqObj() throws JSONException {
+        reqObj = new JSONObject();
+        reqObj.put(KEY_CUSTOMER_NAME, order.getCustomerName());
+        reqObj.put(KEY_CUSTOMER_PHONE, order.getCustomerPhone());
+        reqObj.put(KEY_CUSTOMER_ADDRESS, order.getCustomerAddress());
+        reqObj.put(KEY_CONTACT_PERSON, order.getContactPerson());
+        reqObj.put(KEY_CONTACT_PHONE, order.getContactPhone());
+        reqObj.put(KEY_PRODUCT_TOTAL, order.getTotal());
+        reqObj.put(KEY_DELIVER_FEE, order.getDeliverFee());
+        reqObj.put(KEY_PRE_DELIVER_DATE, order.getPredictDeliverDate());
+        reqObj.put(KEY_DELIVER_PLACE, order.getDeliverPlace());
+        reqObj.put(KEY_PS, order.getPs());
     }
 
     public void onRadioSelect (View view) {

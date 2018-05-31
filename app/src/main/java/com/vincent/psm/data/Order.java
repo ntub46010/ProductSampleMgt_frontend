@@ -15,7 +15,7 @@ public class Order extends Cart {
 
     //建立訂單
     public Order(String customerName, String customerPhone, String customerAddress, String contactPerson, String contactPhone,
-                 int productTotal, int deliverFee, String predictDeliverDate, String deliverPlace, String ps, String salesId) {
+                 int productTotal, int deliverFee, String predictDeliverDate, String actualDeliverDate, String deliverPlace, String ps) {
         super.customerName = customerName;
         super.customerPhone = customerPhone;
         this.customerAddress = customerAddress;
@@ -24,9 +24,9 @@ public class Order extends Cart {
         super.total = productTotal;
         this.deliverFee = deliverFee;
         this.predictDeliverDate = predictDeliverDate;
+        this.actualDeliverDate = actualDeliverDate;
         this.deliverPlace = deliverPlace;
-        this.ps = ps;
-        super.salesId = salesId;
+        this.ps = ps;;
     }
 
     //訂單詳情
@@ -77,6 +77,18 @@ public class Order extends Cart {
 
     public void setDeliverPlace(String deliverPlace) {
         this.deliverPlace = deliverPlace;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public void setActualDeliverDate(String actualDeliverDate) {
+        this.actualDeliverDate = actualDeliverDate;
+    }
+
+    public void setSalesId(String salesId) {
+        this.customerAddress = salesId;
     }
 
 }

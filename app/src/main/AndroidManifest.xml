@@ -45,7 +45,8 @@
         <activity android:name=".cart.CartDetailActivity" />
         <activity android:name=".order.ConvertOrderActivity" />
         <activity android:name=".order.OrderHomeActivity" />
-        <activity android:name=".order.OrderDetailActivity"></activity>
+        <activity android:name=".order.OrderDetailActivity" />
+        <activity android:name=".order.OrderUpdateActivity"></activity>
     </application>
 
 </manifest>

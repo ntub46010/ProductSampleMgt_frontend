@@ -167,9 +167,8 @@ public class CartDetailActivity extends AppCompatActivity {
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     //購物車摘要
-                    JSONObject objCartInfo;
                     if (resObj.has(KEY_CART_INFO)) {
-                        objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
+                        JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
                         cart = new Cart(
                                 objCartInfo.getString(KEY_SALES_NAME),
                                 objCartInfo.getString(KEY_CUSTOMER_NAME),
@@ -184,7 +183,7 @@ public class CartDetailActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (resObj.getBoolean(KEY_SUCCESS)) { //若無KEY_CART_INFO，這裡也必定為false
+                    if (resObj.getBoolean(KEY_SUCCESS)) { //若無KEY_CART_INFO，後續也不必執行
                         //購物車明細
                         JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
                         for (int i = 0; i < ary.length(); i++) {
