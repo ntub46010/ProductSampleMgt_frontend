@@ -40,6 +40,13 @@
                 app:layout_collapseMode="parallax">
                 <TextView
                     style="@style/txt_order_detail_title"
+                    android:text="訂單編號："/>
+                <TextView
+                    android:id="@+id/txtOrderId"
+                    style="@style/txt_order_detail_content"
+                    android:text="1234"/>
+                <TextView
+                    style="@style/txt_order_detail_title"
                     android:text="客戶名稱："/>
                 <TextView
                     android:id="@+id/txtCustomerName"
@@ -135,12 +142,20 @@
         android:id="@+id/lstProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="35dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
 
     <ProgressBar
         android:id="@+id/prgBar"
         style="@style/prg_normal"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAdd"
+        style="@style/fab"
+        android:layout_marginEnd="80dp"
+        app:srcCompat="@drawable/icon_add"
+        app:fabSize="normal"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabUpdate"

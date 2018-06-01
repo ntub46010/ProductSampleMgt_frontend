@@ -23,6 +23,7 @@ import com.vincent.psm.product.ProductMgtActivity;
 import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.currentTokenIndex;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
@@ -57,18 +58,37 @@ public class MainActivity extends AppCompatActivity {
     private void executeFunction(int position) {
         switch (position) {
             case 0:
-                context.startActivity(new Intent(context, ProductHomeActivity.class));
+                startActivity(new Intent(context, ProductHomeActivity.class));
                 break;
             case 1:
-                context.startActivity(new Intent(context, ProductMgtActivity.class));
+                startActivity(new Intent(context, ProductMgtActivity.class));
+                /*
+                if (authority == 3)
+                    startActivity(new Intent(context, ProductMgtActivity.class));
+                 else
+                    Toast.makeText(context, getString(R.string.txt_authority_limit, "產品管理"), Toast.LENGTH_SHORT).show();
+                 */
                 break;
             case 2:
-                context.startActivity(new Intent(context, CartHomeActivity.class));
+                startActivity(new Intent(context, CartHomeActivity.class));
+                /*
+                if (authority == 1)
+                    startActivity(new Intent(context, CartHomeActivity.class));
+                 else
+                    Toast.makeText(context, getString(R.string.txt_authority_limit, "業務"), Toast.LENGTH_SHORT).show();
+                */
                 break;
             case 3:
-                context.startActivity(new Intent(context, OrderHomeActivity.class));
+                startActivity(new Intent(context, OrderHomeActivity.class));
+                /*
+                if (authority == 1 || authority == 2)
+                    startActivity(new Intent(context, OrderHomeActivity.class));
+                 else
+                    Toast.makeText(context, getString(R.string.txt_authority_limit, "業務、倉管"), Toast.LENGTH_SHORT).show();
+                */
                 break;
             case 4:
+                startActivity(new Intent(context, NotificationActivity.class));
                 break;
             case 5:
                 break;
@@ -94,10 +114,10 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case 7:
-                context.startActivity(new Intent(context, BroadcastActivity.class));
+                startActivity(new Intent(context, BroadcastActivity.class));
                 break;
             case 8:
-                context.startActivity(new Intent(context, ImageUploadActivity.class));
+                startActivity(new Intent(context, ImageUploadActivity.class));
                 break;
         }
     }

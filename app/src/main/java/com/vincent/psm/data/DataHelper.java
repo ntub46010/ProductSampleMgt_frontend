@@ -17,9 +17,11 @@ public class DataHelper {
     public static String loginUserId = "ntub46010";
     public static ArrayList<String> tokens = null;
     public static int currentTokenIndex = -1;
-    public static byte authority = 2;
+    public static byte authority = 1;
     public static String defaultCartId = "";
     public static String defaultCartName = "";
+    public static String defaultOrderId = "";
+    public static String defaultOrderName = "";
 
     public static final String KEY_STATUS = "Status";
     public static final String KEY_SUCCESS = "Success";
@@ -44,6 +46,7 @@ public class DataHelper {
     public static final String KEY_STOCK = "Stock";
     public static final String KEY_SAFE_STOCK = "SafeStock";
     public static final String KEY_CART_AMOUNT = "CartAmount";
+    public static final String KEY_ORDER_AMOUNT = "OrderAmount";
     public static final String KEY_CART_NAME = "CartName";
     public static final String KEY_CUSTOMER_NAME = "CustomerName";
     public static final String KEY_CUSTOMER_PHONE = "CustomerPhone";
@@ -76,6 +79,7 @@ public class DataHelper {
     public static final String KEY_ORDERS = "Orders";
     public static final String KEY_CUSTOMERS = "Customers";
     public static final String KEY_CONTACTS = "Contacts";
+    public static final String KEY_WAREHOUSE = "Warehouse";
     public static final String KEY_CONDITIONS = "Conditions";
     public static final String KEY_PRODUCTS_JSON = "ProductsJson";
 

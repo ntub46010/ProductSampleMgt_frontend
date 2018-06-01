@@ -1,6 +1,7 @@
 package com.vincent.psm.broadcast_helper.manager;
 
 import android.app.Activity;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,7 +57,7 @@ public class RequestManager {
                         return;
                     }
                     /*
-                    if (device.getDevice() != null && device.getDevice().equals("android")) //有註冊過相同作業系統
+                    if (device.getPlatform() != null && device.getPlatform().equals("android")) //有註冊過相同作業系統
                         return;
                     */
                 }
@@ -84,7 +85,7 @@ public class RequestManager {
 
                 if (user.getDeviceList() != null) {
                     for (Device device : user.getDeviceList()) {
-                        if (device.getDevice() != null) { //知道其作業系統(判斷似乎可省略)
+                        if (device.getPlatform() != null) { //知道其作業系統(判斷似乎可省略)
                             pushNotification(title, message, photoUrl, device.getToken());
                         }
                     }
@@ -145,7 +146,7 @@ public class RequestManager {
                 if (user.getDeviceList() != null) {
                     tokens = new ArrayList<>();
                     for (Device device : user.getDeviceList()) {
-                        if (device.getDevice() == null) {
+                        if (device.getPlatform() == null) {
                             continue;
                         }
                         tokens.add(device.getToken());

@@ -34,6 +34,8 @@ import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIAL;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_ONSALE;
+import static com.vincent.psm.data.DataHelper.KEY_ORDER_AMOUNT;
+import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_ID;
@@ -45,8 +47,11 @@ import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
+import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.defaultCartId;
 import static com.vincent.psm.data.DataHelper.defaultCartName;
+import static com.vincent.psm.data.DataHelper.defaultOrderId;
+import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private Context context;
@@ -54,10 +59,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView imgProduct;
     private TextView txtProductName, txtPrice, txtId, txtMaterial, txtColor, txtSize, txtPs, txtStock, txtSafeStock;
     private ProgressBar prgBar;
-    private FloatingActionButton fabCart;
+    private FloatingActionButton fabAddCart, fabAddOrder;
 
     private String id;
-    private int cartAmount = 0, amount = 0;
+    private int currentCartAmount = 0, currentOrderAmount = 0, amount = 0;
 
     private MyOkHttp conn;
     private ImageDownloader imageLoader;
@@ -97,17 +102,24 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtStock = findViewById(R.id.txtStock);
         txtSafeStock = findViewById(R.id.txtSafeStock);
         prgBar = findViewById(R.id.prgBar);
-        fabCart = findViewById(R.id.fabCart);
+        fabAddCart = findViewById(R.id.fabAddCart);
+        fabAddOrder = findViewById(R.id.fabAddOrder);
 
         layProductDetail.setVisibility(View.INVISIBLE);
 
-        fabCart.setOnClickListener(new View.OnClickListener() {
+        fabAddCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addToCart();
             }
         });
-        fabCart.hide();
+
+        fabAddOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToOrder();
+            }
+        });
     }
 
     @Override
@@ -120,6 +132,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void loadData() {
         isShown = false;
         prgBar.setVisibility(View.VISIBLE);
+        fabAddCart.hide();
+        fabAddOrder.hide();
 
         conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
@@ -132,7 +146,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         //檢查是否在購物車
-                        cartAmount = resObj.getInt(KEY_CART_AMOUNT);
+                        currentCartAmount = resObj.getInt(KEY_CART_AMOUNT);
+                        currentOrderAmount = resObj.getInt(KEY_ORDER_AMOUNT);
 
                         //產品詳情
                         JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
@@ -170,6 +185,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ID, id);
             reqObj.put(KEY_CART_ID, defaultCartId);
+            reqObj.put(KEY_ORDER_ID, defaultOrderId);
             conn.execute(getString(R.string.link_show_product_detail), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -188,8 +204,17 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtStock.setText(tile.getStock());
         txtSafeStock.setText(tile.getSafeStock());
 
+        /*
+        if (authority == 1)
+            fabAddCart.show();
+        else if (authority == 2)
+            fabAddOrder.show();
+        */
+
+        fabAddCart.show();
+        fabAddOrder.show();
+
         layProductDetail.setVisibility(View.VISIBLE);
-        fabCart.show();
         prgBar.setVisibility(View.GONE);
         isShown = true;
     }
@@ -204,9 +229,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         final EditText edtAmount = new EditText(context);
         edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("加入項目至：" + defaultCartName)
-                .setMessage("請輸入數量，若要從購物車移除，則輸入0\n\n目前數量：" + Comma(String.valueOf(cartAmount)))
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("加入項目至購物車：" + defaultCartName)
+                .setMessage("請輸入數量\n若要從購物車移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentCartAmount)))
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -234,8 +259,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
-                        cartAmount = amount; //更新車內已有數量
-                        if (cartAmount != 0)
+                        currentCartAmount = amount; //更新車內已有數量
+                        if (currentCartAmount != 0)
                             Toast.makeText(context, "購物車已更新", Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(context, "已從購物車移除", Toast.LENGTH_SHORT).show();
@@ -258,6 +283,70 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void addToOrder() {
+        if (defaultOrderId.equals("")) {
+            Toast.makeText(context, "請到訂單頁面選擇預設訂單", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //跳出對話框詢問數量
+        final EditText edtAmount = new EditText(context);
+        edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("加入項目至訂單：" + defaultOrderName)
+                .setMessage("請輸入數量\n若要從訂單移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentOrderAmount)))
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        amount = Integer.valueOf(edtAmount.getText().toString());
+                        if (amount <= Integer.valueOf(tile.getStock()))
+                            uploadToOrder();
+                        else
+                            Toast.makeText(context, "超出庫存量", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("取消", null);
+        AlertDialog dialog = alert.create();
+        dialog.setView(edtAmount, 40, 0, 40, 0);
+        dialog.show();
+    }
+
+    private void uploadToOrder() {
+        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+            @Override
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    prgBar.setVisibility(View.GONE);
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if(resObj.getBoolean(KEY_SUCCESS)) {
+                        currentOrderAmount = amount; //更新訂單內已有數量
+                        if (currentOrderAmount != 0)
+                            Toast.makeText(context, "訂單已更新", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(context, "已從訂單移除", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_ORDER_ID, defaultOrderId);
+            reqObj.put(KEY_PRODUCT_ID, tile.getId());
+            reqObj.put(KEY_AMOUNT, amount);
+            conn.execute(getString(R.string.link_add_order_item), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -269,7 +358,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         tile = null;
+        super.onDestroy();
     }
 }

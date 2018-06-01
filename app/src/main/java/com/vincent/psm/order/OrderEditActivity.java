@@ -45,7 +45,6 @@ import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
-import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public abstract class OrderEditActivity extends AppCompatActivity {
     protected Context context;
@@ -63,7 +62,7 @@ public abstract class OrderEditActivity extends AppCompatActivity {
     protected ImageView btnSubmit;
 
     protected MyOkHttp conn;
-    protected JSONObject reqObj = new JSONObject();
+    protected JSONObject reqObj;
 
     protected Order order;
     private String contactPerson, contactPhone;

@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
-import com.vincent.psm.data.Contact;
 import com.vincent.psm.data.Customer;
 import com.vincent.psm.network_helper.MyOkHttp;
 
@@ -18,31 +17,27 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.vincent.psm.data.DataHelper.KEY_CONTACTS;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMERS;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_ADDRESS;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
-import static com.vincent.psm.data.DataHelper.KEY_DELIVER_FEE;
-import static com.vincent.psm.data.DataHelper.KEY_DELIVER_PLACE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
-import static com.vincent.psm.data.DataHelper.KEY_PRE_DELIVER_DATE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
-import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
-import static com.vincent.psm.data.DataHelper.KEY_PS;
 import static com.vincent.psm.data.DataHelper.KEY_SALES;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
+import static com.vincent.psm.data.DataHelper.KEY_WAREHOUSE;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class ConvertOrderActivity extends OrderEditActivity {
     private String productsJson;
+    private ArrayList<String> warehouses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +68,8 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
+                        //客戶
                         JSONArray aryCustomerName = resObj.getJSONArray(KEY_CUSTOMERS);
-
                         customers = new ArrayList<>();
                         customerNames = new ArrayList<>();
                         for (int i = 0; i < aryCustomerName.length(); i++) {
@@ -87,9 +82,17 @@ public class ConvertOrderActivity extends OrderEditActivity {
                             ));
                             customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
                         }
-                        showData();
+
+                        //倉管人員
+                        JSONArray aryWarehouse = resObj.getJSONArray(KEY_WAREHOUSE);
+                        warehouses = new ArrayList<>();
+                        for (int i = 0; i < warehouses.size(); i++) {
+                            JSONObject obj = aryWarehouse.getJSONObject(i);
+                            warehouses.add(obj.getString(KEY_ID));
+                        }
                     }else {
-                        Toast.makeText(context, "沒有任何客戶", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
+                        showData();
                     }
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();

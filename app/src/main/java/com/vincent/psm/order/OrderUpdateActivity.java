@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
+import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Customer;
 import com.vincent.psm.data.Order;
 import com.vincent.psm.data.Condition;
@@ -44,7 +45,6 @@ import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
-import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class OrderUpdateActivity extends OrderEditActivity {
     private TextView txtId;
@@ -53,7 +53,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
     private EditText edtActDeliverDate;
 
     private String orderId, salesId;
-    private int conditionId;
+    private int conditionId, newConditionId;
 
     private ArrayList<Condition> conditions;
     private ArrayList<String> conditionNames;
@@ -77,7 +77,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    conditionId = conditions.get(position).getId();
+                    newConditionId = conditions.get(position).getId();
                     if (conditions.get(position).getCondition().equals("已完成"))
                         layActDeliverDate.setVisibility(View.VISIBLE);
                     else
@@ -202,6 +202,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
         spnOrderCondition.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, conditionNames));
         for (int i = 0; i < conditionNames.size(); i++) {
             if (conditionNames.get(i).equals(order.getCondition())) {
+                conditionId = i;
                 spnOrderCondition.setSelection(i);
                 break;
             }
@@ -260,6 +261,11 @@ public class OrderUpdateActivity extends OrderEditActivity {
         if (!isInfoValid())
             return;
 
+        if (newConditionId == 0) {
+            Toast.makeText(context, "未選擇訂單狀態", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         conn = new MyOkHttp(OrderUpdateActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
@@ -271,6 +277,18 @@ public class OrderUpdateActivity extends OrderEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+
+                        //發送新訂單狀態給負責業務
+                        if (newConditionId != conditionId) {
+                            RequestManager.getInstance(OrderUpdateActivity.this).prepareNotification(
+                                    salesId,
+                                    "訂單狀態更新",
+                                    getString(R.string.txt_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
+                                    null
+                            );
+                        }
+
+                        finish();
                     }else {
                         Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
@@ -283,7 +301,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
             setUploadReqObj();
             reqObj.put(KEY_ORDER_ID, orderId);
             reqObj.put(KEY_SALES, salesId);
-            reqObj.put(KEY_CONDITION, conditionId);
+            reqObj.put(KEY_CONDITION, newConditionId);
             reqObj.put(KEY_ACT_DELIVER_DATE, order.getActualDeliverDate());
             conn.execute(getString(R.string.link_edit_order), reqObj.toString());
         }catch (JSONException e) {

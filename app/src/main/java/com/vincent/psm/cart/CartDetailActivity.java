@@ -101,7 +101,7 @@ public class CartDetailActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         recyProduct = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        fabAdd = findViewById(R.id.fabAdd);
+        fabAdd = findViewById(R.id.fabAddOrder);
         fabInfo = findViewById(R.id.fabInfo);
         prgBar = findViewById(R.id.prgBar);
 
@@ -111,7 +111,7 @@ public class CartDetailActivity extends AppCompatActivity {
                 prepareOrder();
             }
         });
-        btnSubmit.setImageResource(R.drawable.icon_arrow_right);
+        btnSubmit.setImageResource(R.drawable.icon_create_order);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

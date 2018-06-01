@@ -91,9 +91,12 @@ public class MyOkHttp {
                             try {
                                 JSONObject resObj = new JSONObject(response.body().string());
                                 taskListener.onFinished(resObj);
-                            }catch (JSONException | IOException | NetworkOnMainThreadException e) {
+                            }catch (JSONException e) {
                                 Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
+                            }catch (IOException e) {
+                                Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }catch (NetworkOnMainThreadException e) {
+                                Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -117,46 +120,6 @@ public class MyOkHttp {
             }
         });
     }
-
-    /*
-    private void sendRequest() {
-        call.enqueue(new Callback() {
-            @Override
-            public void onResponse(Call call, final Response response) {
-                //連線成功
-                try {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                taskListener.onFinished(response.body().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (NetworkOnMainThreadException e) {
-                                //Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
-                } catch (NetworkOnMainThreadException e) {
-                    Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call call, final IOException e) {
-                //連線失敗
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Toast.makeText(activity, "連線失敗", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-                e.printStackTrace();
-            }
-        });
-    }
-    */
 
     public void setHeader(Map<String, String> header) {
         this.header = header;

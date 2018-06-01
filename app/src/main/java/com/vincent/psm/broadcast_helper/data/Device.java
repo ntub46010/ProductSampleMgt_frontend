@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Device implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String device;
+    private String platform;
     private String token;
 
     public Device() {
@@ -12,12 +12,12 @@ public class Device implements Serializable {
     }
 
     public Device(String token) {
-        this.device = "android";
+        this.platform = "android";
         this.token = token;
     }
 
-    public String getDevice() {
-        return device;
+    public String getPlatform() {
+        return platform;
     }
 
     public String getToken() {

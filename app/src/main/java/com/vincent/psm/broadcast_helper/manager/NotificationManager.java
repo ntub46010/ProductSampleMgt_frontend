@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.vincent.psm.BroadcastActivity;
+import com.vincent.psm.NotificationActivity;
 import com.vincent.psm.R;
 
 public class NotificationManager {
@@ -40,7 +41,7 @@ public class NotificationManager {
     }
 
     private Notification createNotification(Context context, Bitmap bitmap, String title, String message) {
-        Intent intent = new Intent(context.getApplicationContext(), BroadcastActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(), NotificationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context.getApplicationContext(),
                 0,
@@ -48,7 +49,6 @@ public class NotificationManager {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        //NotificationCompat.Style notificationStyle = createNotificationStyle(message, bitmap);
         Notification notification = mBuilder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -57,28 +57,12 @@ public class NotificationManager {
                 .setContentIntent(pendingIntent)
                 .setTicker(message)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                //.setStyle(notificationStyle) 將大圖示圖片附加在下面
                 .build();
         notification.flags |= Intent.FLAG_ACTIVITY_SINGLE_TOP;
         notification.defaults |= Notification.DEFAULT_VIBRATE;
 
         return notification;
     }
-
-    /*
-    private NotificationCompat.Style createNotificationStyle(String message, Bitmap picBitmap) {
-        //顯示大圖片
-        NotificationCompat.Style style;
-
-        if (picBitmap == null) {
-            style = new NotificationCompat.BigTextStyle().bigText(message);
-        } else {
-            style = new NotificationCompat.BigPictureStyle().bigPicture(picBitmap).setSummaryText(message);
-        }
-
-        return style;
-    }
-    */
 
     private void notifyNotification(Context context, Notification notification) {
         if (notification != null) {

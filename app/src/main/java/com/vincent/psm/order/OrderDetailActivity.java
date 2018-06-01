@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +20,7 @@ import com.vincent.psm.data.Order;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
 import com.vincent.psm.product.ProductDetailActivity;
+import com.vincent.psm.product.ProductHomeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,15 +55,18 @@ import static com.vincent.psm.data.DataHelper.KEY_SUBTOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
+import static com.vincent.psm.data.DataHelper.authority;
+import static com.vincent.psm.data.DataHelper.defaultOrderId;
+import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class OrderDetailActivity extends AppCompatActivity {
     private Context context;
 
     private GridLayout layOrderInfo;
-    private TextView txtCustomerName, txtCustomerPhone, txtContactPerson, txtProductTotal, txtDeliverFee, txtCondition,
+    private TextView txtId, txtCustomerName, txtCustomerPhone, txtContactPerson, txtProductTotal, txtDeliverFee, txtCondition,
                     txtPreDeliverDate, txtActDeliverDate, txtDeliverPlace, txtPs, txtSalesName;
     private ListView lstProduct;
-    private FloatingActionButton fabUpdate;
+    private FloatingActionButton fabUpdate, fabAdd;
     private ProgressBar prgBar;
 
     private MyOkHttp conn;
@@ -96,6 +98,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         });
 
         layOrderInfo = findViewById(R.id.layOrderInfo);
+        txtId = findViewById(R.id.txtOrderId);
         txtCustomerName = findViewById(R.id.txtCustomerName);
         txtCustomerPhone = findViewById(R.id.txtCustomerPhone);
         txtContactPerson = findViewById(R.id.txtContactPerson);
@@ -109,6 +112,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtSalesName = findViewById(R.id.txtSalesName);
         lstProduct = findViewById(R.id.lstProduct);
         fabUpdate = findViewById(R.id.fabUpdate);
+        fabAdd = findViewById(R.id.fabAdd);
         prgBar = findViewById(R.id.prgBar);
 
         lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -117,6 +121,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                 Intent it = new Intent(context, ProductDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(KEY_ID, ((Tile) adapter.getItem(position)).getId());
+                bundle.putString(KEY_NAME, ((Tile) adapter.getItem(position)).getName());
                 it.putExtras(bundle);
                 startActivity(it);
             }
@@ -132,6 +137,18 @@ public class OrderDetailActivity extends AppCompatActivity {
                 startActivity(it);
             }
         });
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!orderId.equals(defaultOrderId))
+                    Toast.makeText(context, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
+
+                defaultOrderId = orderId;
+                defaultOrderName = order.getCustomerName();
+                startActivity(new Intent(context, ProductHomeActivity.class));
+            }
+        });
     }
 
     @Override
@@ -144,6 +161,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     private void loadData() {
         isShown = false;
         fabUpdate.hide();
+        fabAdd.hide();
         layOrderInfo.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
         conn = new MyOkHttp(OrderDetailActivity.this, new MyOkHttp.TaskListener() {
@@ -209,6 +227,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private void showData() {
         //訂單摘要
+        txtId.setText(orderId);
         txtCustomerName.setText(order.getCustomerName());
         txtCustomerPhone.setText(order.getCustomerPhone());
         txtContactPerson.setText(getString(R.string.txt_contact, order.getContactPerson(), order.getContactPhone()));
@@ -225,9 +244,18 @@ public class OrderDetailActivity extends AppCompatActivity {
         adapter = new OrderDetailListAdapter(context, tiles);
         lstProduct.setAdapter(adapter);
 
+        /*
+        if (authority == 2) {
+            fabUpdate.show();
+            fabAdd.show();
+        }
+        */
+
+        fabUpdate.show();
+        fabAdd.show();
+
         prgBar.setVisibility(View.GONE);
         layOrderInfo.setVisibility(View.VISIBLE);
-        fabUpdate.show();
         isShown = true;
     }
 

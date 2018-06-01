@@ -170,6 +170,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 prgBar.setVisibility(View.GONE);
                 btnLogin.setVisibility(View.VISIBLE);
+                edtAcc.setEnabled(true);
+                edtPwd.setEnabled(true);
+                chkAutoLogin.setEnabled(true);
                 startActivity(it);
                 waitingForToken = false;
             }else {
@@ -179,6 +182,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(context, "連線逾時，請重新登入", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     btnLogin.setVisibility(View.VISIBLE);
+                    edtAcc.setEnabled(true);
+                    edtPwd.setEnabled(true);
+                    chkAutoLogin.setEnabled(true);
                     waitingForToken = false;
                 }
             }
@@ -191,6 +197,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
                 btnLogin.setVisibility(View.INVISIBLE);
                 prgBar.setVisibility(View.VISIBLE);
+                edtAcc.setEnabled(false);
+                edtPwd.setEnabled(false);
+                chkAutoLogin.setEnabled(false);
                 login(edtAcc.getText().toString(), edtPwd.getText().toString());
                 break;
         }

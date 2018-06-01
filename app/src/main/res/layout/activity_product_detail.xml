@@ -135,10 +135,17 @@
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabCart"
+        android:id="@+id/fabAddOrder"
         style="@style/fab"
-        android:layout_marginEnd="26dp"
-        app:srcCompat="@drawable/icon_cart"
+        android:layout_marginEnd="80dp"
+        app:srcCompat="@drawable/icon_add_order"
+        app:fabSize="normal"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddCart"
+        style="@style/fab"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/icon_add_cart"
         app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

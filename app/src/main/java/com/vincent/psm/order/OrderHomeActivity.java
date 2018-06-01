@@ -1,6 +1,8 @@
 package com.vincent.psm.order;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +33,8 @@ import static com.vincent.psm.data.DataHelper.KEY_PRE_DELIVER_DATE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
-import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
+import static com.vincent.psm.data.DataHelper.defaultOrderId;
+import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class OrderHomeActivity extends AppCompatActivity {
     private Context context;
@@ -85,6 +88,26 @@ public class OrderHomeActivity extends AppCompatActivity {
                 startActivity(it);
             }
         });
+        lstOrder.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Order order = (Order) adapter.getItem(position);
+                AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+                msgbox.setTitle("訂單")
+                        .setMessage("要設定為預設訂單嗎？")
+                        .setCancelable(true)
+                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                defaultOrderId = order.getId();
+                                defaultOrderName = order.getCustomerName();
+                            }
+                        })
+                        .setNegativeButton("否", null)
+                        .show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -125,6 +148,7 @@ public class OrderHomeActivity extends AppCompatActivity {
                         showData();
                     }else {
                         Toast.makeText(context, "沒有訂單", Toast.LENGTH_SHORT).show();
+                        prgBar.setVisibility(View.GONE);
                     }
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();

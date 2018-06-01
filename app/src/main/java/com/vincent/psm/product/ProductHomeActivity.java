@@ -183,8 +183,10 @@ public class ProductHomeActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        adapter.destroy(true);
-        adapter = null;
+        if (adapter != null) {
+            adapter.destroy(true);
+            adapter = null;
+        }
         System.gc();
         super.onDestroy();
     }
