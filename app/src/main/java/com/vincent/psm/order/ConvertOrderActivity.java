@@ -1,5 +1,6 @@
 package com.vincent.psm.order;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
+import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Customer;
+import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
 
 import org.json.JSONArray;
@@ -17,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMERS;
@@ -24,12 +28,14 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_ADDRESS;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
 import static com.vincent.psm.data.DataHelper.KEY_SALES;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
+import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_WAREHOUSE;
@@ -86,10 +92,12 @@ public class ConvertOrderActivity extends OrderEditActivity {
                         //倉管人員
                         JSONArray aryWarehouse = resObj.getJSONArray(KEY_WAREHOUSE);
                         warehouses = new ArrayList<>();
-                        for (int i = 0; i < warehouses.size(); i++) {
+                        for (int i = 0; i < aryWarehouse.length(); i++) {
                             JSONObject obj = aryWarehouse.getJSONObject(i);
                             warehouses.add(obj.getString(KEY_ID));
                         }
+
+                        showData();
                     }else {
                         Toast.makeText(context, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
                         showData();
@@ -99,7 +107,7 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 }
             }
         });
-        conn.execute(getString(R.string.link_show_customers));
+        conn.execute(getString(R.string.link_show_customers_warehouses));
     }
 
     @Override
@@ -155,6 +163,16 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+                        //發送新訂單推播給倉管人員
+                        for (String warehouse: warehouses) {
+                            RequestManager.getInstance(ConvertOrderActivity.this).prepareNotification(
+                                    warehouse,
+                                    "新訂單",
+                                    getString(R.string.txt_new_order, order.getCustomerName()),
+                                    null
+                            );
+                        }
+
                         Intent it = new Intent(context, OrderDetailActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString(KEY_ORDER_ID, String.valueOf(resObj.getInt(KEY_ORDER_ID)));

@@ -67,6 +67,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void login(final String account, final String password) {
+        btnLogin.setVisibility(View.INVISIBLE);
+        prgBar.setVisibility(View.VISIBLE);
+        edtAcc.setEnabled(false);
+        edtPwd.setEnabled(false);
+        chkAutoLogin.setEnabled(false);
+
         conn = new MyOkHttp(LoginActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
@@ -195,11 +201,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
-                btnLogin.setVisibility(View.INVISIBLE);
-                prgBar.setVisibility(View.VISIBLE);
-                edtAcc.setEnabled(false);
-                edtPwd.setEnabled(false);
-                chkAutoLogin.setEnabled(false);
                 login(edtAcc.getText().toString(), edtPwd.getText().toString());
                 break;
         }

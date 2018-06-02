@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/layout_padding">
+
+    <TableRow
+        android:layout_marginBottom="5dp">
+        <TextView
+            android:text="主旨："
+            android:textSize="16sp"
+            android:textColor="#000000"/>
+        <TextView
+            android:id="@+id/txtTitle"
+            android:textSize="16sp"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_marginBottom="5dp">
+        <TextView
+            android:text="內容："
+            android:textSize="16sp"
+            android:textColor="#000000"/>
+        <TextView
+            android:id="@+id/txtContent"
+            android:textSize="16sp"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_marginBottom="5dp">
+        <TextView
+            android:text="時間："
+            android:textSize="16sp"
+            android:textColor="#000000"/>
+        <TextView
+            android:id="@+id/txtCreateTime"
+            android:textSize="16sp"/>
+    </TableRow>
+
+</TableLayout>

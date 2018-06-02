@@ -8,8 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
-import com.vincent.psm.BroadcastActivity;
-import com.vincent.psm.NotificationActivity;
+import com.vincent.psm.Notification.NotificationActivity;
 import com.vincent.psm.R;
 
 public class NotificationManager {

@@ -73,7 +73,7 @@ public class StockListAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(layout, parent, false);
 
         LinearLayout linearLayout = convertView.findViewById(R.id.layBookSummary);
-        ImageView imgBookPic = convertView.findViewById(R.id.imgBookSummaryPic);
+        ImageView imgBookPic = convertView.findViewById(R.id.imgProduct);
         TextView txtId = convertView.findViewById(R.id.txtId);
         TextView txtName = convertView.findViewById(R.id.txtProductName);
 

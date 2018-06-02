@@ -2,6 +2,7 @@ package com.vincent.psm.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
-import com.vincent.psm.adapter.OrderDetailListAdapter;
+import com.vincent.psm.adapter.OrderItemListAdapter;
 import com.vincent.psm.data.Order;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
@@ -55,7 +56,6 @@ import static com.vincent.psm.data.DataHelper.KEY_SUBTOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
-import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.defaultOrderId;
 import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
@@ -72,7 +72,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     private MyOkHttp conn;
 
     private ArrayList<Tile> tiles;
-    private OrderDetailListAdapter adapter;
+    private OrderItemListAdapter adapter;
     private Order order;
     private String orderId;
 
@@ -240,8 +240,20 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtPs.setText(order.getPs());
         txtSalesName.setText(order.getSalesName());
 
+        switch (order.getCondition()) {
+            case "待處理":
+                txtCondition.setTextColor(Color.parseColor("#FF5050"));
+                break;
+            case "已完成":
+                txtCondition.setTextColor(Color.parseColor("#00A000"));
+                break;
+            default:
+                txtCondition.setTextColor(Color.parseColor("#CC9900"));
+                break;
+        }
+
         //產品明細
-        adapter = new OrderDetailListAdapter(context, tiles);
+        adapter = new OrderItemListAdapter(context, tiles);
         lstProduct.setAdapter(adapter);
 
         /*

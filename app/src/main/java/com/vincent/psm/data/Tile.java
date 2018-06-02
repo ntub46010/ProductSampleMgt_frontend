@@ -26,12 +26,13 @@ public class Tile extends ImageObj {
     }
 
     //購物車列表
-    public Tile(String id, String photo, String name, int amount, int subTotal) {
+    public Tile(String id, String photo, String name, int amount, int subTotal, String stock) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
         this.amount = amount;
         this.subTotal = subTotal;
+        this.stock = stock;
     }
 
     //新增產品、產品詳情
@@ -124,6 +125,10 @@ public class Tile extends ImageObj {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

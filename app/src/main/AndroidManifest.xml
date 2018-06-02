@@ -47,7 +47,7 @@
         <activity android:name=".order.OrderHomeActivity" />
         <activity android:name=".order.OrderDetailActivity" />
         <activity android:name=".order.OrderUpdateActivity" />
-        <activity android:name=".NotificationActivity"></activity>
+        <activity android:name=".Notification.NotificationActivity"></activity>
     </application>
 
 </manifest>

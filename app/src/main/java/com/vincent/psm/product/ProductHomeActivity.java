@@ -126,7 +126,7 @@ public class ProductHomeActivity extends AppCompatActivity {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         tiles = new ArrayList<>();
                         JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i=0; i<ary.length(); i++) {
+                        for (int i = 0; i < ary.length(); i++) {
                             JSONObject obj = ary.getJSONObject(i);
                             tiles.add(new Tile(
                                     obj.getString(KEY_ID),

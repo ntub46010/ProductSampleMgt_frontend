@@ -14,12 +14,12 @@ import java.util.ArrayList;
 
 import static com.vincent.psm.data.DataHelper.Comma;
 
-public class OrderDetailListAdapter extends BaseAdapter {
+public class OrderItemListAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
     private ArrayList<Tile> tiles;
 
-    public OrderDetailListAdapter(Context context, ArrayList<Tile> tiles) {
+    public OrderItemListAdapter(Context context, ArrayList<Tile> tiles) {
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
         this.tiles = tiles;
@@ -51,7 +51,7 @@ public class OrderDetailListAdapter extends BaseAdapter {
         TextView txtAmount = view.findViewById(R.id.txtAmount);
         TextView txtSubTotal = view.findViewById(R.id.txtSubTotal);
 
-        Tile tile = tiles.get(position);
+        Tile tile = (Tile) getItem(position);
         txtId.setText(tile.getId());
         txtProductName.setText(tile.getName());
         txtSize.setText(context.getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));

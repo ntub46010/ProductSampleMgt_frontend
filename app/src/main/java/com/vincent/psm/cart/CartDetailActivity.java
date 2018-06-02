@@ -52,6 +52,7 @@ import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
+import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_SUBTOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
@@ -75,6 +76,7 @@ public class CartDetailActivity extends AppCompatActivity {
     private ProductDisplayAdapter adapter;
 
     private String cartId, cartName;
+    private StringBuffer exceedProducts;
     private boolean isShown = false;
 
     @Override
@@ -193,14 +195,14 @@ public class CartDetailActivity extends AppCompatActivity {
                                     obj.getString(KEY_PHOTO),
                                     obj.getString(KEY_NAME),
                                     obj.getInt(KEY_AMOUNT),
-                                    obj.getInt(KEY_SUBTOTAL)
+                                    obj.getInt(KEY_SUBTOTAL),
+                                    obj.getString(KEY_STOCK)
                             ));
                         }
-                        showData();
                     }else {
                         Toast.makeText(context, "購物車內無產品", Toast.LENGTH_SHORT).show();
-                        showData();
                     }
+                    showData();
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
@@ -231,7 +233,7 @@ public class CartDetailActivity extends AppCompatActivity {
         btnSubmit.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
         recyProduct.setVisibility(View.VISIBLE);
-        tiles = null;
+        //tiles = null;
         isShown = true;
     }
 
@@ -391,14 +393,20 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void prepareOrder() {
+        //理想做法應該要在建立訂單頁面點擊送出後，先確認庫存才可下單
+        if (!isStockEnough())
+            return;
+
         //產生產品陣列的JSON
         JSONArray ary = new JSONArray();
         try {
             JSONObject obj;
+            Tile tile;
             for (int i = 0; i < adapter.getItemCount(); i++) {
+                tile = adapter.getItem(i);
                 obj = new JSONObject();
-                obj.put(KEY_ID, adapter.getItem(i).getId());
-                obj.put(KEY_AMOUNT, adapter.getItem(i).getAmount());
+                obj.put(KEY_ID, tile.getId());
+                obj.put(KEY_AMOUNT, tile.getAmount());
                 ary.put(obj);
             }
         }catch (JSONException e) {
@@ -442,6 +450,27 @@ public class CartDetailActivity extends AppCompatActivity {
             return false;
         }else {
             return true;
+        }
+    }
+
+    private boolean isStockEnough() {
+        exceedProducts = new StringBuffer();
+        Tile tile;
+        for (int i = 0; i < tiles.size(); i++) {
+            tile = tiles.get(i);
+            if (tile.getAmount() > Integer.parseInt(tile.getStock()))
+                exceedProducts.append(tile.getName()).append("\n");
+        }
+
+        if (exceedProducts.length() == 0)
+            return true;
+        else {
+            AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+            msgbox.setTitle("建立訂單")
+                    .setMessage("以下產品庫存不足，無法下單：\n" + exceedProducts.toString())
+                    .setPositiveButton("確定", null)
+                    .show();
+            return false;
         }
     }
 

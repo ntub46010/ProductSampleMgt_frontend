@@ -1,10 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotificationActivity">
+    android:orientation="vertical"
+    tools:context=".Notification.NotificationActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/toolbar"
+        android:paddingEnd="65dp"
+        app:titleTextColor="#FFFFFF"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <view
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            class="android.support.v4.widget.SwipeRefreshLayout"
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:enabled="false">
+            <ListView
+                android:id="@+id/lstNotification"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </view>
+
+        <ProgressBar
+            android:id="@+id/prgBar"
+            style="@style/prg_normal"/>
+
+    </FrameLayout>
+
+</RelativeLayout>

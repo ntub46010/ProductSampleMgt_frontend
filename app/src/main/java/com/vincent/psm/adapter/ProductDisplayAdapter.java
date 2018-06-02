@@ -114,12 +114,13 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
         dataViewHolder.imgProduct.setImageBitmap((tiles.get(i)).getImg());
         dataViewHolder.txtProductName.setText((tiles.get(i)).getName());
 
-        if (tiles.get(i).getLength() != null) { //產品首頁
-            dataViewHolder.txtProductSize.setText(context.getString(R.string.txt_product_size, (tiles.get(i)).getLength(), (tiles.get(i)).getWidth(), (tiles.get(i)).getThick()));
-            dataViewHolder.txtProductPrice.setText("$ " + Comma(tiles.get(i).getPrice()));
+        Tile tile = tiles.get(i);
+        if (tile.getLength() != null) { //產品首頁
+            dataViewHolder.txtProductSize.setText(context.getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));
+            dataViewHolder.txtProductPrice.setText("$ " + Comma(tile.getPrice()));
         }else if (tiles.get(i).getSubTotal() != -1) { //購物車明細
-            dataViewHolder.txtProductSize.setText(Comma(String.valueOf(tiles.get(i).getAmount())) + " 個");
-            dataViewHolder.txtProductPrice.setText("$ " + Comma(String.valueOf(tiles.get(i).getSubTotal())));
+            dataViewHolder.txtProductSize.setText(Comma(String.valueOf(tile.getAmount())) + " 個");
+            dataViewHolder.txtProductPrice.setText("$ " + Comma(String.valueOf(tile.getSubTotal())));
         }
 
         lastPosition = i;

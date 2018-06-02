@@ -8,12 +8,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.vincent.psm.Notification.NotificationActivity;
 import com.vincent.psm.adapter.MainFunctionAdapter;
 import com.vincent.psm.cart.CartHomeActivity;
 import com.vincent.psm.order.OrderHomeActivity;
@@ -23,7 +22,6 @@ import com.vincent.psm.product.ProductMgtActivity;
 import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
-import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.currentTokenIndex;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 

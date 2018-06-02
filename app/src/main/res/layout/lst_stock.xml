@@ -9,7 +9,7 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/imgBookSummaryPic"
+        android:id="@+id/imgProduct"
         android:layout_width="60dp"
         android:layout_height="80dp"
         android:scaleType="centerCrop"
@@ -36,7 +36,8 @@
             android:layout_weight="1"
             android:paddingBottom="6dp"
             android:gravity="center_vertical"
-            android:textSize="19sp"/>
+            android:textSize="19sp"
+            android:ellipsize="end"/>
     </LinearLayout>
 
 </LinearLayout>
