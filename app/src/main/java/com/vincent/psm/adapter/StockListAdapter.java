@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,24 +77,30 @@ public class StockListAdapter extends BaseAdapter {
         ImageView imgBookPic = convertView.findViewById(R.id.imgProduct);
         TextView txtId = convertView.findViewById(R.id.txtId);
         TextView txtName = convertView.findViewById(R.id.txtProductName);
+        TextView txtStock = convertView.findViewById(R.id.txtStock);
 
         if (tiles.get(i).getOnSale())
             linearLayout.setBackgroundColor(res.getColor(R.color.lst_stock_onsale));
         else
             linearLayout.setBackgroundColor(res.getColor(R.color.lst_stock_offsale));
 
-        imgBookPic.setImageBitmap(tiles.get(i).getImg());
-        txtId.setText(tiles.get(i).getId());
-        txtName.setText(tiles.get(i).getName());
+        Tile tile = (Tile) getItem(i);
+        imgBookPic.setImageBitmap(tile.getImg());
+        txtId.setText(tile.getId());
+        txtName.setText(tile.getName());
+        txtStock.setText(tile.getStock() + " / " + tile.getSafeStock());
+
+        if (Integer.parseInt(tile.getStock()) < Integer.parseInt(tile.getSafeStock()))
+            txtStock.setTextColor(Color.parseColor("#FF5050"));
 
         //依滑動方向檢查圖片
         if (i > lastPosition) { //往下滑
-            if (tiles.get(i).getImg() == null) { //若發現沒圖片
+            if (tile.getImg() == null) { //若發現沒圖片
                 setGetBitmapTask(i, imgBookPic); //指派下載器給該項目，放入佇列自動下載
                 queue.enqueueFromRear(tiles.get(i));
             }
         }else { //往上滑
-            if (tiles.get(i).getImg() == null) { //若發現沒圖片
+            if (tile.getImg() == null) { //若發現沒圖片
                 setGetBitmapTask(i, imgBookPic); //指派下載器給該項目，放入佇列自動下載
                 queue.enqueueFromFront(tiles.get(i));
             }

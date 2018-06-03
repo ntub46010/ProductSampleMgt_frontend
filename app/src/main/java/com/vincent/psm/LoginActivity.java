@@ -107,10 +107,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void writeAutoLoginRecord(String account, String password) {
+        sp.edit()
+                .putString(getString(R.string.sp_login_user), account)
+                .apply();
         if (chkAutoLogin.isChecked()) {
             sp.edit()
                     .putBoolean(getString(R.string.sp_auto_login), true)
-                    .putString(getString(R.string.sp_login_user), account)
                     .putString(getString(R.string.sp_login_password), password)
                     .apply();
         }

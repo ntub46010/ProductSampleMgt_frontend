@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#A95d39</color>
+    <color name="colorPrimaryDark">#803815</color>
+    <color name="colorAccent">#D48D6A</color>
 
     <color name="bg_header">@color/colorPrimary</color>
 
-    <color name="blue1">#80CCFF</color>
-    <color name="card_product">#C080CCFF</color> <!--商品首頁清單-->
+    <color name="card_product">#F9C0A4</color> <!--商品首頁清單#C080CCFF-->
 
     <color name="lst_stock_onsale">#FAFAFA</color><!--商品管理清單-->
     <color name="lst_stock_offsale">#DDDDDD</color>

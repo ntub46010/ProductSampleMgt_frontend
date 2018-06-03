@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CONTENT;
 import static com.vincent.psm.data.DataHelper.KEY_CREATE_TIME;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
@@ -47,6 +48,7 @@ public class NotificationActivity extends AppCompatActivity {
     private ArrayList<Notification> notifications;
     private NotificationListAdapter adapter;
 
+    private String userId;
     private boolean isShown = false;
 
     @Override
@@ -84,6 +86,12 @@ public class NotificationActivity extends AppCompatActivity {
                 showNotification(position);
             }
         });
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && !bundle.getString(KEY_ACCOUNT).equals("")) { //由推播進入
+            userId = bundle.getString(KEY_ACCOUNT);
+        }else //非經由推播進入
+            userId = loginUserId;
     }
 
     @Override
@@ -131,7 +139,7 @@ public class NotificationActivity extends AppCompatActivity {
         });
         try {
             JSONObject reqObj = new JSONObject();
-            reqObj.put(KEY_USER_ID, loginUserId);
+            reqObj.put(KEY_USER_ID, userId);
             conn.execute(getString(R.string.link_list_notifications), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();

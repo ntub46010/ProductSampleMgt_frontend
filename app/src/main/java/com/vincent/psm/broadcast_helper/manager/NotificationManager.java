@@ -4,12 +4,16 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.vincent.psm.Notification.NotificationActivity;
 import com.vincent.psm.R;
+
+import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
 
 public class NotificationManager {
     public static final int NOTIFICATION_ID = -Integer.MAX_VALUE;
@@ -40,11 +44,17 @@ public class NotificationManager {
     }
 
     private Notification createNotification(Context context, Bitmap bitmap, String title, String message) {
-        Intent intent = new Intent(context.getApplicationContext(), NotificationActivity.class);
+        //取得最後登入的帳號，讓點擊後能開啟該帳號的通知
+        SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.sp_filename), Context.MODE_PRIVATE);
+        Intent it = new Intent(context.getApplicationContext(), NotificationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_ACCOUNT, sp.getString(context.getString(R.string.sp_login_user), ""));
+        it.putExtras(bundle);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context.getApplicationContext(),
                 0,
-                intent,
+                it,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);

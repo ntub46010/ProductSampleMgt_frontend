@@ -1,6 +1,7 @@
 package com.vincent.psm.order;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -73,6 +74,7 @@ public abstract class OrderEditActivity extends AppCompatActivity {
     protected ArrayList<Contact> contacts;
     protected ArrayAdapter<String> adpContact;
 
+    protected Dialog dlgUpload;
     protected boolean isShown = false;
 
     protected abstract void loadData();
@@ -143,6 +145,8 @@ public abstract class OrderEditActivity extends AppCompatActivity {
                 uploadOrder();
             }
         });
+
+        prepareDialog();
     }
 
     @Override
@@ -264,6 +268,14 @@ public abstract class OrderEditActivity extends AppCompatActivity {
         reqObj.put(KEY_PRE_DELIVER_DATE, order.getPredictDeliverDate());
         reqObj.put(KEY_DELIVER_PLACE, order.getDeliverPlace());
         reqObj.put(KEY_PS, order.getPs());
+    }
+
+    protected void prepareDialog() {
+        dlgUpload = new Dialog(context);
+        dlgUpload.setContentView(R.layout.dlg_uploading);
+        dlgUpload.setCancelable(false);
+        TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);
+        txtUploadHint.setText("上傳中...");
     }
 
     public void onRadioSelect (View view) {

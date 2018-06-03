@@ -271,7 +271,6 @@ public class OrderUpdateActivity extends OrderEditActivity {
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
@@ -283,7 +282,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
                             RequestManager.getInstance(OrderUpdateActivity.this).prepareNotification(
                                     salesId,
                                     "訂單狀態更新",
-                                    getString(R.string.txt_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
+                                    getString(R.string.text_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
                                     null
                             );
                         }
@@ -295,6 +294,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
+                dlgUpload.dismiss();
             }
         });
         try {
@@ -304,6 +304,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
             reqObj.put(KEY_CONDITION, newConditionId);
             reqObj.put(KEY_ACT_DELIVER_DATE, order.getActualDeliverDate());
             conn.execute(getString(R.string.link_edit_order), reqObj.toString());
+            dlgUpload.show();
         }catch (JSONException e) {
             e.printStackTrace();
         }

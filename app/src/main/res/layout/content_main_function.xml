@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:background="@color/blue1"
+        android:background="@color/colorAccent"
         android:foreground="?android:attr/selectableItemBackground">
 
         <ImageView
@@ -30,6 +30,7 @@
             android:layout_marginTop="5dp"
             android:paddingBottom="7.5dp"
             android:textSize="18sp"
+            android:textColor="#000000"
             android:maxLines="1"/>
 
     </LinearLayout>

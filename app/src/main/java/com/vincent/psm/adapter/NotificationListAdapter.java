@@ -48,7 +48,7 @@ public class NotificationListAdapter extends BaseAdapter {
         Notification notify = (Notification) getItem(position);
         txtTitle.setText(notify.getTitle());
         txtContent.setText(notify.getContent());
-        txtTime.setText(notify.getCreateTime().replace("-", "/"));
+        txtTime.setText(notify.getCreateTime().substring(5, notify.getCreateTime().length()).replace("-", "/"));
 
         return view;
     }

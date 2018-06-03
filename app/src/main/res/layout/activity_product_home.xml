@@ -23,8 +23,7 @@
             android:layout_below="@id/toolbar">
 
             <include
-                layout="@layout/content_product_display"
-                android:paddingBottom="35dp"/>
+                layout="@layout/content_product_display"/>
 
             <ProgressBar
                 android:id="@+id/prgBar"

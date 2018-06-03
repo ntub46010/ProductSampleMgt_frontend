@@ -89,19 +89,18 @@ public class MyOkHttp {
                         @Override
                         public void run() {
                             try {
-                                JSONObject resObj = new JSONObject(response.body().string());
-                                taskListener.onFinished(resObj);
+                                taskListener.onFinished(new JSONObject(response.body().string()));
                             }catch (JSONException e) {
                                 Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
                             }catch (IOException e) {
-                                Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }catch (NetworkOnMainThreadException e) {
-                                Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 }catch (NetworkOnMainThreadException e) {
-                    Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }

@@ -7,10 +7,12 @@ public class Tile extends ImageObj {
     private boolean onSale = false;
 
     //產品管理
-    public Tile(String id, String photo, String name, boolean onSale) {
+    public Tile(String id, String photo, String name, String stock, String safeStock, boolean onSale) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
+        this.stock = stock;
+        this.safeStock = safeStock;
         this.onSale = onSale;
     }
 

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
+import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.ImageChild;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.ImageDownloader;
@@ -26,6 +27,7 @@ import static com.vincent.psm.data.DataHelper.KEY_COLOR;
 import static com.vincent.psm.data.DataHelper.KEY_COLORS;
 import static com.vincent.psm.data.DataHelper.KEY_EDIT_MODE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
+import static com.vincent.psm.data.DataHelper.KEY_IS_LOWER;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIAL;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIALS;
@@ -35,6 +37,7 @@ import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_INFO;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
+import static com.vincent.psm.data.DataHelper.KEY_ProductAdmin;
 import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_STOCK;
@@ -48,6 +51,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
     private RadioButton rdoOnStock, rdoOffStock;
 
     private ImageDownloader imageLoader;
+    private ArrayList<String> productAdmins;
 
     private byte editMode = 1;
 
@@ -120,6 +124,12 @@ public class ProductUpdateActivity extends ProductEditActivity {
                             materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
                         for (int i=0; i<aryColor.length(); i++)
                             colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+
+                        //載入產品管理員
+                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                        productAdmins = new ArrayList<>();
+                        for (int i = 0; i < aryAdmin.length(); i++)
+                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
 
                         //載入產品詳情
                         JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
@@ -240,13 +250,26 @@ public class ProductUpdateActivity extends ProductEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         if (editMode == 1 || editMode == 2) {
+                            Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+
+                            //發送庫存不足推播給管理員
+                            if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                for (String admin : productAdmins) {
+                                    RequestManager.getInstance(ProductUpdateActivity.this).prepareNotification(
+                                            admin,
+                                            getString(R.string.title_stock_lower),
+                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), tile.getStock()),
+                                            null
+                                    );
+                                }
+                            }
+
                             Intent it = new Intent(context, ProductDetailActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putString(KEY_ID, tile.getId());
                             bundle.putString(KEY_NAME, tile.getName());
                             it.putExtras(bundle);
                             startActivity(it);
-                            Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
                         }else if (editMode == 3) {
                             Toast.makeText(context, "下架成功", Toast.LENGTH_SHORT).show();
                         }

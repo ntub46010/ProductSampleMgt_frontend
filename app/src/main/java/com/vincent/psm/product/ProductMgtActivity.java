@@ -29,7 +29,9 @@ import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_PHOTO;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
+import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
+import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 
 public class ProductMgtActivity extends AppCompatActivity {
@@ -126,13 +128,15 @@ public class ProductMgtActivity extends AppCompatActivity {
                                     obj.getString(KEY_ID),
                                     obj.getString(KEY_PHOTO),
                                     obj.getString(KEY_NAME),
+                                    obj.getString(KEY_STOCK),
+                                    obj.getString(KEY_SAFE_STOCK),
                                     obj.getInt(KEY_ONSALE) == 1
                             ));
                         }
-                        showData();
                     }else {
                         Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
                     }
+                    showData();
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }

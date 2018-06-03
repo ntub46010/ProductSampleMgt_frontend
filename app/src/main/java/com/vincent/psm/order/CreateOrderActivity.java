@@ -1,6 +1,5 @@
 package com.vincent.psm.order;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 import com.vincent.psm.R;
 import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Customer;
-import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
 
 import org.json.JSONArray;
@@ -20,7 +18,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMERS;
@@ -28,22 +25,22 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_ADDRESS;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
-import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.KEY_IS_LOWER;
 import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
+import static com.vincent.psm.data.DataHelper.KEY_ProductAdmin;
 import static com.vincent.psm.data.DataHelper.KEY_SALES;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
-import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_WAREHOUSE;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
-public class ConvertOrderActivity extends OrderEditActivity {
+public class CreateOrderActivity extends OrderEditActivity {
     private String productsJson;
-    private ArrayList<String> warehouses;
+    private ArrayList<String> warehouses, productAdmins;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +61,7 @@ public class ConvertOrderActivity extends OrderEditActivity {
         btnSubmit.setVisibility(View.GONE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conn = new MyOkHttp(ConvertOrderActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CreateOrderActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
@@ -89,13 +86,17 @@ public class ConvertOrderActivity extends OrderEditActivity {
                             customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
                         }
 
-                        //倉管人員
+                        //載入倉管人員
                         JSONArray aryWarehouse = resObj.getJSONArray(KEY_WAREHOUSE);
                         warehouses = new ArrayList<>();
-                        for (int i = 0; i < aryWarehouse.length(); i++) {
-                            JSONObject obj = aryWarehouse.getJSONObject(i);
-                            warehouses.add(obj.getString(KEY_ID));
-                        }
+                        for (int i = 0; i < aryWarehouse.length(); i++)
+                            warehouses.add(aryWarehouse.getJSONObject(i).getString(KEY_ID));
+
+                        //載入產品管理員
+                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                        productAdmins = new ArrayList<>();
+                        for (int i = 0; i < aryAdmin.length(); i++)
+                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
 
                         showData();
                     }else {
@@ -127,7 +128,7 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 }
                 edtCustomerPhone.setText(customers.get(index).getPhone());
                 edtCustomerAddress.setText(customers.get(index).getAddress());
-                loadContactData(ConvertOrderActivity.this, customers.get(index).getId());
+                loadContactData(CreateOrderActivity.this, customers.get(index).getId());
             }
         });
 
@@ -152,25 +153,37 @@ public class ConvertOrderActivity extends OrderEditActivity {
         if (!isInfoValid())
             return;
 
-        conn = new MyOkHttp(ConvertOrderActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(CreateOrderActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
                     Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+
                         //發送新訂單推播給倉管人員
                         for (String warehouse: warehouses) {
-                            RequestManager.getInstance(ConvertOrderActivity.this).prepareNotification(
+                            RequestManager.getInstance(CreateOrderActivity.this).prepareNotification(
                                     warehouse,
-                                    "新訂單",
-                                    getString(R.string.txt_new_order, order.getCustomerName()),
+                                    getString(R.string.title_new_order),
+                                    getString(R.string.text_new_order, order.getCustomerName()),
                                     null
                             );
+
+                            //發送庫存不足推播給管理員
+                            if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                for (String admin : productAdmins) {
+                                    RequestManager.getInstance(CreateOrderActivity.this).prepareNotification(
+                                            admin,
+                                            getString(R.string.title_stock_lower),
+                                            getString(R.string.text_some_stock_lower),
+                                            null
+                                    );
+                                }
+                            }
                         }
 
                         Intent it = new Intent(context, OrderDetailActivity.class);
@@ -185,6 +198,7 @@ public class ConvertOrderActivity extends OrderEditActivity {
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
+                dlgUpload.dismiss();
             }
         });
         try {
@@ -192,6 +206,7 @@ public class ConvertOrderActivity extends OrderEditActivity {
             reqObj.put(KEY_SALES, loginUserId);
             reqObj.put(KEY_PRODUCTS, new JSONArray(productsJson));
             conn.execute(getString(R.string.link_create_order), reqObj.toString());
+            dlgUpload.show();
         }catch (JSONException e) {
             e.printStackTrace();
         }

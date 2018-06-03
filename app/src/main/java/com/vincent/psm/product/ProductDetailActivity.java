@@ -17,12 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vincent.psm.R;
+import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.ImageDownloader;
 import com.vincent.psm.network_helper.MyOkHttp;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import static com.vincent.psm.data.DataHelper.Comma;
 import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
@@ -30,6 +34,7 @@ import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_COLOR;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_CART_AMOUNT;
+import static com.vincent.psm.data.DataHelper.KEY_IS_LOWER;
 import static com.vincent.psm.data.DataHelper.KEY_LENGTH;
 import static com.vincent.psm.data.DataHelper.KEY_MATERIAL;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
@@ -41,13 +46,13 @@ import static com.vincent.psm.data.DataHelper.KEY_PRICE;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_INFO;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
+import static com.vincent.psm.data.DataHelper.KEY_ProductAdmin;
 import static com.vincent.psm.data.DataHelper.KEY_SAFE_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
-import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.defaultCartId;
 import static com.vincent.psm.data.DataHelper.defaultCartName;
 import static com.vincent.psm.data.DataHelper.defaultOrderId;
@@ -67,6 +72,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private MyOkHttp conn;
     private ImageDownloader imageLoader;
     private Tile tile;
+    private ArrayList<String> productAdmins;
 
     private boolean isShown = false;
 
@@ -145,9 +151,15 @@ public class ProductDetailActivity extends AppCompatActivity {
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        //檢查是否在購物車
+                        //購物車或訂單內數量
                         currentCartAmount = resObj.getInt(KEY_CART_AMOUNT);
                         currentOrderAmount = resObj.getInt(KEY_ORDER_AMOUNT);
+
+                        //載入產品管理員
+                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                        productAdmins = new ArrayList<>();
+                        for (int i = 0; i < aryAdmin.length(); i++)
+                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
 
                         //產品詳情
                         JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
@@ -174,7 +186,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                         });
                         imageLoader.execute(tile);
                     }else {
-                        Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "商品不存在或沒有產品管理員", Toast.LENGTH_SHORT).show();
+                        showData();
                     }
                 }else {
                     Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
@@ -324,9 +337,21 @@ public class ProductDetailActivity extends AppCompatActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         currentOrderAmount = amount; //更新訂單內已有數量
-                        if (currentOrderAmount != 0)
+                        if (currentOrderAmount != 0) {
                             Toast.makeText(context, "訂單已更新", Toast.LENGTH_SHORT).show();
-                        else
+
+                            //發送庫存不足推播給管理員
+                            if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                for (String admin : productAdmins) {
+                                    RequestManager.getInstance(ProductDetailActivity.this).prepareNotification(
+                                            admin,
+                                            getString(R.string.title_stock_lower),
+                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), tile.getStock()),
+                                            null
+                                    );
+                                }
+                            }
+                        }else
                             Toast.makeText(context, "已從訂單移除", Toast.LENGTH_SHORT).show();
                     }else {
                         Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();

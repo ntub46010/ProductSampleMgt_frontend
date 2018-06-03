@@ -26,7 +26,7 @@ import com.vincent.psm.data.Cart;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
-import com.vincent.psm.order.ConvertOrderActivity;
+import com.vincent.psm.order.CreateOrderActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 
 import org.json.JSONArray;
@@ -413,7 +413,7 @@ public class CartDetailActivity extends AppCompatActivity {
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        Intent it = new Intent(context, ConvertOrderActivity.class);
+        Intent it = new Intent(context, CreateOrderActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SALES_NAME, cart.getSalesName());
         bundle.putString(KEY_CUSTOMER_NAME, cart.getCustomerName());
