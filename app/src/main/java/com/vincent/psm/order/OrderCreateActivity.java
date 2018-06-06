@@ -1,5 +1,6 @@
 package com.vincent.psm.order;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PERSON;
 import static com.vincent.psm.data.DataHelper.KEY_CONTACT_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMERS;
@@ -26,6 +28,7 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_IS_LOWER;
+import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_ORDER_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS_JSON;
@@ -38,7 +41,8 @@ import static com.vincent.psm.data.DataHelper.KEY_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_WAREHOUSE;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
-public class CreateOrderActivity extends OrderEditActivity {
+public class OrderCreateActivity extends OrderEditActivity {
+    private String cartId;
     private String productsJson;
     private ArrayList<String> warehouses, productAdmins;
 
@@ -46,8 +50,17 @@ public class CreateOrderActivity extends OrderEditActivity {
     protected void onCreate(Bundle savedInstanceState) {
         layout = R.layout.activity_convert_order;
         toolbarTitle = "建立訂單";
-        context = this;
+        activity = this;
         super.onCreate(savedInstanceState);
+
+        cartId = getIntent().getExtras().getString(KEY_CART_ID);
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prepareUpload();
+            }
+        });
     }
 
     @Override
@@ -61,11 +74,11 @@ public class CreateOrderActivity extends OrderEditActivity {
         btnSubmit.setVisibility(View.GONE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conn = new MyOkHttp(CreateOrderActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -100,11 +113,11 @@ public class CreateOrderActivity extends OrderEditActivity {
 
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
                         showData();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -114,7 +127,7 @@ public class CreateOrderActivity extends OrderEditActivity {
     @Override
     protected void showData() {
         //客戶清單
-        aetCustomerName.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, customerNames));
+        aetCustomerName.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, customerNames));
         aetCustomerName.setThreshold(1);
         aetCustomerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -128,7 +141,7 @@ public class CreateOrderActivity extends OrderEditActivity {
                 }
                 edtCustomerPhone.setText(customers.get(index).getPhone());
                 edtCustomerAddress.setText(customers.get(index).getAddress());
-                loadContactData(CreateOrderActivity.this, customers.get(index).getId());
+                loadContactData(OrderCreateActivity.this, customers.get(index).getId());
             }
         });
 
@@ -148,25 +161,73 @@ public class CreateOrderActivity extends OrderEditActivity {
         isShown = true;
     }
 
+    private void prepareUpload() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
+            @Override
+            public void onFinished(JSONObject resObj) throws JSONException {
+                if (resObj.length() == 0) {
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    prgBar.setVisibility(View.GONE);
+                    return;
+                }
+                if (resObj.getBoolean(KEY_STATUS)) {
+                    if (resObj.getBoolean(KEY_SUCCESS)) {
+                        uploadOrder();
+                    }else {
+                        dlgUpload.dismiss();
+
+                        StringBuffer msg = new StringBuffer();
+                        msg.append("以下產品庫存量不足：\n");
+
+                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                        for (int i = 0; i < ary.length(); i++) {
+                            JSONObject obj = ary.getJSONObject(i);
+                            msg.append(obj.getString(KEY_NAME)).append("\n");
+                        }
+
+                        AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
+                        msgbox.setTitle(toolbarTitle)
+                                .setMessage(msg.toString().substring(0, msg.length() - 1))
+                                .setCancelable(true)
+                                .show();
+                    }
+                }else {
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_CART_ID, cartId);
+            conn.execute(getString(R.string.link_list_cart_unenough_item), reqObj.toString());
+
+            txtUploadHint.setText("檢查庫存中...");
+            dlgUpload.show();
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void uploadOrder() {
         if (!isInfoValid())
             return;
 
-        conn = new MyOkHttp(CreateOrderActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
+                dlgUpload.dismiss();
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
 
                         //發送新訂單推播給倉管人員
                         for (String warehouse: warehouses) {
-                            RequestManager.getInstance(CreateOrderActivity.this).prepareNotification(
+                            RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
                                     warehouse,
                                     getString(R.string.title_new_order),
                                     getString(R.string.text_new_order, order.getCustomerName()),
@@ -176,7 +237,7 @@ public class CreateOrderActivity extends OrderEditActivity {
                             //發送庫存不足推播給管理員
                             if (resObj.getBoolean(KEY_IS_LOWER)) {
                                 for (String admin : productAdmins) {
-                                    RequestManager.getInstance(CreateOrderActivity.this).prepareNotification(
+                                    RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
                                             admin,
                                             getString(R.string.title_stock_lower),
                                             getString(R.string.text_some_stock_lower),
@@ -186,19 +247,18 @@ public class CreateOrderActivity extends OrderEditActivity {
                             }
                         }
 
-                        Intent it = new Intent(context, OrderDetailActivity.class);
+                        Intent it = new Intent(activity, OrderDetailActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString(KEY_ORDER_ID, String.valueOf(resObj.getInt(KEY_ORDER_ID)));
                         it.putExtras(bundle);
                         startActivity(it);
                         finish();
                     }else {
-                        Toast.makeText(context, "建立失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "建立失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
-                dlgUpload.dismiss();
             }
         });
         try {
@@ -206,6 +266,8 @@ public class CreateOrderActivity extends OrderEditActivity {
             reqObj.put(KEY_SALES, loginUserId);
             reqObj.put(KEY_PRODUCTS, new JSONArray(productsJson));
             conn.execute(getString(R.string.link_create_order), reqObj.toString());
+
+            txtUploadHint.setText("上傳中...");
             dlgUpload.show();
         }catch (JSONException e) {
             e.printStackTrace();

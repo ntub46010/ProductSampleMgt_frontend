@@ -25,6 +25,7 @@ public class MyOkHttp {
     private OkHttpClient client;
     private Map<String, String> header = null;
     private Call call;
+    private boolean safely = false;
 
     // 宣告一個接收回傳結果的程式必須實作的介面
     public interface TaskListener {
@@ -84,24 +85,15 @@ public class MyOkHttp {
             @Override
             public void onResponse(Call call, final Response response) {
                 //連線成功
-                try {
+                if (safely) { //主程式需呼叫runOnUiThread
+                    accessResponse(response);
+                }else {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                taskListener.onFinished(new JSONObject(response.body().string()));
-                            }catch (JSONException e) {
-                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
-                            }catch (IOException e) {
-                                Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }catch (NetworkOnMainThreadException e) {
-                                Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                            accessResponse(response);
                         }
                     });
-                }catch (NetworkOnMainThreadException e) {
-                    Toast.makeText(activity, "NetworkOnMainThreadException", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                 }
             }
 
@@ -122,6 +114,22 @@ public class MyOkHttp {
 
     public void setHeader(Map<String, String> header) {
         this.header = header;
+    }
+
+    public void setSafely(boolean safely) {
+        this.safely = safely;
+    }
+
+    private void accessResponse(Response response) {
+        try {
+            taskListener.onFinished(new JSONObject(response.body().string()));
+        }catch (JSONException e) {
+            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+        }catch (IOException e) {
+            Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }catch (NetworkOnMainThreadException e) {
+            Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void cancel() {

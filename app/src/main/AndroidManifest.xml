@@ -43,11 +43,12 @@
         <activity android:name=".product.ProductUpdateActivity" />
         <activity android:name=".cart.CartHomeActivity" />
         <activity android:name=".cart.CartDetailActivity" />
-        <activity android:name=".order.CreateOrderActivity" />
+        <activity android:name=".order.OrderCreateActivity" />
         <activity android:name=".order.OrderHomeActivity" />
         <activity android:name=".order.OrderDetailActivity" />
         <activity android:name=".order.OrderUpdateActivity" />
-        <activity android:name=".Notification.NotificationActivity"></activity>
+        <activity android:name=".Notification.NotificationActivity" />
+        <activity android:name=".ProfileActivity"></activity>
     </application>
 
 </manifest>

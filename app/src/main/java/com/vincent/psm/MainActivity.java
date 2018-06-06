@@ -1,6 +1,6 @@
 package com.vincent.psm;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,17 +22,18 @@ import com.vincent.psm.product.ProductMgtActivity;
 import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.currentTokenIndex;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class MainActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = this;
+        activity = this;
 
         TextView txtGreeting = findViewById(R.id.txtGreeting);
         GridView grdFunction = findViewById(R.id.grdFunction);
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        grdFunction.setAdapter(new MainFunctionAdapter(context));
+        grdFunction.setAdapter(new MainFunctionAdapter(activity));
         grdFunction.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -56,42 +57,47 @@ public class MainActivity extends AppCompatActivity {
     private void executeFunction(int position) {
         switch (position) {
             case 0:
-                startActivity(new Intent(context, ProductHomeActivity.class));
+                startActivity(new Intent(activity, ProductHomeActivity.class));
                 break;
             case 1:
-                startActivity(new Intent(context, ProductMgtActivity.class));
+                startActivity(new Intent(activity, ProductMgtActivity.class));
                 /*
                 if (authority == 3)
-                    startActivity(new Intent(context, ProductMgtActivity.class));
+                    startActivity(new Intent(activity, ProductMgtActivity.class));
                  else
-                    Toast.makeText(context, getString(R.string.txt_authority_limit, "產品管理"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, getString(R.string.txt_authority_limit, "產品管理"), Toast.LENGTH_SHORT).show();
                  */
                 break;
             case 2:
-                startActivity(new Intent(context, CartHomeActivity.class));
+                startActivity(new Intent(activity, CartHomeActivity.class));
                 /*
                 if (authority == 1)
-                    startActivity(new Intent(context, CartHomeActivity.class));
+                    startActivity(new Intent(activity, CartHomeActivity.class));
                  else
-                    Toast.makeText(context, getString(R.string.txt_authority_limit, "業務"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, getString(R.string.txt_authority_limit, "業務"), Toast.LENGTH_SHORT).show();
                 */
                 break;
             case 3:
-                startActivity(new Intent(context, OrderHomeActivity.class));
+                startActivity(new Intent(activity, OrderHomeActivity.class));
                 /*
                 if (authority == 1 || authority == 2)
-                    startActivity(new Intent(context, OrderHomeActivity.class));
+                    startActivity(new Intent(activity, OrderHomeActivity.class));
                  else
-                    Toast.makeText(context, getString(R.string.txt_authority_limit, "業務、倉管"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, getString(R.string.txt_authority_limit, "業務、倉管"), Toast.LENGTH_SHORT).show();
                 */
                 break;
             case 4:
-                startActivity(new Intent(context, NotificationActivity.class));
+                startActivity(new Intent(activity, NotificationActivity.class));
                 break;
             case 5:
+                Intent it = new Intent(activity, ProfileActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_SALES_ID, loginUserId);
+                it.putExtras(bundle);
+                startActivity(it);
                 break;
             case 6:
-                AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+                AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
                 msgbox.setTitle(getString(R.string.app_name))
                         .setMessage("確定要登出嗎")
                         .setPositiveButton("是", new DialogInterface.OnClickListener() {
@@ -112,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             case 7:
-                startActivity(new Intent(context, BroadcastActivity.class));
+                startActivity(new Intent(activity, BroadcastActivity.class));
                 break;
             case 8:
-                startActivity(new Intent(context, ImageUploadActivity.class));
+                startActivity(new Intent(activity, ImageUploadActivity.class));
                 break;
         }
     }

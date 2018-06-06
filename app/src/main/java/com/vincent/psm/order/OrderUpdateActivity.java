@@ -64,7 +64,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
         toolbarTitle = "編輯訂單";
         super.onCreate(savedInstanceState);
 
-        context = this;
+        activity = this;
         Bundle bundle = getIntent().getExtras();
         orderId = bundle.getString(KEY_ORDER_ID);
 
@@ -105,11 +105,11 @@ public class OrderUpdateActivity extends OrderEditActivity {
         btnSubmit.setVisibility(View.GONE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conn = new MyOkHttp(OrderUpdateActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -130,13 +130,14 @@ public class OrderUpdateActivity extends OrderEditActivity {
                                 objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
                                 objOrderInfo.getString(KEY_DELIVER_PLACE),
                                 objOrderInfo.getString(KEY_PS),
-                                objOrderInfo.getString(KEY_SALES_NAME)
+                                objOrderInfo.getString(KEY_SALES_NAME),
+                                objOrderInfo.getString(KEY_SALES_ID)
                         );
                         order.setCustomerAddress(objOrderInfo.getString(KEY_CUSTOMER_ADDRESS));
                         salesId = objOrderInfo.getString(KEY_SALES_ID);
 
                     }else {
-                        Toast.makeText(context, "訂單不存在", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
                         prgBar.setVisibility(View.GONE);
                         return;
                     }
@@ -177,11 +178,11 @@ public class OrderUpdateActivity extends OrderEditActivity {
 
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有任何客戶或訂單狀態", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有任何客戶或訂單狀態", Toast.LENGTH_SHORT).show();
                         showData();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -199,7 +200,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
         txtId.setText(order.getId());
 
         //訂單狀態
-        spnOrderCondition.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, conditionNames));
+        spnOrderCondition.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, conditionNames));
         for (int i = 0; i < conditionNames.size(); i++) {
             if (conditionNames.get(i).equals(order.getCondition())) {
                 conditionId = i;
@@ -227,7 +228,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
         rdoNewContact.setChecked(true);
 
         //客戶清單
-        aetCustomerName.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, customerNames));
+        aetCustomerName.setAdapter(new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, customerNames));
         aetCustomerName.setThreshold(1);
         aetCustomerName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -262,20 +263,21 @@ public class OrderUpdateActivity extends OrderEditActivity {
             return;
 
         if (newConditionId == 0) {
-            Toast.makeText(context, "未選擇訂單狀態", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "未選擇訂單狀態", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        conn = new MyOkHttp(OrderUpdateActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
+                dlgUpload.dismiss();
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
 
                         //發送新訂單狀態給負責業務
                         if (newConditionId != conditionId) {
@@ -289,12 +291,11 @@ public class OrderUpdateActivity extends OrderEditActivity {
 
                         finish();
                     }else {
-                        Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
-                dlgUpload.dismiss();
             }
         });
         try {
@@ -304,6 +305,8 @@ public class OrderUpdateActivity extends OrderEditActivity {
             reqObj.put(KEY_CONDITION, newConditionId);
             reqObj.put(KEY_ACT_DELIVER_DATE, order.getActualDeliverDate());
             conn.execute(getString(R.string.link_edit_order), reqObj.toString());
+
+            txtUploadHint.setText("上傳中...");
             dlgUpload.show();
         }catch (JSONException e) {
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package com.vincent.psm.product;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +36,7 @@ import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
 public class ProductHomeActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
     private RecyclerView recyProduct;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fabTop, fabSearch;
@@ -53,7 +53,7 @@ public class ProductHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_home);
-        context = this;
+        activity = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("瀏覽產品");
@@ -87,7 +87,7 @@ public class ProductHomeActivity extends AppCompatActivity {
                     adapter.destroy(false);
                     recyProduct.scrollToPosition(0);
                 }catch (Exception e) {
-                    Toast.makeText(context, "沒有商品，不能往上", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有商品，不能往上", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -114,42 +114,53 @@ public class ProductHomeActivity extends AppCompatActivity {
         isShown = false;
         if (showPrgBar)
             prgBar.setVisibility(View.VISIBLE);
-        conn = new MyOkHttp(ProductHomeActivity.this, new MyOkHttp.TaskListener() {
+
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        tiles = new ArrayList<>();
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            tiles.add(new Tile(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_PHOTO),
-                                    obj.getString(KEY_NAME),
-                                    obj.getString(KEY_LENGTH),
-                                    obj.getString(KEY_WIDTH),
-                                    obj.getString(KEY_THICK),
-                                    obj.getString(KEY_PRICE)
-                            ));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (resObj.length() == 0) {
+                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                            prgBar.setVisibility(View.GONE);
+                            return;
                         }
-                    }else {
-                        Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    tiles = new ArrayList<>();
+                                    JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        tiles.add(new Tile(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_PHOTO),
+                                                obj.getString(KEY_NAME),
+                                                obj.getString(KEY_LENGTH),
+                                                obj.getString(KEY_WIDTH),
+                                                obj.getString(KEY_THICK),
+                                                obj.getString(KEY_PRICE)
+                                        ));
+                                    }
+                                }else {
+                                    Toast.makeText(activity, "沒有產品", Toast.LENGTH_SHORT).show();
+                                }
+                                showData();
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    showData();
-                }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ONSALE, true);
+            conn.setSafely(true);
             conn.execute(getString(R.string.link_list_products), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -158,9 +169,9 @@ public class ProductHomeActivity extends AppCompatActivity {
 
     private void showData() {
         recyProduct.setHasFixedSize(true);
-        recyProduct.setLayoutManager(new LinearLayoutManager(context));
+        recyProduct.setLayoutManager(new LinearLayoutManager(activity));
 
-        adapter = new ProductDisplayAdapter(getResources(), context, tiles, 10);
+        adapter = new ProductDisplayAdapter(getResources(), activity, tiles, 10);
         adapter.setBackgroundColor(getResources(), R.color.card_product);
         recyProduct.setAdapter(adapter);
         swipeRefreshLayout.setEnabled(true);

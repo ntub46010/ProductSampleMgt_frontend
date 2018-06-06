@@ -1,7 +1,7 @@
 package com.vincent.psm.cart;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -50,7 +50,7 @@ import static com.vincent.psm.data.DataHelper.defaultCartName;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class CartHomeActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView lstCart;
@@ -70,7 +70,7 @@ public class CartHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_home);
-        context = this;
+        activity = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("購物車");
@@ -101,14 +101,14 @@ public class CartHomeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cart cart = (Cart) adapter.getItem(position);
                 if (cart.getSalesId().equals(loginUserId)) {
-                    Intent it = new Intent(context, CartDetailActivity.class);
+                    Intent it = new Intent(activity, CartDetailActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(KEY_CART_ID, cart.getId());
                     bundle.putString(KEY_CART_NAME, cart.getCartName());
                     it.putExtras(bundle);
                     startActivity(it);
                 }else
-                    Toast.makeText(context, "這不是您的購物車", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "這不是您的購物車", Toast.LENGTH_SHORT).show();
             }
         });
         lstCart.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -116,7 +116,7 @@ public class CartHomeActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final Cart cart = (Cart) adapter.getItem(position);
                 if (cart.getSalesId().equals(loginUserId)) {
-                    AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+                    AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
                     msgbox.setTitle("購物車")
                             .setMessage("要設定為預設購物車嗎？")
                             .setCancelable(true)
@@ -158,11 +158,11 @@ public class CartHomeActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
 
         carts = new ArrayList<>();
-        conn = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -182,10 +182,10 @@ public class CartHomeActivity extends AppCompatActivity {
                         }
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有購物車", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有購物車", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -193,7 +193,7 @@ public class CartHomeActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        adapter = new CartListAdapter(context, carts);
+        adapter = new CartListAdapter(activity, carts);
         lstCart.setAdapter(adapter);
 
         swipeRefreshLayout.setEnabled(true);
@@ -205,7 +205,7 @@ public class CartHomeActivity extends AppCompatActivity {
     }
 
     private void createCart() {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(activity);
         TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_create_cart, null);
 
         edtCartName = layout.findViewById(R.id.edtCartName);
@@ -236,19 +236,19 @@ public class CartHomeActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(context, "建立成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
                         loadData(true);
                     }else {
-                        Toast.makeText(context, "建立購物車失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "建立購物車失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -267,7 +267,7 @@ public class CartHomeActivity extends AppCompatActivity {
     }
 
     private boolean isInfoValid() {
-        Verifier v = new Verifier(context);
+        Verifier v = new Verifier(activity);
         StringBuffer errMsg = new StringBuffer();
 
         cart = null;

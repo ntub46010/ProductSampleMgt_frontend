@@ -1,7 +1,6 @@
 package com.vincent.psm.Notification;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +38,7 @@ import static com.vincent.psm.data.DataHelper.KEY_USER_ID;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class NotificationActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView lstNotification;
     private ProgressBar prgBar;
@@ -55,7 +54,7 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        context = this;
+        activity = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("通知");
@@ -107,11 +106,11 @@ public class NotificationActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
         swipeRefreshLayout.setEnabled(false);
 
-        conn = new MyOkHttp(NotificationActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -129,11 +128,11 @@ public class NotificationActivity extends AppCompatActivity {
                             ));
                         }
                     }else {
-                        Toast.makeText(context, "沒有通知", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有通知", Toast.LENGTH_SHORT).show();
                     }
                     showData();
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -147,7 +146,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        adapter = new NotificationListAdapter(context, notifications);
+        adapter = new NotificationListAdapter(activity, notifications);
         lstNotification.setAdapter(adapter);
 
         lstNotification.setVisibility(View.VISIBLE);
@@ -159,7 +158,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void showNotification(int position) {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(activity);
         TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_notification, null);
         TextView txtTitle = layout.findViewById(R.id.txtTitle);
         TextView txtContent = layout.findViewById(R.id.txtContent);
@@ -170,7 +169,7 @@ public class NotificationActivity extends AppCompatActivity {
         txtContent.setText(notify.getContent());
         txtTime.setText(notify.getCreateTime().replace("-", "/"));
 
-        AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+        AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
         msgbox.setTitle("通知")
                 .setView(layout)
                 .setCancelable(true)
@@ -182,7 +181,6 @@ public class NotificationActivity extends AppCompatActivity {
     public void onDestroy() {
         if (conn != null)
             conn.cancel();
-        System.gc();
         super.onDestroy();
     }
 }

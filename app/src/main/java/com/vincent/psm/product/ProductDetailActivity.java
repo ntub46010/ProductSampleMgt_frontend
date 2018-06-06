@@ -1,7 +1,7 @@
 package com.vincent.psm.product;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +59,7 @@ import static com.vincent.psm.data.DataHelper.defaultOrderId;
 import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class ProductDetailActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
     private ScrollView layProductDetail;
     private ImageView imgProduct;
     private TextView txtProductName, txtPrice, txtId, txtMaterial, txtColor, txtSize, txtPs, txtStock, txtSafeStock;
@@ -80,7 +80,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
-        context = this;
+        activity = this;
 
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString(KEY_ID);
@@ -141,11 +141,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         fabAddCart.hide();
         fabAddOrder.hide();
 
-        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -186,11 +186,11 @@ public class ProductDetailActivity extends AppCompatActivity {
                         });
                         imageLoader.execute(tile);
                     }else {
-                        Toast.makeText(context, "商品不存在或沒有產品管理員", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "商品不存在或沒有產品管理員", Toast.LENGTH_SHORT).show();
                         showData();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -234,25 +234,25 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void addToCart() {
         if (defaultCartId.equals("")) {
-            Toast.makeText(context, "請到購物車頁面選擇預設購物車", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "請到購物車頁面選擇預設購物車", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //跳出對話框詢問數量
-        final EditText edtAmount = new EditText(context);
+        final EditText edtAmount = new EditText(activity);
         edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
         alert.setTitle("加入項目至購物車：" + defaultCartName)
                 .setMessage("請輸入數量\n若要從購物車移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentCartAmount)))
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        amount = Integer.valueOf(edtAmount.getText().toString());
+                        amount = Integer.valueOf(edtAmount.getText().toString().equals("") ? "-1" : edtAmount.getText().toString());
                         if (amount <= Integer.valueOf(tile.getStock()))
                             uploadToCart();
                         else
-                            Toast.makeText(context, "超出庫存量", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "超出庫存量或未輸入", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("取消", null);
@@ -262,11 +262,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void uploadToCart() {
-        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -274,14 +274,14 @@ public class ProductDetailActivity extends AppCompatActivity {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         currentCartAmount = amount; //更新車內已有數量
                         if (currentCartAmount != 0)
-                            Toast.makeText(context, "購物車已更新", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "購物車已更新", Toast.LENGTH_SHORT).show();
                         else
-                            Toast.makeText(context, "已從購物車移除", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "已從購物車移除", Toast.LENGTH_SHORT).show();
                     }else {
-                        Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -298,25 +298,25 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void addToOrder() {
         if (defaultOrderId.equals("")) {
-            Toast.makeText(context, "請到訂單頁面選擇預設訂單", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "請到訂單頁面選擇預設訂單", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //跳出對話框詢問數量
-        final EditText edtAmount = new EditText(context);
+        final EditText edtAmount = new EditText(activity);
         edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
         alert.setTitle("加入項目至訂單：" + defaultOrderName)
                 .setMessage("請輸入數量\n若要從訂單移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentOrderAmount)))
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        amount = Integer.valueOf(edtAmount.getText().toString());
-                        if (amount <= Integer.valueOf(tile.getStock()))
+                        amount = Integer.valueOf(edtAmount.getText().toString().equals("") ? "-1" : edtAmount.getText().toString());
+                        if (amount <= Integer.valueOf(tile.getStock()) && amount != -1)
                             uploadToOrder();
                         else
-                            Toast.makeText(context, "超出庫存量", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "超出庫存量或未輸入", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("取消", null);
@@ -326,11 +326,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void uploadToOrder() {
-        conn = new MyOkHttp(ProductDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -338,7 +338,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         currentOrderAmount = amount; //更新訂單內已有數量
                         if (currentOrderAmount != 0) {
-                            Toast.makeText(context, "訂單已更新", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "訂單已更新", Toast.LENGTH_SHORT).show();
 
                             //發送庫存不足推播給管理員
                             if (resObj.getBoolean(KEY_IS_LOWER)) {
@@ -352,12 +352,12 @@ public class ProductDetailActivity extends AppCompatActivity {
                                 }
                             }
                         }else
-                            Toast.makeText(context, "已從訂單移除", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "已從訂單移除", Toast.LENGTH_SHORT).show();
                     }else {
-                        Toast.makeText(context, "操作失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

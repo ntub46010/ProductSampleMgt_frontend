@@ -60,7 +60,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         layout = R.layout.activity_product_update;
         toolbarTitle = "編輯產品";
         super.onCreate(savedInstanceState);
-        context = this;
+        activity = this;
 
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString(KEY_ID);
@@ -102,11 +102,11 @@ public class ProductUpdateActivity extends ProductEditActivity {
         layProductPost.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -158,10 +158,10 @@ public class ProductUpdateActivity extends ProductEditActivity {
                         });
                         imageLoader.execute(tile);
                     }else {
-                        Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -226,7 +226,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
         if (isPhotoChanged) {
             String[] fileNames = new String[1];
             fileNames[0] = "";
-            queue = new ImageUploadQueue(getResources(), context, getString(R.string.link_upload_image));
+            queue = new ImageUploadQueue(getResources(), activity, getString(R.string.link_upload_image));
             queue.enqueueFromRear(new ImageChild(provider.getImage(), true));
             queue.startUpload(fileNames, null, null, new ImageUploadQueue.TaskListener() {
                 @Override
@@ -242,7 +242,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
 
     @Override
     protected void uploadProduct() {
-        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 dlgUpload.dismiss();
@@ -250,7 +250,7 @@ public class ProductUpdateActivity extends ProductEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         if (editMode == 1 || editMode == 2) {
-                            Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
 
                             //發送庫存不足推播給管理員
                             if (resObj.getBoolean(KEY_IS_LOWER)) {
@@ -264,21 +264,21 @@ public class ProductUpdateActivity extends ProductEditActivity {
                                 }
                             }
 
-                            Intent it = new Intent(context, ProductDetailActivity.class);
+                            Intent it = new Intent(activity, ProductDetailActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putString(KEY_ID, tile.getId());
                             bundle.putString(KEY_NAME, tile.getName());
                             it.putExtras(bundle);
                             startActivity(it);
                         }else if (editMode == 3) {
-                            Toast.makeText(context, "下架成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "下架成功", Toast.LENGTH_SHORT).show();
                         }
                         finish();
                     }else {
-                        Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

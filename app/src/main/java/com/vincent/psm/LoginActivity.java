@@ -1,7 +1,7 @@
 package com.vincent.psm;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,7 +35,7 @@ import static com.vincent.psm.data.DataHelper.loginUserId;
 import static com.vincent.psm.data.DataHelper.tokens;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    private Context context;
+    private Activity activity;
     private EditText edtAcc, edtPwd;
     private Button btnLogin;
     private CheckBox chkAutoLogin;
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        context = this;
+        activity = this;
 
         edtAcc = findViewById(R.id.edtAccount);
         edtPwd = findViewById(R.id.edtPassword);
@@ -73,14 +73,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtPwd.setEnabled(false);
         chkAutoLogin.setEnabled(false);
 
-        conn = new MyOkHttp(LoginActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
                         loginUserId = obj.getString(KEY_ID);
-                        it = new Intent(LoginActivity.this, MainActivity.class);
+                        it = new Intent(activity, MainActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
                         bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
@@ -89,10 +89,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         writeAutoLoginRecord(account, password);
                         accessToken(account);
                     }else {
-                        Toast.makeText(context, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -120,8 +120,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void accessToken(String account) {
         initTrdTimer();
-        RequestManager.getInstance(LoginActivity.this).insertUser(account);
-        RequestManager.getInstance(LoginActivity.this).getTokensById(account);
+        RequestManager.getInstance(activity).insertUser(account);
+        RequestManager.getInstance(activity).getTokensById(account);
         waitingForToken = true;
         initTrdWaitToken(); //等待從Firebase取得本裝置所有Token，確認索引後再行登入
     }
@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (waitingForToken)
                     initTrdWaitToken();
                 else {
-                    Toast.makeText(context, "連線逾時，請重新登入", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "連線逾時，請重新登入", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     btnLogin.setVisibility(View.VISIBLE);
                     edtAcc.setEnabled(true);

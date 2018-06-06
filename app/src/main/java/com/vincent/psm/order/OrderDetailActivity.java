@@ -1,8 +1,8 @@
 package com.vincent.psm.order;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vincent.psm.ProfileActivity;
 import com.vincent.psm.R;
 import com.vincent.psm.adapter.OrderItemListAdapter;
 import com.vincent.psm.data.Order;
@@ -50,6 +51,7 @@ import static com.vincent.psm.data.DataHelper.KEY_PRODUCTS;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_ID;
 import static com.vincent.psm.data.DataHelper.KEY_PRODUCT_TOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_PS;
+import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUBTOTAL;
@@ -60,7 +62,7 @@ import static com.vincent.psm.data.DataHelper.defaultOrderId;
 import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class OrderDetailActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
 
     private GridLayout layOrderInfo;
     private TextView txtId, txtCustomerName, txtCustomerPhone, txtContactPerson, txtProductTotal, txtDeliverFee, txtCondition,
@@ -82,7 +84,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
-        context = this;
+        activity = this;
         final Bundle bundle = getIntent().getExtras();
         orderId = bundle.getString(KEY_ORDER_ID);
 
@@ -118,7 +120,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent it = new Intent(context, ProductDetailActivity.class);
+                if (!orderId.equals(defaultOrderId))
+                    Toast.makeText(activity, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
+
+                defaultOrderId = orderId;
+                defaultOrderName = order.getCustomerName();
+
+                Intent it = new Intent(activity, ProductDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(KEY_ID, ((Tile) adapter.getItem(position)).getId());
                 bundle.putString(KEY_NAME, ((Tile) adapter.getItem(position)).getName());
@@ -130,7 +138,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         fabUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it = new Intent(context, OrderUpdateActivity.class);
+                Intent it = new Intent(activity, OrderUpdateActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(KEY_ORDER_ID, orderId);
                 it.putExtras(bundle);
@@ -142,11 +150,42 @@ public class OrderDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!orderId.equals(defaultOrderId))
-                    Toast.makeText(context, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
 
                 defaultOrderId = orderId;
                 defaultOrderName = order.getCustomerName();
-                startActivity(new Intent(context, ProductHomeActivity.class));
+                startActivity(new Intent(activity, ProductHomeActivity.class));
+            }
+        });
+
+        txtCustomerPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent();
+                it.setAction(Intent.ACTION_DIAL);
+                it.setData(Uri.parse("tel:" + order.getCustomerPhone()));
+                startActivity(it);
+            }
+        });
+
+        txtContactPerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent();
+                it.setAction(Intent.ACTION_DIAL);
+                it.setData(Uri.parse("tel:" + order.getContactPhone()));
+                startActivity(it);
+            }
+        });
+
+        txtSalesName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(activity, ProfileActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_SALES_ID, order.getSalesId());
+                it.putExtras(bundle);
+                startActivity(it);
             }
         });
     }
@@ -168,7 +207,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -188,7 +227,8 @@ public class OrderDetailActivity extends AppCompatActivity {
                                 objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
                                 objOrderInfo.getString(KEY_DELIVER_PLACE),
                                 objOrderInfo.getString(KEY_PS),
-                                objOrderInfo.getString(KEY_SALES_NAME)
+                                objOrderInfo.getString(KEY_SALES_NAME),
+                                objOrderInfo.getString(KEY_SALES_ID)
                         );
 
                         JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
@@ -208,11 +248,11 @@ public class OrderDetailActivity extends AppCompatActivity {
                         }
                         showData();
                     }else {
-                        Toast.makeText(context, "訂單不存在", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
                         prgBar.setVisibility(View.GONE);
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -240,20 +280,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtPs.setText(order.getPs());
         txtSalesName.setText(order.getSalesName());
 
-        switch (order.getCondition()) {
-            case "待處理":
-                txtCondition.setTextColor(Color.parseColor("#FF5050"));
-                break;
-            case "已完成":
-                txtCondition.setTextColor(Color.parseColor("#00A000"));
-                break;
-            default:
-                txtCondition.setTextColor(Color.parseColor("#CC9900"));
-                break;
-        }
-
         //產品明細
-        adapter = new OrderItemListAdapter(context, tiles);
+        adapter = new OrderItemListAdapter(activity, tiles);
         lstProduct.setAdapter(adapter);
 
         /*

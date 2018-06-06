@@ -25,6 +25,7 @@ import com.vincent.psm.product.ProductDetailActivity;
 import com.vincent.psm.product.ProductUpdateActivity;
 import com.vincent.psm.structure.ImageDownloadQueue;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.vincent.psm.data.DataHelper.KEY_ID;
@@ -92,6 +93,9 @@ public class StockListAdapter extends BaseAdapter {
 
         if (Integer.parseInt(tile.getStock()) < Integer.parseInt(tile.getSafeStock()))
             txtStock.setTextColor(Color.parseColor("#FF5050"));
+        else
+            txtStock.setTextColor(Color.parseColor("#666666"));
+
 
         //依滑動方向檢查圖片
         if (i > lastPosition) { //往下滑

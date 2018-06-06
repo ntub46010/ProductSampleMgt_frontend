@@ -1,7 +1,7 @@
 package com.vincent.psm.order;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -37,7 +37,7 @@ import static com.vincent.psm.data.DataHelper.defaultOrderId;
 import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
 public class OrderHomeActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView lstOrder;
@@ -53,7 +53,7 @@ public class OrderHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_home);
-        context = this;
+        activity = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("訂單一覽");
@@ -81,7 +81,7 @@ public class OrderHomeActivity extends AppCompatActivity {
         lstOrder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent it = new Intent(context, OrderDetailActivity.class);
+                Intent it = new Intent(activity, OrderDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(KEY_ORDER_ID, orders.get(position).getId());
                 it.putExtras(bundle);
@@ -92,7 +92,7 @@ public class OrderHomeActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final Order order = (Order) adapter.getItem(position);
-                AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+                AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
                 msgbox.setTitle("訂單")
                         .setMessage("要設定為預設訂單嗎？")
                         .setCancelable(true)
@@ -124,11 +124,11 @@ public class OrderHomeActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
 
         orders = new ArrayList<>();
-        conn = new MyOkHttp(OrderHomeActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -147,11 +147,11 @@ public class OrderHomeActivity extends AppCompatActivity {
                         }
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有訂單", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有訂單", Toast.LENGTH_SHORT).show();
                         prgBar.setVisibility(View.GONE);
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -165,7 +165,7 @@ public class OrderHomeActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        adapter = new OrderListAdapter(context, orders);
+        adapter = new OrderListAdapter(activity, orders);
         lstOrder.setAdapter(adapter);
 
         swipeRefreshLayout.setEnabled(true);

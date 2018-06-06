@@ -1,8 +1,9 @@
 package com.vincent.psm.cart;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +27,7 @@ import com.vincent.psm.data.Cart;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.data.Verifier;
 import com.vincent.psm.network_helper.MyOkHttp;
-import com.vincent.psm.order.CreateOrderActivity;
+import com.vincent.psm.order.OrderCreateActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 
 import org.json.JSONArray;
@@ -61,7 +62,7 @@ import static com.vincent.psm.data.DataHelper.defaultCartName;
 import static com.vincent.psm.data.DataHelper.loginUserId;
 
 public class CartDetailActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
 
     protected ImageView btnSubmit;
     private RecyclerView recyProduct;
@@ -76,14 +77,13 @@ public class CartDetailActivity extends AppCompatActivity {
     private ProductDisplayAdapter adapter;
 
     private String cartId, cartName;
-    private StringBuffer exceedProducts;
     private boolean isShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_detail);
-        context = this;
+        activity = this;
         Bundle bundle = getIntent().getExtras();
         cartId = bundle.getString(KEY_CART_ID);
         cartName = bundle.getString(KEY_CART_NAME);
@@ -127,11 +127,11 @@ public class CartDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!cartId.equals(defaultCartId))
-                    Toast.makeText(context, "已選取購物車：" + cartName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "已選取購物車：" + cartName, Toast.LENGTH_SHORT).show();
 
                 defaultCartId = cartId;
                 defaultCartName = cartName;
-                startActivity(new Intent(context, ProductHomeActivity.class));
+                startActivity(new Intent(activity, ProductHomeActivity.class));
             }
         });
 
@@ -163,7 +163,7 @@ public class CartDetailActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -180,7 +180,7 @@ public class CartDetailActivity extends AppCompatActivity {
                                 objCartInfo.getInt(KEY_TOTAL)
                         );
                     }else {
-                        Toast.makeText(context, "購物車不存在", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "購物車不存在", Toast.LENGTH_SHORT).show();
                         prgBar.setVisibility(View.GONE);
                         return;
                     }
@@ -199,12 +199,13 @@ public class CartDetailActivity extends AppCompatActivity {
                                     obj.getString(KEY_STOCK)
                             ));
                         }
+                        showData();
                     }else {
-                        Toast.makeText(context, "購物車內無產品", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "購物車內無產品", Toast.LENGTH_SHORT).show();
+                        showData();
                     }
-                    showData();
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -219,9 +220,9 @@ public class CartDetailActivity extends AppCompatActivity {
 
     private void showData() {
         recyProduct.setHasFixedSize(true);
-        recyProduct.setLayoutManager(new LinearLayoutManager(context));
+        recyProduct.setLayoutManager(new LinearLayoutManager(activity));
 
-        adapter = new ProductDisplayAdapter(getResources(), context, tiles, 10);
+        adapter = new ProductDisplayAdapter(getResources(), activity, tiles, 10);
         adapter.setBackgroundColor(getResources(), R.color.card_product);
         recyProduct.setAdapter(adapter);
         swipeRefreshLayout.setEnabled(true);
@@ -233,13 +234,13 @@ public class CartDetailActivity extends AppCompatActivity {
         btnSubmit.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
         recyProduct.setVisibility(View.VISIBLE);
-        //tiles = null;
+        tiles = null;
         isShown = true;
     }
 
     private void showCartInfo() {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_cart_summary, null);
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_cart_info, null);
         TextView txtSales = layout.findViewById(R.id.txtSalesName);
         TextView txtCustomerName = layout.findViewById(R.id.txtCustomerName);
         TextView txtCustomerPhone = layout.findViewById(R.id.txtCustomerPhone);
@@ -254,7 +255,27 @@ public class CartDetailActivity extends AppCompatActivity {
         txtContactPhone.setText(cart.getContactPhone());
         txtTotal.setText("$ " + Comma(String.valueOf(cart.getTotal())));
 
-        AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
+        txtCustomerPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent();
+                it.setAction(Intent.ACTION_DIAL);
+                it.setData(Uri.parse("tel:" + cart.getCustomerPhone()));
+                startActivity(it);
+            }
+        });
+
+        txtContactPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent();
+                it.setAction(Intent.ACTION_DIAL);
+                it.setData(Uri.parse("tel:" + cart.getContactPhone()));
+                startActivity(it);
+            }
+        });
+
+        AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
         msgbox.setTitle("購物車摘要")
                 .setView(layout)
                 .setCancelable(true)
@@ -275,7 +296,7 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void prepareEditCartInfo() {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(activity);
         TableLayout layout = (TableLayout) inflater.inflate(R.layout.dlg_create_cart, null);
 
         edtCartName = layout.findViewById(R.id.edtCartName);
@@ -290,7 +311,7 @@ public class CartDetailActivity extends AppCompatActivity {
         edtContactPerson.setText(cart.getContactPerson());
         edtContactPhone.setText(cart.getContactPhone());
 
-        AlertDialog.Builder dlgCreateCart = new AlertDialog.Builder(context);
+        AlertDialog.Builder dlgCreateCart = new AlertDialog.Builder(activity);
         dlgCreateCart.setTitle("編輯購物車")
                 .setMessage("請輸入購物車資料")
                 .setView(layout)
@@ -305,7 +326,7 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void prepareDeleteCart() {
-        AlertDialog.Builder dlgDelete = new AlertDialog.Builder(context);
+        AlertDialog.Builder dlgDelete = new AlertDialog.Builder(activity);
         dlgDelete.setTitle("刪除購物車")
                 .setMessage("真的要刪除購物車：" + cartName + "\n此舉無法復原")
                 .setCancelable(true)
@@ -327,21 +348,21 @@ public class CartDetailActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(context, "編輯成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
                         cartName = cart.getCartName();
                         recyProduct.setVisibility(View.INVISIBLE);
                         adapter.destroy(false);
                         loadData(true);
                     }else {
-                        Toast.makeText(context, "編輯失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -364,7 +385,7 @@ public class CartDetailActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -372,13 +393,13 @@ public class CartDetailActivity extends AppCompatActivity {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         if (cartId.equals(defaultCartId))
                             defaultCartId = "";
-                        Toast.makeText(context, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
                         finish();
                     }else {
-                        Toast.makeText(context, "商品不存在", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "商品不存在", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -393,27 +414,21 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void prepareOrder() {
-        //理想做法應該要在建立訂單頁面點擊送出後，先確認庫存才可下單
-        if (!isStockEnough())
-            return;
-
         //產生產品陣列的JSON
         JSONArray ary = new JSONArray();
         try {
             JSONObject obj;
-            Tile tile;
             for (int i = 0; i < adapter.getItemCount(); i++) {
-                tile = adapter.getItem(i);
                 obj = new JSONObject();
-                obj.put(KEY_ID, tile.getId());
-                obj.put(KEY_AMOUNT, tile.getAmount());
+                obj.put(KEY_ID, adapter.getItem(i).getId());
+                obj.put(KEY_AMOUNT, adapter.getItem(i).getAmount());
                 ary.put(obj);
             }
         }catch (JSONException e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        Intent it = new Intent(context, CreateOrderActivity.class);
+        Intent it = new Intent(activity, OrderCreateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(KEY_SALES_NAME, cart.getSalesName());
         bundle.putString(KEY_CUSTOMER_NAME, cart.getCustomerName());
@@ -421,13 +436,14 @@ public class CartDetailActivity extends AppCompatActivity {
         bundle.putString(KEY_CONTACT_PERSON, cart.getContactPerson());
         bundle.putString(KEY_CONTACT_PHONE, cart.getContactPhone());
         bundle.putInt(KEY_TOTAL, cart.getTotal());
+        bundle.putString(KEY_CART_ID, cartId);
         bundle.putString(KEY_PRODUCTS_JSON, ary.toString());
         it.putExtras(bundle);
         startActivity(it);
     }
 
     private boolean isInfoValid() {
-        Verifier v = new Verifier(context);
+        Verifier v = new Verifier(activity);
         StringBuffer errMsg = new StringBuffer();
 
         cart = null;
@@ -450,27 +466,6 @@ public class CartDetailActivity extends AppCompatActivity {
             return false;
         }else {
             return true;
-        }
-    }
-
-    private boolean isStockEnough() {
-        exceedProducts = new StringBuffer();
-        Tile tile;
-        for (int i = 0; i < tiles.size(); i++) {
-            tile = tiles.get(i);
-            if (tile.getAmount() > Integer.parseInt(tile.getStock()))
-                exceedProducts.append(tile.getName()).append("\n");
-        }
-
-        if (exceedProducts.length() == 0)
-            return true;
-        else {
-            AlertDialog.Builder msgbox = new AlertDialog.Builder(context);
-            msgbox.setTitle("建立訂單")
-                    .setMessage("以下產品庫存不足，無法下單：\n" + exceedProducts.toString())
-                    .setPositiveButton("確定", null)
-                    .show();
-            return false;
         }
     }
 

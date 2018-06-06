@@ -1,8 +1,8 @@
 package com.vincent.psm.product;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -48,7 +48,7 @@ import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 
 public abstract class ProductEditActivity extends AppCompatActivity {
-    protected Context context;
+    protected Activity activity;
     protected int layout;
     protected String toolbarTitle, dialogTitle;
 
@@ -178,14 +178,14 @@ public abstract class ProductEditActivity extends AppCompatActivity {
 
     protected void setSpecification() {
         //材質、顏色清單
-        adpMaterial = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, materials);
-        adpColor = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, colors);
+        adpMaterial = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, materials);
+        adpColor = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, colors);
         spnMaterial.setAdapter(adpMaterial);
         spnColor.setAdapter(adpColor);
     }
 
     protected boolean isInfoValid() {
-        Verifier v = new Verifier(context);
+        Verifier v = new Verifier(activity);
         StringBuffer errMsg = new StringBuffer();
 
         String material = rdoSelectMaterial.isChecked() ? this.material : edtMaterial.getText().toString();
@@ -232,13 +232,13 @@ public abstract class ProductEditActivity extends AppCompatActivity {
     }
 
     protected void prepareDialog() {
-        dlgUpload = new Dialog(context);
+        dlgUpload = new Dialog(activity);
         dlgUpload.setContentView(R.layout.dlg_uploading);
         dlgUpload.setCancelable(false);
         TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);
         txtUploadHint.setText("上傳中，長按取消...");
 
-        msgbox = new AlertDialog.Builder(context)
+        msgbox = new AlertDialog.Builder(activity)
                 .setTitle(dialogTitle)
                 .setMessage("確定取消上傳嗎？")
                 .setCancelable(true)
@@ -248,7 +248,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             queue.cancelUpload();
-                            Toast.makeText(context, "上傳已取消", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "上傳已取消", Toast.LENGTH_SHORT).show();
                             dlgUpload.dismiss();
                         }catch (NullPointerException e) {
                             e.printStackTrace();

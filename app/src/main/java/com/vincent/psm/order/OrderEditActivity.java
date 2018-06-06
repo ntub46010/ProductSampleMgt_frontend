@@ -2,7 +2,6 @@ package com.vincent.psm.order;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,7 +47,7 @@ import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 
 public abstract class OrderEditActivity extends AppCompatActivity {
-    protected Context context;
+    protected Activity activity;
     protected int layout;
     protected String toolbarTitle;
 
@@ -75,6 +74,7 @@ public abstract class OrderEditActivity extends AppCompatActivity {
     protected ArrayAdapter<String> adpContact;
 
     protected Dialog dlgUpload;
+    protected TextView txtUploadHint;
     protected boolean isShown = false;
 
     protected abstract void loadData();
@@ -161,7 +161,7 @@ public abstract class OrderEditActivity extends AppCompatActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrderEditActivity.this.activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (resObj.getBoolean(KEY_STATUS)) {
@@ -182,10 +182,10 @@ public abstract class OrderEditActivity extends AppCompatActivity {
                         }
                         showContactData();
                     }else {
-                        Toast.makeText(context, "沒有聯絡人", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OrderEditActivity.this.activity, "沒有聯絡人", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrderEditActivity.this.activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -199,12 +199,12 @@ public abstract class OrderEditActivity extends AppCompatActivity {
     }
 
     private void showContactData() {
-        adpContact = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, contactPersons);
+        adpContact = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, contactPersons);
         spnContact.setAdapter(adpContact);
     }
 
     protected boolean isInfoValid() {
-        Verifier v = new Verifier(context);
+        Verifier v = new Verifier(activity);
         StringBuffer errMsg = new StringBuffer();
 
         if (rdoNewContact.isChecked()) {
@@ -271,11 +271,10 @@ public abstract class OrderEditActivity extends AppCompatActivity {
     }
 
     protected void prepareDialog() {
-        dlgUpload = new Dialog(context);
+        dlgUpload = new Dialog(activity);
         dlgUpload.setContentView(R.layout.dlg_uploading);
         dlgUpload.setCancelable(false);
-        TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);
-        txtUploadHint.setText("上傳中...");
+        txtUploadHint = dlgUpload.findViewById(R.id.txtHint);
     }
 
     public void onRadioSelect (View view) {

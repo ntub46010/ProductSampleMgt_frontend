@@ -32,7 +32,7 @@ public class ProductPostActivity extends ProductEditActivity {
     protected void onCreate(Bundle savedInstanceState) {
         layout = R.layout.activity_product_post;
         toolbarTitle = "新增產品";
-        context = this;
+        activity = this;
         super.onCreate(savedInstanceState);
     }
 
@@ -46,11 +46,11 @@ public class ProductPostActivity extends ProductEditActivity {
         layEditContent.setVisibility(View.INVISIBLE);
         prgBar.setVisibility(View.VISIBLE);
 
-        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
                     prgBar.setVisibility(View.GONE);
                     return;
                 }
@@ -70,10 +70,10 @@ public class ProductPostActivity extends ProductEditActivity {
 
                         showData();
                     }else {
-                        Toast.makeText(context, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -99,7 +99,7 @@ public class ProductPostActivity extends ProductEditActivity {
 
         String[] fileNames = new String[1];
         fileNames[0] = "";
-        queue = new ImageUploadQueue(getResources(), context, getString(R.string.link_upload_image));
+        queue = new ImageUploadQueue(getResources(), activity, getString(R.string.link_upload_image));
         queue.enqueueFromRear(new ImageChild(provider.getImage(), true));
         queue.startUpload(fileNames, null, null, new ImageUploadQueue.TaskListener() {
             @Override
@@ -112,7 +112,7 @@ public class ProductPostActivity extends ProductEditActivity {
 
     @Override
     protected void uploadProduct() {
-        conn = new MyOkHttp(this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 dlgUpload.dismiss();
@@ -120,7 +120,7 @@ public class ProductPostActivity extends ProductEditActivity {
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                        Intent it = new Intent(context, ProductDetailActivity.class);
+                        Intent it = new Intent(activity, ProductDetailActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString(KEY_ID, obj.getString(KEY_ID));
                         bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
@@ -128,10 +128,10 @@ public class ProductPostActivity extends ProductEditActivity {
                         startActivity(it);
                         finish();
                     }else {
-                        Toast.makeText(context, "刊登失敗", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "刊登失敗", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
             }
         });

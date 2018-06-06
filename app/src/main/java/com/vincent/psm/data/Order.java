@@ -31,7 +31,7 @@ public class Order extends Cart {
 
     //訂單詳情
     public Order(String id, String customerName, String customerPhone, String contactPerson, String contactPhone, int productTotal, int deliverFee,
-                 String condition, String predictDeliverDate, String actualDeliverDate, String deliverPlace, String ps, String salesName) {
+                 String condition, String predictDeliverDate, String actualDeliverDate, String deliverPlace, String ps, String salesName, String salesId) {
         super.id = id;
         super.customerName = customerName;
         super.customerPhone = customerPhone;
@@ -45,6 +45,7 @@ public class Order extends Cart {
         this.deliverPlace = deliverPlace;
         this.ps = ps;
         this.salesName = salesName;
+        this.salesId = salesId;
     }
 
     public String getCustomerAddress() {

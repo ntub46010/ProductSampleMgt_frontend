@@ -21,7 +21,8 @@
             android:id="@+id/txtProductName"
             style="@style/txt_product_title"
             android:layout_width="match_parent"
-            android:layout_height="80dp"/>
+            android:layout_height="80dp"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/txtProductSize"

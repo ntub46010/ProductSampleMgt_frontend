@@ -1,6 +1,6 @@
 package com.vincent.psm.product;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,7 +35,7 @@ import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 
 public class ProductMgtActivity extends AppCompatActivity {
-    private Context context;
+    private Activity activity;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView lstProduct;
     private FloatingActionButton fabPost;
@@ -51,7 +51,7 @@ public class ProductMgtActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_mgt);
-        context = this;
+        activity = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("產品管理");
@@ -110,41 +110,51 @@ public class ProductMgtActivity extends AppCompatActivity {
             prgBar.setVisibility(View.VISIBLE);
         swipeRefreshLayout.setEnabled(false);
 
-        conn = new MyOkHttp(ProductMgtActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(context, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        tiles = new ArrayList<>();
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i=0; i<ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            tiles.add(new Tile(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_PHOTO),
-                                    obj.getString(KEY_NAME),
-                                    obj.getString(KEY_STOCK),
-                                    obj.getString(KEY_SAFE_STOCK),
-                                    obj.getInt(KEY_ONSALE) == 1
-                            ));
-                        }
-                    }else {
-                        Toast.makeText(context, "沒有產品", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (resObj.length() == 0) {
+                        Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                        prgBar.setVisibility(View.GONE);
+                        return;
                     }
-                    showData();
-                }else {
-                    Toast.makeText(context, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    tiles = new ArrayList<>();
+                                    JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                    for (int i=0; i<ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        tiles.add(new Tile(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_PHOTO),
+                                                obj.getString(KEY_NAME),
+                                                obj.getString(KEY_STOCK),
+                                                obj.getString(KEY_SAFE_STOCK),
+                                                obj.getInt(KEY_ONSALE) == 1
+                                        ));
+                                    }
+                                }else {
+                                    Toast.makeText(activity, "沒有產品", Toast.LENGTH_SHORT).show();
+                                }
+                                showData();
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ONSALE, false);
+            conn.setSafely(true);
             conn.execute(getString(R.string.link_list_products), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -152,7 +162,7 @@ public class ProductMgtActivity extends AppCompatActivity {
     }
 
     private void showData() {
-        adapter = new StockListAdapter(getResources(), context, tiles, R.layout.lst_stock, 10);
+        adapter = new StockListAdapter(getResources(), activity, tiles, R.layout.lst_stock, 10);
         lstProduct.setAdapter(adapter);
 
         tiles = null;
