@@ -59,7 +59,7 @@
                     android:id="@+id/txtCustomerPhone"
                     style="@style/txt_order_detail_content"
                     android:text="0212345678"
-                    android:textColor="#0000FF"/>
+                    android:textColor="#5050FF"/>
                 <TextView
                     style="@style/txt_order_detail_title"
                     android:text="聯絡人："/>
@@ -67,7 +67,7 @@
                     android:id="@+id/txtContactPerson"
                     style="@style/txt_order_detail_content"
                     android:text="鐵心蘭（0987654321#1234）"
-                    android:textColor="#0000FF"/>
+                    android:textColor="#5050FF"/>
                 <TextView
                     style="@style/txt_order_detail_title"
                     android:text="產品總金額："/>
@@ -126,7 +126,7 @@
                     android:id="@+id/txtSalesName"
                     style="@style/txt_order_detail_content"
                     android:text="鄭仲佑"
-                    android:textColor="#0000FF"/>
+                    android:textColor="#5050FF"/>
                 <TextView
                     style="@style/txt_order_detail_title"
                     android:layout_marginTop="10dp"

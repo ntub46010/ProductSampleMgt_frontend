@@ -76,6 +76,10 @@ public class DataHelper {
     public static final String KEY_TITLE = "Title";
     public static final String KEY_CONTENT = "Content";
     public static final String KEY_IS_LOWER = "IsLower";
+    public static final String KEY_PROFILE = "Profile";
+    public static final String KEY_PHONE = "Phone";
+    public static final String KEY_EMAIL = "Email";
+    public static final String KEY_AUTHORITY = "Authority";
 
     public static final String KEY_PRODUCTS = "Products";
     public static final String KEY_MATERIALS = "Materials";

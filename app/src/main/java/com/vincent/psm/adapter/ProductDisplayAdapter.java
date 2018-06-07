@@ -54,7 +54,7 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
             super(itemView);
 
             // 連結資料的顯示物件取得
-            cardView = itemView.findViewById(R.id.card_view);
+            cardView = itemView.findViewById(R.id.cardView);
             layProductCard = itemView.findViewById(R.id.layProductCard);
             imgProduct = itemView.findViewById(R.id.imgProduct);
             txtProductName = itemView.findViewById(R.id.txtProductName);

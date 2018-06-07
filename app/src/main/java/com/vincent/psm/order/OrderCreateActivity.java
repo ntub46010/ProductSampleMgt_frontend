@@ -121,7 +121,7 @@ public class OrderCreateActivity extends OrderEditActivity {
                 }
             }
         });
-        conn.execute(getString(R.string.link_show_customers_warehouses));
+        conn.execute(getString(R.string.link_show_staff));
     }
 
     @Override

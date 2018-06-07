@@ -60,11 +60,11 @@ public class OrderUpdateActivity extends OrderEditActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        activity = this;
         layout = R.layout.activity_order_update;
         toolbarTitle = "編輯訂單";
         super.onCreate(savedInstanceState);
 
-        activity = this;
         Bundle bundle = getIntent().getExtras();
         orderId = bundle.getString(KEY_ORDER_ID);
 
