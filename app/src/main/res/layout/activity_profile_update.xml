@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".profile.ProfileUpdateActivity">
+
+    <include layout="@layout/content_checking_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingEnd="10dp">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/layout_padding"
+            android:layout_gravity="center_vertical"
+            android:columnCount="2"
+            app:layout_collapseMode="parallax">
+            <TextView
+                style="@style/txt_product_title"
+                android:text="姓名："/>
+            <EditText
+                android:id="@+id/edtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"/>
+            <TextView
+                style="@style/txt_product_title"
+                android:text="電話："/>
+            <EditText
+                android:id="@+id/edtPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="phone"/>
+            <TextView
+                style="@style/txt_product_title"
+                android:text="電子郵件："/>
+            <EditText
+                android:id="@+id/edtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textEmailAddress"/>
+            <TextView
+                style="@style/txt_product_title"
+                android:text="舊密碼："/>
+            <EditText
+                android:id="@+id/edtOldPwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPassword"/>
+            <TextView
+                style="@style/txt_product_title"
+                android:text="新密碼："/>
+            <EditText
+                android:id="@+id/edtNewPwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPassword"/>
+            <TextView
+                style="@style/txt_product_title"
+                android:text="確認新密碼："/>
+            <EditText
+                android:id="@+id/edtNewPwd2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:inputType="textPassword"/>
+        </GridLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -11,6 +11,7 @@ public class Verifier {
     private Context c;
     private String ptnText = "[\\u4e00-\\u9fa5a-zA-Z_0-9]{%s,%s}"; //不包含標點符號
     private String ptnNumber = "[0-9]{%s,%s}";
+    private String ptnEmail = "^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$";
 
     private String lowerProductName = "1", upperProductName = "30";
     private String lowerMaterial = "1", upperMaterial = "20";
@@ -25,6 +26,7 @@ public class Verifier {
     private String lowerContactName = "0", upperContactName = "20";
     private String lowerName = "1", upperName = "30";
     private String lowerPhone = "7", upperPhone = "15";
+    private String lowerPwd = "6", upperPwd = "15";
 
     private String ptnProductName = String.format(ptnText, lowerProductName, upperProductName);
     private String ptnMaterial = String.format(ptnText, lowerMaterial, upperMaterial);
@@ -39,6 +41,7 @@ public class Verifier {
     private String ptnContactName = String.format(ptnText, lowerContactName, upperContactName);
     private String ptnName = String.format(ptnText, lowerName, upperName);
     private String ptnPhone = String.format(ptnNumber, lowerPhone, upperPhone);
+    private String ptnPwd = String.format(ptnText, lowerPwd, upperPwd);
 
     public Verifier(Context context) {
         this.c = context;
@@ -102,7 +105,7 @@ public class Verifier {
         if (Pattern.matches(ptnPrice, s))
             return "";
         else
-            return c.getString(R.string.chk_price_wrong, "價格");
+            return c.getString(R.string.chk_format_wrong, "價格");
     }
 
     public String chkPs(String s) {
@@ -193,6 +196,22 @@ public class Verifier {
         if (Pattern.matches(ptnPrice, s))
             return "";
         else
-            return c.getString(R.string.chk_price_wrong, "運費");
+            return c.getString(R.string.chk_format_wrong, "運費");
+    }
+
+    public String chkEmail(String s) {
+        if (Pattern.matches(ptnEmail, s))
+            return "";
+        else
+            return c.getString(R.string.chk_format_wrong, "信箱");
+    }
+
+    public String chkNewPwd(String pwd1, String pwd2) {
+        if (!Pattern.matches(ptnPwd, pwd1))
+            return "新密碼格式錯誤\n";
+        else if (!pwd1.equals(pwd2))
+            return "新密碼不一致\n";
+        else
+            return "";
     }
 }

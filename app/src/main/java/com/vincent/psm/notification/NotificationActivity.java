@@ -1,4 +1,4 @@
-package com.vincent.psm.Notification;
+package com.vincent.psm.notification;
 
 import android.app.Activity;
 import android.support.v4.widget.SwipeRefreshLayout;

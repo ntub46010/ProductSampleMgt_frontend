@@ -48,7 +48,7 @@ public class OrderCreateActivity extends OrderEditActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        layout = R.layout.activity_convert_order;
+        layout = R.layout.activity_create_order;
         toolbarTitle = "建立訂單";
         activity = this;
         super.onCreate(savedInstanceState);

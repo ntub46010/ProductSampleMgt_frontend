@@ -35,6 +35,7 @@
     <string name="link_add_order_item">http://111.250.8.9:8181/add_order_item</string>
     <string name="link_list_notifications">http://111.250.8.9:8181/list_notifications</string>
     <string name="link_show_profile">http://111.250.8.9:8181/show_profile</string>
+    <string name="link_edit_profile">http://111.250.8.9:8181/edit_profile</string>
 
     <string name="link_upload_avatar">http://111.250.8.9:8181/upload_avatar</string>
     <string name="link_upload_image">http://111.250.8.9:8181/upload_image</string>
@@ -45,7 +46,7 @@
     <string name="txt_authority_limit">此功能限%1s身份使用</string>
 
     <string name="chk_number">請確認%1s是否正確\n</string>
-    <string name="chk_price_wrong">%1s格式錯誤\n</string>
+    <string name="chk_format_wrong">%1s格式錯誤\n</string>
     <string name="chk_is_empty">%1s未填寫\n</string>
     <string name="chk_cart_name">購物車名稱為1~30字\n</string>
     <string name="chk_range_words">%1s為%2s~%3s字\n</string>

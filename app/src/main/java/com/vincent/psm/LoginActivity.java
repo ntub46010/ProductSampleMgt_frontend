@@ -90,6 +90,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         accessToken(account);
                     }else {
                         Toast.makeText(activity, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
+                        prgBar.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
+                        edtAcc.setEnabled(true);
+                        edtPwd.setEnabled(true);
+                        chkAutoLogin.setEnabled(true);
                     }
                 }else {
                     Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();

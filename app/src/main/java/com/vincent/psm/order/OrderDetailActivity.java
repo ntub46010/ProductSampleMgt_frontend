@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.vincent.psm.ProfileActivity;
+import com.vincent.psm.profile.ProfileActivity;
 import com.vincent.psm.R;
 import com.vincent.psm.adapter.OrderItemListAdapter;
 import com.vincent.psm.data.Order;

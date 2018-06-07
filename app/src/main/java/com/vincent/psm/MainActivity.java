@@ -12,12 +12,13 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.vincent.psm.Notification.NotificationActivity;
+import com.vincent.psm.notification.NotificationActivity;
 import com.vincent.psm.adapter.MainFunctionAdapter;
 import com.vincent.psm.cart.CartHomeActivity;
 import com.vincent.psm.order.OrderHomeActivity;
 import com.vincent.psm.product.ProductHomeActivity;
 import com.vincent.psm.product.ProductMgtActivity;
+import com.vincent.psm.profile.ProfileActivity;
 
 import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;

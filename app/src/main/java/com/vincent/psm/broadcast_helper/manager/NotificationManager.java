@@ -10,7 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
-import com.vincent.psm.Notification.NotificationActivity;
+import com.vincent.psm.notification.NotificationActivity;
 import com.vincent.psm.R;
 
 import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;

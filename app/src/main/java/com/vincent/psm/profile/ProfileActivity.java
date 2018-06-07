@@ -1,4 +1,4 @@
-package com.vincent.psm;
+package com.vincent.psm.profile;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vincent.psm.R;
 import com.vincent.psm.data.User;
 import com.vincent.psm.network_helper.MyOkHttp;
 
@@ -24,6 +25,7 @@ import static com.vincent.psm.data.DataHelper.KEY_AUTHORITY;
 import static com.vincent.psm.data.DataHelper.KEY_EMAIL;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
+import static com.vincent.psm.data.DataHelper.KEY_PASSWORD;
 import static com.vincent.psm.data.DataHelper.KEY_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_PROFILE;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
@@ -100,8 +102,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 obj.getString(KEY_NAME),
                                 obj.getString(KEY_PHONE),
                                 obj.getString(KEY_EMAIL),
-                                obj.getString(KEY_AUTHORITY),
-                                obj.getString(KEY_IDENTITY)
+                                obj.getInt(KEY_AUTHORITY),
+                                obj.getString(KEY_IDENTITY),
+                                obj.getString(KEY_PASSWORD)
                         );
                     }else {
                         Toast.makeText(activity, "使用者不存在", Toast.LENGTH_SHORT).show();
@@ -128,9 +131,23 @@ public class ProfileActivity extends AppCompatActivity {
         txtEmail.setText(user.getEmail());
         txtIdentity.setText(user.getIdentity());
 
-        if (userId.equals(loginUserId))
+        if (userId.equals(loginUserId)) {
             btnUpdate.setVisibility(View.VISIBLE);
-        else {
+            btnUpdate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(activity, ProfileUpdateActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(KEY_USER_ID, userId);
+                    bundle.putString(KEY_NAME, user.getName());
+                    bundle.putString(KEY_PHONE, user.getPhone());
+                    bundle.putString(KEY_EMAIL, user.getEmail());
+                    bundle.putString(KEY_PASSWORD, user.getOldPwd());
+                    it.putExtras(bundle);
+                    startActivity(it);
+                }
+            });
+        }else {
             txtPhone.setTextColor(Color.parseColor("#5050FF"));
             txtPhone.setOnClickListener(new View.OnClickListener() {
                 @Override
