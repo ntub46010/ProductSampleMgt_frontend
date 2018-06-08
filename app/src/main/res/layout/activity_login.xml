@@ -26,7 +26,7 @@
             <EditText
                 android:id="@+id/edtAccount"
                 style="@style/edt_login_field"
-                android:hint="User"
+                android:hint="帳號"
                 android:inputType="text"
                 android:text="10346010"/>
         </LinearLayout>
@@ -42,7 +42,7 @@
             <EditText
                 android:id="@+id/edtPassword"
                 style="@style/edt_login_field"
-                android:hint="Password"
+                android:hint="密碼"
                 android:inputType="textPassword"
                 android:text="111111"/>
         </LinearLayout>
@@ -58,13 +58,27 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/btnLogin"
-                style="@style/btn_login"
-                android:layout_marginTop="25dp"
-                android:text="log in"
-                android:textSize="23sp"
-                android:background="@drawable/btn_login"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/btnLogin"
+                    style="@style/btn_login"
+                    android:layout_marginTop="25dp"
+                    android:text="登入"
+                    android:textSize="23sp"
+                    android:background="@drawable/btn_login"/>
+                <Button
+                    android:id="@+id/btnDeleteToken"
+                    style="@style/btn_login"
+                    android:layout_marginTop="25dp"
+                    android:text="清除Token"
+                    android:textSize="23sp"
+                    android:background="@drawable/btn_login"/>
+            </LinearLayout>
+
             <ProgressBar
                 android:id="@+id/prgBar"
                 style="@style/prg_normal"

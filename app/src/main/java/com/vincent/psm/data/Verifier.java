@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class Verifier {
     private Context c;
-    private String ptnText = "[\\u4e00-\\u9fa5a-zA-Z_0-9]{%s,%s}"; //不包含標點符號
+    private String ptnCharacter = "[a-zA-Z0-9]{%s,%s}"; //不包含標點符號
+    private String ptnChinese = "[\\u4e00-\\u9fa5a-zA-Z_0-9\\u3002\\uff1b\\uff0c\\uff1a\\u201c\\u201d\\uff08\\uff09\\u3001\\uff1f\\u300a\\u300b^\\x00-\\xff]{%s,%s}";
     private String ptnNumber = "[0-9]{%s,%s}";
     private String ptnEmail = "^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$";
 
@@ -28,20 +29,20 @@ public class Verifier {
     private String lowerPhone = "7", upperPhone = "15";
     private String lowerPwd = "6", upperPwd = "15";
 
-    private String ptnProductName = String.format(ptnText, lowerProductName, upperProductName);
-    private String ptnMaterial = String.format(ptnText, lowerMaterial, upperMaterial);
-    private String ptnColor = String.format(ptnText, lowerColor, upperColor);
+    private String ptnProductName = String.format(ptnChinese, lowerProductName, upperProductName);
+    private String ptnMaterial = String.format(ptnChinese, lowerMaterial, upperMaterial);
+    private String ptnColor = String.format(ptnChinese, lowerColor, upperColor);
     private String ptnLength = String.format(ptnNumber, lowerLength, upperLength);
     private String ptnThick = String.format(ptnNumber, lowerThick, upperThick);
     private String ptnPrice = String.format(ptnNumber, lowerPrice, upperPrice);
-    private String ptnPs = String.format(ptnText, lowerPs, upperPs);
+    private String ptnPs = String.format(ptnChinese, lowerPs, upperPs);
     private String ptnStock = String.format(ptnNumber, lowerStock, upperStock);
-    private String ptnCustomerName = String.format(ptnText, lowerCustomerName, upperCustomerName);
-    private String ptnCustomerPhone = String.format(ptnText, lowerCustomerPhone, upperCustomerPhone);
-    private String ptnContactName = String.format(ptnText, lowerContactName, upperContactName);
-    private String ptnName = String.format(ptnText, lowerName, upperName);
+    private String ptnCustomerName = String.format(ptnChinese, lowerCustomerName, upperCustomerName);
+    private String ptnCustomerPhone = String.format(ptnNumber, lowerCustomerPhone, upperCustomerPhone);
+    private String ptnContactName = String.format(ptnChinese, lowerContactName, upperContactName);
+    private String ptnName = String.format(ptnChinese, lowerName, upperName);
     private String ptnPhone = String.format(ptnNumber, lowerPhone, upperPhone);
-    private String ptnPwd = String.format(ptnText, lowerPwd, upperPwd);
+    private String ptnPwd = String.format(ptnCharacter, lowerPwd, upperPwd);
 
     public Verifier(Context context) {
         this.c = context;

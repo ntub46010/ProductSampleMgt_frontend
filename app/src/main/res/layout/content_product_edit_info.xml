@@ -110,7 +110,7 @@
         <TextView
             style="@style/txt_goods_detail_title"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:text="長："/>
         <EditText
             android:id="@+id/edtLength"
@@ -121,7 +121,7 @@
         <TextView
             style="@style/txt_goods_detail_title"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:text="寬："/>
         <EditText
             android:id="@+id/edtWidth"
@@ -132,7 +132,7 @@
         <TextView
             style="@style/txt_goods_detail_title"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:text="厚："/>
         <EditText
             android:id="@+id/edtThick"

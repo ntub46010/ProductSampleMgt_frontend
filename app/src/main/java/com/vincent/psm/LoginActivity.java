@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.DataHelper;
 import com.vincent.psm.network_helper.MyOkHttp;
@@ -22,6 +23,7 @@ import com.vincent.psm.network_helper.MyOkHttp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
@@ -37,7 +39,7 @@ import static com.vincent.psm.data.DataHelper.tokens;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private Activity activity;
     private EditText edtAcc, edtPwd;
-    private Button btnLogin;
+    private Button btnLogin, btnDeleteToken;
     private CheckBox chkAutoLogin;
     private ProgressBar prgBar;
 
@@ -56,45 +58,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtAcc = findViewById(R.id.edtAccount);
         edtPwd = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        btnDeleteToken = findViewById(R.id.btnDeleteToken);
         chkAutoLogin = findViewById(R.id.chkAutoLogin);
         prgBar = findViewById(R.id.prgBar);
 
         btnLogin.setOnClickListener(this);
+        btnDeleteToken.setOnClickListener(this);
 
         sp = getSharedPreferences(getString(R.string.sp_filename), MODE_PRIVATE);
         if (sp.getBoolean(getString(R.string.sp_auto_login), false))
-            login(sp.getString(getString(R.string.sp_login_user), ""), sp.getString(getString(R.string.sp_login_password), ""));
+            login(sp.getString(getString(R.string.sp_login_user), ""), sp.getString(getString(R.string.sp_login_password), ""), true);
     }
 
-    private void login(final String account, final String password) {
-        btnLogin.setVisibility(View.INVISIBLE);
-        prgBar.setVisibility(View.VISIBLE);
-        edtAcc.setEnabled(false);
-        edtPwd.setEnabled(false);
-        chkAutoLogin.setEnabled(false);
+    private void login(final String account, final String password, final boolean isNormalLogin) {
+        displayWidget(false);
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
-                        loginUserId = obj.getString(KEY_ID);
-                        it = new Intent(activity, MainActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
-                        bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
-                        it.putExtras(bundle);
+                        if (isNormalLogin) {
+                            JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
+                            loginUserId = obj.getString(KEY_ID);
+                            it = new Intent(activity, MainActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
+                            bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
+                            it.putExtras(bundle);
 
-                        writeAutoLoginRecord(account, password);
-                        accessToken(account);
+                            writeAutoLoginRecord(account, password);
+                            accessToken(account);
+                        }else {
+                            FirebaseDatabase.getInstance().getReference()
+                                    .child(DATABASE_USERS)
+                                    .child(account)
+                                    .removeValue();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(5000);
+                                    }catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    hdrDeleteToken.sendMessage(hdrDeleteToken.obtainMessage());
+                                }
+                            }).start();
+                        }
                     }else {
                         Toast.makeText(activity, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
-                        btnLogin.setVisibility(View.VISIBLE);
-                        edtAcc.setEnabled(true);
-                        edtPwd.setEnabled(true);
-                        chkAutoLogin.setEnabled(true);
+                        displayWidget(true);
                     }
                 }else {
                     Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
@@ -181,34 +195,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         break;
                     }
                 }
-                prgBar.setVisibility(View.GONE);
-                btnLogin.setVisibility(View.VISIBLE);
-                edtAcc.setEnabled(true);
-                edtPwd.setEnabled(true);
-                chkAutoLogin.setEnabled(true);
+                displayWidget(true);
                 startActivity(it);
                 waitingForToken = false;
             }else {
                 if (waitingForToken)
                     initTrdWaitToken();
                 else {
-                    Toast.makeText(activity, "連線逾時，請重新登入", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    btnLogin.setVisibility(View.VISIBLE);
-                    edtAcc.setEnabled(true);
-                    edtPwd.setEnabled(true);
-                    chkAutoLogin.setEnabled(true);
+                    Toast.makeText(activity, "連線逾時，請重新登入\n若多次失敗可嘗試清除Token", Toast.LENGTH_SHORT).show();
+                    displayWidget(true);
                     waitingForToken = false;
                 }
             }
         }
     };
 
+    @SuppressLint("HandlerLeak")
+    private Handler hdrDeleteToken = new Handler() {
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Toast.makeText(activity, "清除完成，請再嘗試登入", Toast.LENGTH_SHORT).show();
+            displayWidget(true);
+        }
+    };
+
+    private void displayWidget(boolean showUp) {
+        prgBar.setVisibility(showUp ? View.GONE : View.VISIBLE);
+        btnLogin.setVisibility(showUp ? View.VISIBLE : View.INVISIBLE);
+        btnDeleteToken.setVisibility(showUp ? View.VISIBLE : View.INVISIBLE);
+        edtAcc.setEnabled(showUp);
+        edtPwd.setEnabled(showUp);
+        chkAutoLogin.setEnabled(showUp);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
-                login(edtAcc.getText().toString(), edtPwd.getText().toString());
+                login(edtAcc.getText().toString(), edtPwd.getText().toString(), true);
+                break;
+            case R.id.btnDeleteToken:
+                login(edtAcc.getText().toString(), edtPwd.getText().toString(), false);
                 break;
         }
     }
@@ -220,4 +247,3 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
     }
 }
-;

@@ -2,6 +2,7 @@ package com.vincent.psm.order;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -279,6 +280,18 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtDeliverPlace.setText(order.getDeliverPlace());
         txtPs.setText(order.getPs());
         txtSalesName.setText(order.getSalesName());
+
+        switch (order.getCondition()) {
+            case "待處理":
+                txtCondition.setTextColor(Color.parseColor("#FF5050"));
+                break;
+            case "已完成":
+                txtCondition.setTextColor(Color.parseColor("#00A000"));
+                break;
+            default:
+                txtCondition.setTextColor(Color.parseColor("#CC9900"));
+                break;
+        }
 
         //產品明細
         adapter = new OrderItemListAdapter(activity, tiles);

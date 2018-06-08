@@ -108,37 +108,48 @@ public class NotificationActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
-                notifications = new ArrayList<>();
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray ary = resObj.getJSONArray(KEY_NOTIFICATIONS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            notifications.add(new Notification(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_TITLE),
-                                    obj.getString(KEY_CONTENT),
-                                    obj.getString(KEY_CREATE_TIME)
-                            ));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (resObj.length() == 0) {
+                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                            prgBar.setVisibility(View.GONE);
+                            return;
                         }
-                    }else {
-                        Toast.makeText(activity, "沒有通知", Toast.LENGTH_SHORT).show();
+                        notifications = new ArrayList<>();
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray ary = resObj.getJSONArray(KEY_NOTIFICATIONS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        notifications.add(new Notification(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_TITLE),
+                                                obj.getString(KEY_CONTENT),
+                                                obj.getString(KEY_CREATE_TIME)
+                                        ));
+                                    }
+                                }else {
+                                    Toast.makeText(activity, "沒有通知", Toast.LENGTH_SHORT).show();
+                                }
+                                showData();
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    showData();
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
+
             }
         });
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_USER_ID, userId);
+            conn.setSafely(true);
             conn.execute(getString(R.string.link_list_notifications), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();

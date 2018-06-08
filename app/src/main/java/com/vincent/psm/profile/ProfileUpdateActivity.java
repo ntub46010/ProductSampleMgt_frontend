@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -149,6 +150,7 @@ public class ProfileUpdateActivity extends AppCompatActivity {
 
     private void prepareDialog() {
         dlgUpload = new Dialog(activity);
+        dlgUpload.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgUpload.setContentView(R.layout.dlg_uploading);
         dlgUpload.setCancelable(false);
         TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);

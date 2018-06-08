@@ -29,6 +29,7 @@
         <EditText
             android:id="@+id/edtCustomerPhone"
             style="@style/edt_goods_post_content"
+            android:inputType="phone"
             android:hint="(已選客戶可免填)"/>
     </LinearLayout>
 
@@ -150,7 +151,8 @@
         <EditText
             android:id="@+id/edtPreDeliverDate"
             style="@style/edt_goods_post_content"
-            android:inputType="datetime"/>
+            android:inputType="datetime"
+            android:hint="如：2018-06-08 11:00"/>
     </LinearLayout>
 
     <LinearLayout

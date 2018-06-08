@@ -440,6 +440,7 @@ public class CartDetailActivity extends AppCompatActivity {
         bundle.putString(KEY_PRODUCTS_JSON, ary.toString());
         it.putExtras(bundle);
         startActivity(it);
+        finish();
     }
 
     private boolean isInfoValid() {

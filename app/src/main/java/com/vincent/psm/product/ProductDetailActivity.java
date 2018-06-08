@@ -2,17 +2,21 @@ package com.vincent.psm.product;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -239,12 +243,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         //跳出對話框詢問數量
-        final EditText edtAmount = new EditText(activity);
-        edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.dlg_add_cart_item, null);
+        TextView txtAddItemHint = layout.findViewById(R.id.txtAddItemHint);
+        txtAddItemHint.setText(getString(R.string.hint_add_item, "購物車", String.valueOf(currentOrderAmount)));
+        final EditText edtAmount = layout.findViewById(R.id.edtAmount);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(activity);
         alert.setTitle("加入項目至購物車：" + defaultCartName)
-                .setMessage("請輸入數量\n若要從購物車移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentCartAmount)))
+                .setView(layout)
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -255,10 +262,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                             Toast.makeText(activity, "超出庫存量或未輸入", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("取消", null);
-        AlertDialog dialog = alert.create();
-        dialog.setView(edtAmount, 40, 0, 40, 0);
-        dialog.show();
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     private void uploadToCart() {
@@ -303,12 +308,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         //跳出對話框詢問數量
-        final EditText edtAmount = new EditText(activity);
-        edtAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.dlg_add_cart_item, null);
+        TextView txtAddItemHint = layout.findViewById(R.id.txtAddItemHint);
+        txtAddItemHint.setText(getString(R.string.hint_add_item, "訂單", String.valueOf(currentOrderAmount)));
+        final EditText edtAmount = layout.findViewById(R.id.edtAmount);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(activity);
         alert.setTitle("加入項目至訂單：" + defaultOrderName)
-                .setMessage("請輸入數量\n若要從訂單移除，則輸入0\n目前數量：" + Comma(String.valueOf(currentOrderAmount)))
+                .setView(layout)
                 .setPositiveButton("確定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -319,10 +327,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                             Toast.makeText(activity, "超出庫存量或未輸入", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("取消", null);
-        AlertDialog dialog = alert.create();
-        dialog.setView(edtAmount, 40, 0, 40, 0);
-        dialog.show();
+                .setNegativeButton("取消", null)
+                .show();
     }
 
     private void uploadToOrder() {
@@ -339,6 +345,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                         currentOrderAmount = amount; //更新訂單內已有數量
                         if (currentOrderAmount != 0) {
                             Toast.makeText(activity, "訂單已更新", Toast.LENGTH_SHORT).show();
+
+                            //發送追加產品推播給倉管
 
                             //發送庫存不足推播給管理員
                             if (resObj.getBoolean(KEY_IS_LOWER)) {

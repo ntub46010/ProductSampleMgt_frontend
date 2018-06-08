@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -233,6 +234,7 @@ public abstract class ProductEditActivity extends AppCompatActivity {
 
     protected void prepareDialog() {
         dlgUpload = new Dialog(activity);
+        dlgUpload.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dlgUpload.setContentView(R.layout.dlg_uploading);
         dlgUpload.setCancelable(false);
         TextView txtUploadHint = dlgUpload.findViewById(R.id.txtHint);

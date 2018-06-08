@@ -10,37 +10,39 @@
     <string name="sp_login_password">LoginPassword</string>
     <string name="sp_token">Token</string>
 
-    <string name="link_image">http://111.250.8.9:8181/images/</string>
-    <string name="link_login">http://111.250.8.9:8181/login</string>
-    <string name="link_list_products">http://111.250.8.9:8181/list_products</string>
-    <string name="link_show_product_detail">http://111.250.8.9:8181/show_product_detail</string>
-    <string name="link_show_specification">http://111.250.8.9:8181/show_specification</string>
-    <string name="link_post_product">http://111.250.8.9:8181/post_product</string>
-    <string name="link_show_editing_product">http://111.250.8.9:8181/show_editing_product</string>
-    <string name="link_edit_product">http://111.250.8.9:8181/edit_product</string>
-    <string name="link_create_cart">http://111.250.8.9:8181/create_cart</string>
-    <string name="link_list_carts">http://111.250.8.9:8181/list_carts</string>
-    <string name="link_show_cart">http://111.250.8.9:8181/show_cart</string>
-    <string name="link_add_cart_item">http://111.250.8.9:8181/add_cart_item</string>
-    <string name="link_edit_cart">http://111.250.8.9:8181/edit_cart</string>
-    <string name="link_delete_cart">http://111.250.8.9:8181/delete_cart</string>
-    <string name="link_show_staff">http://111.250.8.9:8181/show_staff</string>
-    <string name="link_show_contacts">http://111.250.8.9:8181/show_contacts</string>
-    <string name="link_list_cart_unenough_item">http://111.250.8.9:8181/list_cart_unenough_item</string>
-    <string name="link_create_order">http://111.250.8.9:8181/create_order</string>
-    <string name="link_list_orders">http://111.250.8.9:8181/list_orders</string>
-    <string name="link_show_order">http://111.250.8.9:8181/show_order</string>
-    <string name="link_show_editing_order">http://111.250.8.9:8181/show_editing_order</string>
-    <string name="link_edit_order">http://111.250.8.9:8181/edit_order</string>
-    <string name="link_add_order_item">http://111.250.8.9:8181/add_order_item</string>
-    <string name="link_list_notifications">http://111.250.8.9:8181/list_notifications</string>
-    <string name="link_show_profile">http://111.250.8.9:8181/show_profile</string>
-    <string name="link_edit_profile">http://111.250.8.9:8181/edit_profile</string>
+    <string name="link_image">http://111.250.2.36:8181/images/</string>
+    <string name="link_login">http://111.250.2.36:8181/login</string>
+    <string name="link_list_products">http://111.250.2.36:8181/list_products</string>
+    <string name="link_show_product_detail">http://111.250.2.36:8181/show_product_detail</string>
+    <string name="link_show_specification">http://111.250.2.36:8181/show_specification</string>
+    <string name="link_post_product">http://111.250.2.36:8181/post_product</string>
+    <string name="link_show_editing_product">http://111.250.2.36:8181/show_editing_product</string>
+    <string name="link_edit_product">http://111.250.2.36:8181/edit_product</string>
+    <string name="link_create_cart">http://111.250.2.36:8181/create_cart</string>
+    <string name="link_list_carts">http://111.250.2.36:8181/list_carts</string>
+    <string name="link_show_cart">http://111.250.2.36:8181/show_cart</string>
+    <string name="link_add_cart_item">http://111.250.2.36:8181/add_cart_item</string>
+    <string name="link_edit_cart">http://111.250.2.36:8181/edit_cart</string>
+    <string name="link_delete_cart">http://111.250.2.36:8181/delete_cart</string>
+    <string name="link_show_staff">http://111.250.2.36:8181/show_staff</string>
+    <string name="link_show_contacts">http://111.250.2.36:8181/show_contacts</string>
+    <string name="link_list_cart_unenough_item">http://111.250.2.36:8181/list_cart_unenough_item</string>
+    <string name="link_create_order">http://111.250.2.36:8181/create_order</string>
+    <string name="link_list_orders">http://111.250.2.36:8181/list_orders</string>
+    <string name="link_show_order">http://111.250.2.36:8181/show_order</string>
+    <string name="link_show_editing_order">http://111.250.2.36:8181/show_editing_order</string>
+    <string name="link_edit_order">http://111.250.2.36:8181/edit_order</string>
+    <string name="link_add_order_item">http://111.250.2.36:8181/add_order_item</string>
+    <string name="link_list_notifications">http://111.250.2.36:8181/list_notifications</string>
+    <string name="link_show_profile">http://111.250.2.36:8181/show_profile</string>
+    <string name="link_edit_profile">http://111.250.2.36:8181/edit_profile</string>
 
-    <string name="link_upload_avatar">http://111.250.8.9:8181/upload_avatar</string>
-    <string name="link_upload_image">http://111.250.8.9:8181/upload_image</string>
+    <string name="link_upload_avatar">http://111.250.2.36:8181/upload_avatar</string>
+    <string name="link_upload_image">http://111.250.2.36:8181/upload_image</string>
 
     <string name="hint_upload_photo" formatted="false">上傳中，長按取消… (%1s/%2s)</string>
+    <string name="hint_add_item">請輸入數量\n若要從%1s移除，則輸入0\n目前數量：%2s</string>
+
     <string name="txt_product_size" formatted="false">%1s × %2s × %3s mm</string>
     <string name="txt_greeting">您好，%1s，使用身份是%2s</string>
     <string name="txt_authority_limit">此功能限%1s身份使用</string>

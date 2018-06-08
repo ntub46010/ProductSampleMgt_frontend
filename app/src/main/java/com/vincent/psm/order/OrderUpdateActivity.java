@@ -107,88 +107,98 @@ public class OrderUpdateActivity extends OrderEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    //訂單摘要
-                    if (resObj.has(KEY_ORDER_INFO)) {
-                        JSONObject objOrderInfo = resObj.getJSONObject(KEY_ORDER_INFO);
-                        order = new Order(
-                                objOrderInfo.getString(KEY_ORDER_ID),
-                                objOrderInfo.getString(KEY_CUSTOMER_NAME),
-                                objOrderInfo.getString(KEY_CUSTOMER_PHONE),
-                                objOrderInfo.getString(KEY_CONTACT_PERSON),
-                                objOrderInfo.getString(KEY_CONTACT_PHONE),
-                                objOrderInfo.getInt(KEY_PRODUCT_TOTAL),
-                                objOrderInfo.getInt(KEY_DELIVER_FEE),
-                                objOrderInfo.getString(KEY_CONDITION),
-                                objOrderInfo.getString(KEY_PRE_DELIVER_DATE),
-                                objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
-                                objOrderInfo.getString(KEY_DELIVER_PLACE),
-                                objOrderInfo.getString(KEY_PS),
-                                objOrderInfo.getString(KEY_SALES_NAME),
-                                objOrderInfo.getString(KEY_SALES_ID)
-                        );
-                        order.setCustomerAddress(objOrderInfo.getString(KEY_CUSTOMER_ADDRESS));
-                        salesId = objOrderInfo.getString(KEY_SALES_ID);
-
-                    }else {
-                        Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
-                        return;
-                    }
-
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        //客戶清單
-                        JSONArray aryCustomerName = resObj.getJSONArray(KEY_CUSTOMERS);
-                        customers = new ArrayList<>();
-                        customerNames = new ArrayList<>();
-                        for (int i = 0; i < aryCustomerName.length(); i++) {
-                            JSONObject obj = aryCustomerName.getJSONObject(i);
-                            customers.add(new Customer(
-                                    obj.getInt(KEY_ID),
-                                    obj.getString(KEY_CUSTOMER_NAME),
-                                    obj.getString(KEY_CUSTOMER_PHONE),
-                                    obj.getString(KEY_CUSTOMER_ADDRESS)
-                            ));
-                            customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (resObj.length() == 0) {
+                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
+                            prgBar.setVisibility(View.GONE);
+                            return;
                         }
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                //訂單摘要
+                                if (resObj.has(KEY_ORDER_INFO)) {
+                                    JSONObject objOrderInfo = resObj.getJSONObject(KEY_ORDER_INFO);
+                                    order = new Order(
+                                            objOrderInfo.getString(KEY_ORDER_ID),
+                                            objOrderInfo.getString(KEY_CUSTOMER_NAME),
+                                            objOrderInfo.getString(KEY_CUSTOMER_PHONE),
+                                            objOrderInfo.getString(KEY_CONTACT_PERSON),
+                                            objOrderInfo.getString(KEY_CONTACT_PHONE),
+                                            objOrderInfo.getInt(KEY_PRODUCT_TOTAL),
+                                            objOrderInfo.getInt(KEY_DELIVER_FEE),
+                                            objOrderInfo.getString(KEY_CONDITION),
+                                            objOrderInfo.getString(KEY_PRE_DELIVER_DATE),
+                                            objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
+                                            objOrderInfo.getString(KEY_DELIVER_PLACE),
+                                            objOrderInfo.getString(KEY_PS),
+                                            objOrderInfo.getString(KEY_SALES_NAME),
+                                            objOrderInfo.getString(KEY_SALES_ID)
+                                    );
+                                    order.setCustomerAddress(objOrderInfo.getString(KEY_CUSTOMER_ADDRESS));
+                                    salesId = objOrderInfo.getString(KEY_SALES_ID);
 
-                        //訂單狀態
-                        JSONArray aryConditions = resObj.getJSONArray(KEY_CONDITIONS);
-                        conditions = new ArrayList<>();
-                        conditions.add(new Condition(
-                                0,
-                                "請選擇"
-                        ));
-                        conditionNames = new ArrayList<>();
-                        conditionNames.add("請選擇");
-                        for (int i = 0; i < aryConditions.length(); i++) {
-                            JSONObject obj = aryConditions.getJSONObject(i);
-                            conditions.add(new Condition(
-                                    obj.getInt(KEY_ID),
-                                    obj.getString(KEY_CONDITION)
-                            ));
-                            conditionNames.add(obj.getString(KEY_CONDITION));
+                                }else {
+                                    Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
+                                    prgBar.setVisibility(View.GONE);
+                                    return;
+                                }
+
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    //客戶清單
+                                    JSONArray aryCustomerName = resObj.getJSONArray(KEY_CUSTOMERS);
+                                    customers = new ArrayList<>();
+                                    customerNames = new ArrayList<>();
+                                    for (int i = 0; i < aryCustomerName.length(); i++) {
+                                        JSONObject obj = aryCustomerName.getJSONObject(i);
+                                        customers.add(new Customer(
+                                                obj.getInt(KEY_ID),
+                                                obj.getString(KEY_CUSTOMER_NAME),
+                                                obj.getString(KEY_CUSTOMER_PHONE),
+                                                obj.getString(KEY_CUSTOMER_ADDRESS)
+                                        ));
+                                        customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
+                                    }
+
+                                    //訂單狀態
+                                    JSONArray aryConditions = resObj.getJSONArray(KEY_CONDITIONS);
+                                    conditions = new ArrayList<>();
+                                    conditions.add(new Condition(
+                                            0,
+                                            "請選擇"
+                                    ));
+                                    conditionNames = new ArrayList<>();
+                                    conditionNames.add("請選擇");
+                                    for (int i = 0; i < aryConditions.length(); i++) {
+                                        JSONObject obj = aryConditions.getJSONObject(i);
+                                        conditions.add(new Condition(
+                                                obj.getInt(KEY_ID),
+                                                obj.getString(KEY_CONDITION)
+                                        ));
+                                        conditionNames.add(obj.getString(KEY_CONDITION));
+                                    }
+
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有任何客戶或訂單狀態", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有任何客戶或訂單狀態", Toast.LENGTH_SHORT).show();
-                        showData();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ORDER_ID, orderId);
+            conn.setSafely(true);
             conn.execute(getString(R.string.link_show_editing_order), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -283,7 +293,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
                         if (newConditionId != conditionId) {
                             RequestManager.getInstance(OrderUpdateActivity.this).prepareNotification(
                                     salesId,
-                                    "訂單狀態更新",
+                                    getString(R.string.title_order_condition),
                                     getString(R.string.text_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
                                     null
                             );

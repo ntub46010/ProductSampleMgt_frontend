@@ -28,7 +28,8 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtCustomerPhone"
-            style="@style/edt_create_cart"/>
+            style="@style/edt_create_cart"
+            android:inputType="phone"/>
     </TableRow>
     <TableRow>
         <TextView
@@ -44,7 +45,8 @@
             android:textSize="16sp"/>
         <EditText
             android:id="@+id/edtContactPhone"
-            style="@style/edt_create_cart"/>
+            style="@style/edt_create_cart"
+            android:inputType="phone"/>
     </TableRow>
 
 </TableLayout>
