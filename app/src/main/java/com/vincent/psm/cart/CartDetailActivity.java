@@ -64,7 +64,7 @@ import static com.vincent.psm.data.DataHelper.loginUserId;
 public class CartDetailActivity extends AppCompatActivity {
     private Activity activity;
 
-    protected ImageView btnSubmit;
+    private ImageView btnSubmit;
     private RecyclerView recyProduct;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fabAdd, fabInfo;

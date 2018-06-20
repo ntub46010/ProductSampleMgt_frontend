@@ -1,6 +1,7 @@
 package com.vincent.psm.product;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -95,7 +96,7 @@ public class ProductHomeActivity extends AppCompatActivity {
         fabSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(activity, ProductSearchActivity.class));
             }
         });
 

@@ -49,7 +49,8 @@
         <activity android:name=".order.OrderUpdateActivity" />
         <activity android:name=".notification.NotificationActivity" />
         <activity android:name=".profile.ProfileActivity" />
-        <activity android:name=".profile.ProfileUpdateActivity"></activity>
+        <activity android:name=".profile.ProfileUpdateActivity" />
+        <activity android:name=".product.ProductSearchActivity"></activity>
     </application>
 
 </manifest>

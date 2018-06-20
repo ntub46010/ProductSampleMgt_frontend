@@ -189,7 +189,13 @@ public class CartHomeActivity extends AppCompatActivity {
                 }
             }
         });
-        conn.execute(getString(R.string.link_list_carts));
+        try {
+            JSONObject reqObj = new JSONObject();
+            reqObj.put(KEY_SALES_ID, loginUserId);
+            conn.execute(getString(R.string.link_list_carts), reqObj.toString());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showData() {

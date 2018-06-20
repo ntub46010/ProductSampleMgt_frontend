@@ -31,15 +31,16 @@ public class BroadcastActivity extends AppCompatActivity implements View.OnClick
         switch (view.getId()) {
             case R.id.btnRegister:
                 String id = edtRegId.getText().toString();
-                RequestManager.getInstance(BroadcastActivity.this).insertUser(id);
+                RequestManager.getInstance(BroadcastActivity.this).insertUser(id); //在Firebase註冊ID
                 break;
 
             case R.id.btnSend:
                 String sendId = edtSendId.getText().toString(); //Firebase的ID
-                String title = "BENQ"; //通知標題
-                String message = "Hi，你朋友希望你買來送他喔！"; //通知內容
-                String photoUrl = "http://image.yipee.cc/index/2013/12/BenQ-G2F-產品圖_1-copy.jpg"; //大圖示的URL
-                RequestManager.getInstance(BroadcastActivity.this).prepareNotification(sendId, title, message, photoUrl); //開始發送推播
+                String title = "Firebase推播"; //通知標題
+                String message = "看到這個訊息，代表推播成功囉！"; //通知內容
+                String photoUrl = "https://firebase.google.com/_static/images/firebase/touchicon-180.png"; //大圖示的URL
+                RequestManager.getInstance(BroadcastActivity.this)
+                        .prepareNotification(sendId, title, message, photoUrl); //開始發送推播
                 break;
         }
     }

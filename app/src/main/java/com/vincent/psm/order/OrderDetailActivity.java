@@ -59,6 +59,7 @@ import static com.vincent.psm.data.DataHelper.KEY_SUBTOTAL;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
+import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.defaultOrderId;
 import static com.vincent.psm.data.DataHelper.defaultOrderName;
 
@@ -297,12 +298,11 @@ public class OrderDetailActivity extends AppCompatActivity {
         adapter = new OrderItemListAdapter(activity, tiles);
         lstProduct.setAdapter(adapter);
 
-        /*
+
         if (authority == 2) {
             fabUpdate.show();
             fabAdd.show();
         }
-        */
 
         fabUpdate.show();
         fabAdd.show();

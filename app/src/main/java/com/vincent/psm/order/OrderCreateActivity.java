@@ -77,11 +77,6 @@ public class OrderCreateActivity extends OrderEditActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         //客戶
@@ -165,11 +160,6 @@ public class OrderCreateActivity extends OrderEditActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         uploadOrder();
@@ -263,6 +253,7 @@ public class OrderCreateActivity extends OrderEditActivity {
         });
         try {
             setUploadReqObj();
+            reqObj.put(KEY_CART_ID, cartId);
             reqObj.put(KEY_SALES, loginUserId);
             reqObj.put(KEY_PRODUCTS, new JSONArray(productsJson));
             conn.execute(getString(R.string.link_create_order), reqObj.toString());

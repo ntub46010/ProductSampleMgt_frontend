@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.vincent.psm.notification.NotificationActivity;
@@ -26,6 +27,7 @@ import static com.vincent.psm.data.DataHelper.KEY_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
 import static com.vincent.psm.data.DataHelper.currentTokenIndex;
 import static com.vincent.psm.data.DataHelper.loginUserId;
+import static com.vincent.psm.data.DataHelper.authority;
 
 public class MainActivity extends AppCompatActivity {
     private Activity activity;
@@ -62,30 +64,30 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 1:
                 startActivity(new Intent(activity, ProductMgtActivity.class));
-                /*
+
                 if (authority == 3)
                     startActivity(new Intent(activity, ProductMgtActivity.class));
                  else
                     Toast.makeText(activity, getString(R.string.txt_authority_limit, "產品管理"), Toast.LENGTH_SHORT).show();
-                 */
+
                 break;
             case 2:
                 startActivity(new Intent(activity, CartHomeActivity.class));
-                /*
+
                 if (authority == 1)
                     startActivity(new Intent(activity, CartHomeActivity.class));
                  else
                     Toast.makeText(activity, getString(R.string.txt_authority_limit, "業務"), Toast.LENGTH_SHORT).show();
-                */
+
                 break;
             case 3:
                 startActivity(new Intent(activity, OrderHomeActivity.class));
-                /*
+
                 if (authority == 1 || authority == 2)
                     startActivity(new Intent(activity, OrderHomeActivity.class));
                  else
                     Toast.makeText(activity, getString(R.string.txt_authority_limit, "業務、倉管"), Toast.LENGTH_SHORT).show();
-                */
+
                 break;
             case 4:
                 startActivity(new Intent(activity, NotificationActivity.class));

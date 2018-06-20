@@ -2,13 +2,11 @@ package com.vincent.psm.product;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.vincent.psm.data.DataHelper.Comma;
 import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_COLOR;
@@ -57,6 +53,7 @@ import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_STOCK;
 import static com.vincent.psm.data.DataHelper.KEY_THICK;
 import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
+import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.defaultCartId;
 import static com.vincent.psm.data.DataHelper.defaultCartName;
 import static com.vincent.psm.data.DataHelper.defaultOrderId;
@@ -221,12 +218,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         txtStock.setText(tile.getStock());
         txtSafeStock.setText(tile.getSafeStock());
 
-        /*
         if (authority == 1)
             fabAddCart.show();
         else if (authority == 2)
             fabAddOrder.show();
-        */
 
         fabAddCart.show();
         fabAddOrder.show();
