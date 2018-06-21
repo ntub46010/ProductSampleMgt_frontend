@@ -1,7 +1,6 @@
 package com.vincent.psm.broadcast_helper.manager;
 
 import android.app.Activity;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,10 +55,6 @@ public class RequestManager {
                         //已經註冊過該token
                         return;
                     }
-                    /*
-                    if (device.getPlatform() != null && device.getPlatform().equals("android")) //有註冊過相同作業系統
-                        return;
-                    */
                 }
 
                 user.addDevice(device);

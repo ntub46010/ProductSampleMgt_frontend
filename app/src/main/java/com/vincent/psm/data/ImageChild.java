@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class ImageChild {
     private Bitmap bitmap;
     private String fileName = ""; //伺服器上的圖檔名稱
-    private boolean isEntity = false; //是否為剛剛從手機選取的圖，而非透過下載或空白圖
+    private boolean isEntity; //是否為剛剛從手機選取的圖，而非透過下載或空白圖
 
     public ImageChild(Bitmap bitmap, boolean isEntity) {
         this.bitmap = bitmap;

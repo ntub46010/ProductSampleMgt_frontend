@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import static com.vincent.psm.broadcast_helper.data.FirebaseUser.DATABASE_USERS;
 import static com.vincent.psm.data.DataHelper.KEY_ACCOUNT;
+import static com.vincent.psm.data.DataHelper.KEY_AUTHORITY;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_IDENTITY;
 import static com.vincent.psm.data.DataHelper.KEY_NAME;
@@ -34,6 +35,7 @@ import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_USER_INFO;
 import static com.vincent.psm.data.DataHelper.currentTokenIndex;
 import static com.vincent.psm.data.DataHelper.loginUserId;
+import static com.vincent.psm.data.DataHelper.authority;
 import static com.vincent.psm.data.DataHelper.tokens;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -81,6 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (isNormalLogin) {
                             JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
                             loginUserId = obj.getString(KEY_ID);
+                            authority = obj.getInt(KEY_AUTHORITY);
                             it = new Intent(activity, MainActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putString(KEY_NAME, obj.getString(KEY_NAME));

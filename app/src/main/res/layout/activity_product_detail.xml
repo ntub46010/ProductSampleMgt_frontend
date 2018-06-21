@@ -135,9 +135,16 @@
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabEdit"
+        style="@style/fab"
+        android:layout_marginEnd="16dp"
+        app:srcCompat="@drawable/icon_edit_white"
+        app:fabSize="normal"/>
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddOrder"
         style="@style/fab"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="16dp"
         app:srcCompat="@drawable/icon_add_order"
         app:fabSize="normal"/>
 

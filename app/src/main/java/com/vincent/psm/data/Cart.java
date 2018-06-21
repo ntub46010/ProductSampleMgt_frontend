@@ -13,12 +13,10 @@ public class Cart {
     }
 
     //購物車首頁
-    public Cart(String id, String cartName, int total, String salesName, String salesId, String createTime) {
+    public Cart(String id, String cartName, int total, String createTime) {
         this.id = id;
         this.cartName = cartName;
         this.total = total;
-        this.salesName = salesName;
-        this.salesId = salesId;
         this.createTime = createTime;
     }
 

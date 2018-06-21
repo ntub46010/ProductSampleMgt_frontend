@@ -1,21 +1,12 @@
 package com.vincent.psm.data;
 
-public class Contact {
-    private int id;
-    private String name, phone;
+public class Contact extends Specification {
+    private String phone;
 
     public Contact(int id, String name, String phone) {
-        this.id = id;
-        this.name = name;
+        super.id = id;
+        super.name = name;
         this.phone = phone;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getPhone() {

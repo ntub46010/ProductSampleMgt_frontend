@@ -46,13 +46,11 @@ public class CartListAdapter extends BaseAdapter {
         TextView txtCartName = view.findViewById(R.id.txtCartName);
         TextView txtTotal = view.findViewById(R.id.txtTotal);
         TextView txtCreateTime = view.findViewById(R.id.txtCreateTime);
-        TextView txtSalesName = view.findViewById(R.id.txtSalesName);
 
         Cart cart = (Cart) getItem(position);
         txtCartName.setText(cart.getCartName());
-        txtTotal.setText("$ " + Comma(String.valueOf(cart.getTotal())));
+        txtTotal.setText("$ " + Comma(cart.getTotal()));
         txtCreateTime.setText(cart.getCreateTime().replace("-", "/"));
-        txtSalesName.setText(cart.getSalesName());
 
         return view;
     }

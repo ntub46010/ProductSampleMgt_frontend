@@ -124,11 +124,11 @@ public class MyOkHttp {
         try {
             taskListener.onFinished(new JSONObject(response.body().string()));
         }catch (JSONException e) {
-            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
         }catch (IOException e) {
-            Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }catch (NetworkOnMainThreadException e) {
-            Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

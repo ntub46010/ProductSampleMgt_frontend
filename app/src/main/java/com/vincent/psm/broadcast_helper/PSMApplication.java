@@ -13,7 +13,7 @@ public class PSMApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        this.initData();
+        initData();
     }
 
     public static Context getAPPLICATION() {
@@ -26,7 +26,7 @@ public class PSMApplication extends Application {
 
     private void initData() {
         APPLICATION = this;
-        RESOURCE = this.getResources();
-        FirebaseUserManager.initialize(this.getApplicationContext());
+        RESOURCE = getResources();
+        FirebaseUserManager.initialize(getApplicationContext());
     }
 }

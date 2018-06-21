@@ -1,8 +1,6 @@
 package com.vincent.psm.data;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.util.TypedValue;
 import android.widget.SimpleAdapter;
 
 import java.math.BigInteger;
@@ -17,7 +15,7 @@ public class DataHelper {
     public static String loginUserId = "ntub46010";
     public static ArrayList<String> tokens = null;
     public static int currentTokenIndex = -1;
-    public static byte authority = 1;
+    public static int authority = 0;
     public static String defaultCartId = "";
     public static String defaultCartName = "";
     public static String defaultOrderId = "";
@@ -108,40 +106,21 @@ public class DataHelper {
         return "";
     }
 
-    public static SimpleAdapter getSimpleAdapter(Context context, int layoutId, int layoutIconId, int layoutTitleId, int[] icon, String[] title) {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (int i = 0; i< icon.length ; i++) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("icon", icon[i]);
-            item.put("title", title[i]);
-            list.add(item);
-        }
-
-        SimpleAdapter adapter = new SimpleAdapter(
-                context,
-                list,
-                layoutId,
-                new String[] {"icon", "title"},
-                new int[] {layoutIconId, layoutTitleId}
-        );
-
-        return  adapter;
-    }
-
-    public static String Comma(String num) {
-        boolean negative = num.contains("-");
-        if (negative) num = num.substring(1);
-        String[] numPart = num.split("\\.");
+    public static String Comma(float num) {
+        String strNum = String.valueOf(num);
+        boolean negative = strNum.contains("-");
+        if (negative) strNum = strNum.substring(1);
+        String[] numPart = strNum.split("\\.");
         String result;
 
         if (numPart[0].length() < 4)
             result = numPart[0];
         else {
-            result = Comma(numPart[0].substring(0, numPart[0].length() - 3))
+            result = Comma(Integer.parseInt(numPart[0].substring(0, numPart[0].length() - 3)))
                     + "," + numPart[0].substring(numPart[0].length() - 3);
         }
 
-        if (numPart.length == 2)
+        if (numPart.length == 2 && !numPart[1].equals("0"))
             result += "." + numPart[1];
         if (negative)
             result = "-" + result;

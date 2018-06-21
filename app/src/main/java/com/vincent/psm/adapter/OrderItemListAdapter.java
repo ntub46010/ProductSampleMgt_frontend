@@ -55,8 +55,8 @@ public class OrderItemListAdapter extends BaseAdapter {
         txtId.setText(tile.getId());
         txtProductName.setText(tile.getName());
         txtSize.setText(context.getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));
-        txtAmount.setText(Comma(String.valueOf(tile.getAmount())) + " 個");
-        txtSubTotal.setText(Comma(String.valueOf(tile.getSubTotal())));
+        txtAmount.setText(Comma(tile.getAmount()) + " 個");
+        txtSubTotal.setText(Comma(tile.getSubTotal()));
 
         return view;
     }

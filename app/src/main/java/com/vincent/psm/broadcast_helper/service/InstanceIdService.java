@@ -1,11 +1,8 @@
 package com.vincent.psm.broadcast_helper.service;
 
-import android.widget.Toast;
-
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.vincent.psm.R;
-import com.vincent.psm.broadcast_helper.PSMApplication;
 import com.vincent.psm.broadcast_helper.manager.FirebaseUserManager;
 
 public class InstanceIdService extends FirebaseInstanceIdService {

@@ -34,6 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".ImageActivity" />
         <activity android:name=".BroadcastActivity" />
         <activity android:name=".ImageUploadActivity" />
         <activity android:name=".product.ProductHomeActivity" />

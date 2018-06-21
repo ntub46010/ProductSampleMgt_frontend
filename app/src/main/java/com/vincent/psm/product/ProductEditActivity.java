@@ -202,10 +202,10 @@ public abstract class ProductEditActivity extends AppCompatActivity {
                 edtLength.getText().toString(),
                 edtWidth.getText().toString(),
                 edtThick.getText().toString(),
-                edtPrice.getText().toString(),
+                Integer.parseInt(edtPrice.getText().toString()),
                 edtPs.getText().toString(),
-                edtStock.getText().toString(),
-                edtSafeStock.getText().toString(),
+                Integer.parseInt(edtStock.getText().toString()),
+                Integer.parseInt(edtSafeStock.getText().toString()),
                 true
         );
 
@@ -218,16 +218,16 @@ public abstract class ProductEditActivity extends AppCompatActivity {
         errMsg.append(v.chkLength(tile.getLength()));
         errMsg.append(v.chkWidth(tile.getWidth()));
         errMsg.append(v.chkThick(tile.getThick()));
-        errMsg.append(v.chkPrice(tile.getPrice()));
+        errMsg.append(v.chkPrice(String.valueOf(tile.getPrice())));
         errMsg.append(v.chkPs(tile.getPs()));
-        errMsg.append(v.chkStock(tile.getStock()));
-        errMsg.append(v.chkSafeStock(tile.getSafeStock()));
+        errMsg.append(v.chkStock(String.valueOf(tile.getStock())));
+        errMsg.append(v.chkSafeStock(String.valueOf(tile.getSafeStock())));
 
         if (errMsg.length() != 0) {
             v.getDialog("產品資料錯誤", errMsg.substring(0, errMsg.length() - 1)).show();
             return false;
         }else {
-            tile.setPrice(String.valueOf(Integer.parseInt(tile.getPrice()))); //避免有人開頭輸入一堆0
+            tile.setPrice(Integer.parseInt(String.valueOf(tile.getPrice()))); //避免有人開頭輸入一堆0
             return true;
         }
     }

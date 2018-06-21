@@ -1,5 +1,6 @@
 package com.vincent.psm.structure;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -83,6 +84,7 @@ public class ImageUploadQueue extends Queue {
         }).start();
     }
 
+    @SuppressLint("HandlerLeak")
     private Handler hdrWaitPhoto = new Handler() {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -116,8 +118,9 @@ public class ImageUploadQueue extends Queue {
                     txtUploadHint.setText(res.getString(R.string.hint_upload_photo, String.valueOf(itemCount), String.valueOf(entityAmount)));
                 new Thread(new Runnable() {
                     public void run() {
-                        imageTask = new ImageUploadTask(context, linkUpload);
-                        imageTask.uploadFile(((ImageChild) get(itemIndex)).getBitmap());
+                        imageTask = new ImageUploadTask(linkUpload);
+                        //imageTask.uploadFile(((ImageChild) get(itemIndex)).getBitmap());
+                        imageTask.uploadPhotoByBitmap(((ImageChild) get(itemIndex)).getBitmap());
                     }
                 }).start();
                 initTrdWaitPhoto(); //監聽正在上傳的圖片檔名

@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.vincent.psm.R;
-import com.vincent.psm.data.Cart;
 import com.vincent.psm.data.Order;
 
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class OrderListAdapter extends BaseAdapter {
         Order order = (Order) getItem(position);
         txtId.setText(order.getId());
         txtCustomerName.setText(order.getCustomerName());
-        txtTotal.setText("$ " + Comma(String.valueOf(order.getTotal())));
+        txtTotal.setText("$ " + Comma(order.getTotal()));
         txtDeliverDate.setText(order.getPredictDeliverDate().replace("-", "/"));
         txtCondition.setText(order.getCondition());
 

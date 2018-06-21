@@ -83,13 +83,4 @@ public class Order extends Cart {
     public void setCustomerAddress(String customerAddress) {
         this.customerAddress = customerAddress;
     }
-
-    public void setActualDeliverDate(String actualDeliverDate) {
-        this.actualDeliverDate = actualDeliverDate;
-    }
-
-    public void setSalesId(String salesId) {
-        this.customerAddress = salesId;
-    }
-
 }

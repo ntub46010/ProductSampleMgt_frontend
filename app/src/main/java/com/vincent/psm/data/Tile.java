@@ -1,13 +1,13 @@
 package com.vincent.psm.data;
 
 public class Tile extends ImageObj {
-    private String id, name, length, width, thick, price;
-    private String material, color, ps, stock, safeStock;
-    private int amount, subTotal = -1;
+    private String id, name, length, width, thick;
+    private String material, color, ps;
+    private int price, amount, subTotal = -1, stock, safeStock;
     private boolean onSale = false;
 
     //產品管理
-    public Tile(String id, String photo, String name, String stock, String safeStock, boolean onSale) {
+    public Tile(String id, String photo, String name, int stock, int safeStock, boolean onSale) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
@@ -17,7 +17,7 @@ public class Tile extends ImageObj {
     }
 
     //產品首頁列表
-    public Tile(String id, String photo, String name, String length, String width, String thick, String price) {
+    public Tile(String id, String photo, String name, String length, String width, String thick, int price) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
@@ -28,7 +28,7 @@ public class Tile extends ImageObj {
     }
 
     //購物車列表
-    public Tile(String id, String photo, String name, int amount, int subTotal, String stock) {
+    public Tile(String id, String photo, String name, int amount, int subTotal, int stock) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
@@ -38,7 +38,8 @@ public class Tile extends ImageObj {
     }
 
     //新增產品、產品詳情
-    public Tile(String id, String photo, String name, String material, String color, String length, String width, String thick, String price, String ps, String stock, String safeStock, boolean onSale) {
+    public Tile(String id, String photo, String name, String material, String color, String length, String width, String thick
+            , int price, String ps, int stock, int safeStock, boolean onSale) {
         this.id = id;
         super.imgURL = photo;
         this.name = name;
@@ -54,7 +55,8 @@ public class Tile extends ImageObj {
         this.onSale = onSale;
     }
 
-    public Tile(String id, String name, String length, String width, String thick, String price, int amount, int subTotal) {
+    //訂單明細
+    public Tile(String id, String name, String length, String width, String thick, int price, int amount, int subTotal) {
         this.id = id;
         this.name = name;
         this.length = length;
@@ -89,7 +91,7 @@ public class Tile extends ImageObj {
         return thick;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -105,11 +107,11 @@ public class Tile extends ImageObj {
         return ps;
     }
 
-    public String getStock() {
+    public int getStock() {
         return stock;
     }
 
-    public String getSafeStock() {
+    public int getSafeStock() {
         return safeStock;
     }
 
@@ -125,7 +127,7 @@ public class Tile extends ImageObj {
         return subTotal;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

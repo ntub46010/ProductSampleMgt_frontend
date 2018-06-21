@@ -35,7 +35,7 @@ public class StockListAdapter extends BaseAdapter {
     private Resources res;
     private Context context;
     private LayoutInflater layoutInflater;
-    private int layout, lastPosition, backgroundColor, queueVolume;
+    private int layout, lastPosition, queueVolume;
 
     private ArrayList<Tile> tiles;
     private ImageDownloadQueue queue;
@@ -51,7 +51,7 @@ public class StockListAdapter extends BaseAdapter {
         this.layoutInflater = LayoutInflater.from(context);
         this.queueVolume = queueVolume;
         this.queue = new ImageDownloadQueue(queueVolume);
-        prepareDialog();
+        //prepareDialog();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class StockListAdapter extends BaseAdapter {
         txtName.setText(tile.getName());
         txtStock.setText(tile.getStock() + " / " + tile.getSafeStock());
 
-        if (Integer.parseInt(tile.getStock()) < Integer.parseInt(tile.getSafeStock()))
+        if (tile.getStock() < tile.getSafeStock())
             txtStock.setTextColor(Color.parseColor("#FF5050"));
         else
             txtStock.setTextColor(Color.parseColor("#666666"));
@@ -122,62 +122,6 @@ public class StockListAdapter extends BaseAdapter {
                 //notifyDataSetChanged(); //不可
             }
         }));
-    }
-
-    public void setBackgroundColor(int color) {
-        this.backgroundColor = color;
-    }
-
-    private void prepareDialog() {
-        dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dlg_list_options);
-        dialog.setCancelable(true);
-
-        String[] textGroup = {"查看", "編輯"};
-        int[] iconGroup = {
-                R.drawable.icon_check,
-                R.drawable.icon_edit
-        };
-
-        ListView listView = dialog.findViewById(R.id.lstOptions);
-        listView.setAdapter(DataHelper.getSimpleAdapter(
-                context,
-                R.layout.lst_text_with_icon_black,
-                R.id.imgIcon,
-                R.id.txtTitle,
-                iconGroup,
-                textGroup
-        ));
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemName = ((TextView)view.findViewById(R.id.txtTitle)).getText().toString();
-                Intent it;
-                Bundle bundle;
-                switch (itemName) {
-                    case "查看":
-                        it = new Intent(context, ProductDetailActivity.class);
-                        bundle = new Bundle();
-                        bundle.putString(KEY_ID, tiles.get(pressPosition).getId());
-                        bundle.putString(KEY_NAME, tiles.get(pressPosition).getName());
-                        it.putExtras(bundle);
-                        context.startActivity(it);
-                        break;
-
-                    case "編輯":
-                        it = new Intent(context, ProductUpdateActivity.class);
-                        bundle = new Bundle();
-                        bundle.putString(KEY_ID, tiles.get(pressPosition).getId());
-                        bundle.putString(KEY_NAME, tiles.get(pressPosition).getName());
-                        it.putExtras(bundle);
-                        context.startActivity(it);
-                        break;
-                }
-                dialog.dismiss();
-            }
-        });
     }
 
     public void destroy(boolean isFully) {
