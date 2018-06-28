@@ -14,7 +14,7 @@ import com.vincent.psm.R;
 import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Customer;
 import com.vincent.psm.data.Order;
-import com.vincent.psm.data.Condition;
+import com.vincent.psm.data.Specification;
 import com.vincent.psm.network_helper.MyOkHttp;
 
 import org.json.JSONArray;
@@ -55,7 +55,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
     private String orderId, salesId;
     private int conditionId, newConditionId;
 
-    private ArrayList<Condition> conditions;
+    private ArrayList<Specification> conditions;
     private ArrayList<String> conditionNames;
 
     @Override
@@ -78,7 +78,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     newConditionId = conditions.get(position).getId();
-                    if (conditions.get(position).getCondition().equals("已完成"))
+                    if (conditions.get(position).getName().equals("已完成"))
                         layActDeliverDate.setVisibility(View.VISIBLE);
                     else
                         layActDeliverDate.setVisibility(View.GONE);
@@ -111,11 +111,6 @@ public class OrderUpdateActivity extends OrderEditActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (resObj.length() == 0) {
-                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                            prgBar.setVisibility(View.GONE);
-                            return;
-                        }
                         try {
                             if (resObj.getBoolean(KEY_STATUS)) {
                                 //訂單摘要
@@ -165,7 +160,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
                                     //訂單狀態
                                     JSONArray aryConditions = resObj.getJSONArray(KEY_CONDITIONS);
                                     conditions = new ArrayList<>();
-                                    conditions.add(new Condition(
+                                    conditions.add(new Specification(
                                             0,
                                             "請選擇"
                                     ));
@@ -173,7 +168,7 @@ public class OrderUpdateActivity extends OrderEditActivity {
                                     conditionNames.add("請選擇");
                                     for (int i = 0; i < aryConditions.length(); i++) {
                                         JSONObject obj = aryConditions.getJSONObject(i);
-                                        conditions.add(new Condition(
+                                        conditions.add(new Specification(
                                                 obj.getInt(KEY_ID),
                                                 obj.getString(KEY_CONDITION)
                                         ));
@@ -281,10 +276,6 @@ public class OrderUpdateActivity extends OrderEditActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 dlgUpload.dismiss();
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();

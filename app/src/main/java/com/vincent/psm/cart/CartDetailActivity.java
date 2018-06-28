@@ -110,7 +110,10 @@ public class CartDetailActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prepareOrder();
+                if (adapter.getItemCount() < 1)
+                    Toast.makeText(activity, "購物車內無產品，無法建立訂單", Toast.LENGTH_SHORT).show();
+                else
+                    prepareOrder();
             }
         });
         btnSubmit.setImageResource(R.drawable.icon_create_order);
@@ -162,11 +165,6 @@ public class CartDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     //購物車摘要
                     if (resObj.has(KEY_CART_INFO)) {
@@ -196,7 +194,7 @@ public class CartDetailActivity extends AppCompatActivity {
                                     obj.getString(KEY_NAME),
                                     obj.getInt(KEY_AMOUNT),
                                     obj.getInt(KEY_SUBTOTAL),
-                                    obj.getString(KEY_STOCK)
+                                    obj.getInt(KEY_STOCK)
                             ));
                         }
                         showData();
@@ -253,7 +251,7 @@ public class CartDetailActivity extends AppCompatActivity {
         txtCustomerPhone.setText(cart.getCustomerPhone());
         txtContactPerson.setText(cart.getContactPerson());
         txtContactPhone.setText(cart.getContactPhone());
-        txtTotal.setText("$ " + Comma(String.valueOf(cart.getTotal())));
+        txtTotal.setText("$ " + Comma(cart.getTotal()));
 
         txtCustomerPhone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,10 +345,6 @@ public class CartDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
@@ -384,11 +378,6 @@ public class CartDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         if (cartId.equals(defaultCartId))

@@ -105,11 +105,6 @@ public class ProductUpdateActivity extends ProductEditActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         //載入規格清單
@@ -142,10 +137,10 @@ public class ProductUpdateActivity extends ProductEditActivity {
                                 objProduct.getString(KEY_LENGTH),
                                 objProduct.getString(KEY_WIDTH),
                                 objProduct.getString(KEY_THICK),
-                                objProduct.getString(KEY_PRICE),
+                                objProduct.getInt(KEY_PRICE),
                                 objProduct.getString(KEY_PS),
-                                objProduct.getString(KEY_STOCK),
-                                objProduct.getString(KEY_SAFE_STOCK),
+                                objProduct.getInt(KEY_STOCK),
+                                objProduct.getInt(KEY_SAFE_STOCK),
                                 objProduct.getInt(KEY_ONSALE) == 1
                         );
                         photo = objProduct.getString(KEY_PHOTO);
@@ -205,10 +200,10 @@ public class ProductUpdateActivity extends ProductEditActivity {
         edtLength.setText(tile.getLength());
         edtWidth.setText(tile.getWidth());
         edtThick.setText(tile.getThick());
-        edtPrice.setText(tile.getPrice());
+        edtPrice.setText(String.valueOf(tile.getPrice()));
         edtPs.setText(tile.getPs());
-        edtStock.setText(tile.getStock());
-        edtSafeStock.setText(tile.getSafeStock());
+        edtStock.setText(String.valueOf(tile.getStock()));
+        edtSafeStock.setText(String.valueOf(tile.getSafeStock()));
 
         layProductPost.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);

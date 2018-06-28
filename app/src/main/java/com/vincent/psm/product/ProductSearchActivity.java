@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.vincent.psm.R;
 import com.vincent.psm.adapter.ProductDisplayAdapter;
+import com.vincent.psm.data.Specification;
 import com.vincent.psm.data.Tile;
 import com.vincent.psm.network_helper.MyOkHttp;
 
@@ -53,7 +55,7 @@ import static com.vincent.psm.data.DataHelper.KEY_WIDTH;
 public class ProductSearchActivity extends AppCompatActivity {
     private Activity activity;
 
-    private FrameLayout laySearchOption;
+    private LinearLayout laySearchOption;
     private ImageView btnSubmit;
     private EditText edtKeyword;
     private Spinner spnKeyword;
@@ -62,14 +64,14 @@ public class ProductSearchActivity extends AppCompatActivity {
     private ProgressBar prgBar;
 
     private String keyword;
-    private ArrayList<String> materials, colors;
+    private ArrayList<Specification> materials, colors;
     private ArrayAdapter<String> adpMaterial, adpColor;
 
     private MyOkHttp conn;
     private ArrayList<Tile> tiles;
     private ProductDisplayAdapter adapter;
 
-    private byte searchMode;
+    private byte searchMode = 1;
     private boolean isShown = false;
 
     @Override
@@ -104,12 +106,19 @@ public class ProductSearchActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchMode == 0 || edtKeyword.getText().toString().equals("") || keyword.equals("請選擇"))
-                    Toast.makeText(activity, "未定義搜尋依據", Toast.LENGTH_SHORT).show();
-                else if (searchMode == 1 || searchMode == 2) {
+                if (searchMode == 1 || searchMode == 2) {
                     keyword = edtKeyword.getText().toString();
-                    searchProduct();
+                    if (!keyword.equals("")) {
+                        searchProduct();
+                        return;
+                    }
+                }else if (searchMode == 3 || searchMode == 4) {
+                    if (!keyword.equals("0")) {
+                        searchProduct();
+                        return;
+                    }
                 }
+                Toast.makeText(activity, "未定義搜尋依據", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -132,21 +141,24 @@ public class ProductSearchActivity extends AppCompatActivity {
                         edtKeyword.setVisibility(View.GONE);
                         spnKeyword.setVisibility(View.VISIBLE);
                         spnKeyword.setAdapter(adpMaterial);
+                        keyword = "0";
                         break;
                     case R.id.rdoColor:
                         searchMode = 4;
                         edtKeyword.setVisibility(View.GONE);
                         spnKeyword.setVisibility(View.VISIBLE);
                         spnKeyword.setAdapter(adpColor);
+                        keyword = "0";
                         break;
                 }
             }
         });
 
+        spnKeyword.setVisibility(View.GONE);
         spnKeyword.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                keyword = parent.getSelectedItem().toString();
+                keyword = String.valueOf(position);
             }
 
             @Override
@@ -181,13 +193,13 @@ public class ProductSearchActivity extends AppCompatActivity {
                         JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
                         materials = new ArrayList<>();
                         colors = new ArrayList<>();
-                        materials.add("請選擇");
-                        colors.add("請選擇");
+                        materials.add(new Specification(0, "請選擇"));
+                        colors.add(new Specification(0, "請選擇"));
 
                         for (int i = 0; i < aryMaterial.length(); i++)
-                            materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
+                            materials.add(new Specification(i, aryMaterial.getJSONObject(i).getString(KEY_MATERIAL)));
                         for (int i = 0; i < aryColor.length(); i++)
-                            colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+                            colors.add(new Specification(i, aryColor.getJSONObject(i).getString(KEY_COLOR)));
 
                         showData();
                     }else {
@@ -202,6 +214,13 @@ public class ProductSearchActivity extends AppCompatActivity {
     }
 
     private void showData() {
+        ArrayList<String> materials = new ArrayList<>();
+        ArrayList<String> colors = new ArrayList<>();
+        for (int i = 0; i < this.materials.size(); i++)
+            materials.add(this.materials.get(i).getName());
+        for (int i = 0; i < this.colors.size(); i++)
+            colors.add(this.colors.get(i).getName());
+
         adpMaterial = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, materials);
         adpColor = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, colors);
         btnSubmit.setVisibility(View.VISIBLE);
@@ -218,11 +237,6 @@ public class ProductSearchActivity extends AppCompatActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         tiles = new ArrayList<>();
@@ -236,13 +250,13 @@ public class ProductSearchActivity extends AppCompatActivity {
                                     obj.getString(KEY_LENGTH),
                                     obj.getString(KEY_WIDTH),
                                     obj.getString(KEY_THICK),
-                                    obj.getString(KEY_PRICE)
+                                    obj.getInt(KEY_PRICE)
                             ));
                         }
+                        showProduct();
                     }else {
                         Toast.makeText(activity, "沒有符合的產品", Toast.LENGTH_SHORT).show();
                     }
-                    showProduct();
                 }else {
                     Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                 }
@@ -253,9 +267,7 @@ public class ProductSearchActivity extends AppCompatActivity {
             reqObj.put(KEY_SEARCH_MODE, searchMode);
             reqObj.put(KEY_KEYWORD, keyword);
             reqObj.put(KEY_ONSALE, chkInclude.isChecked() ? 0 : 1);
-            //conn.setSafely(true);
-            //conn.execute(getString(R.string.link_search_product), reqObj.toString());
-            Toast.makeText(activity, reqObj.toString(), Toast.LENGTH_SHORT).show();
+            conn.execute(getString(R.string.link_search_product), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
         }

@@ -40,9 +40,6 @@ public class StockListAdapter extends BaseAdapter {
     private ArrayList<Tile> tiles;
     private ImageDownloadQueue queue;
 
-    public int pressPosition;
-    public Dialog dialog;
-
     public StockListAdapter(Resources res, Context context, ArrayList<Tile> tiles, int layout, int queueVolume) {
         this.res = res;
         this.context = context;
@@ -51,7 +48,6 @@ public class StockListAdapter extends BaseAdapter {
         this.layoutInflater = LayoutInflater.from(context);
         this.queueVolume = queueVolume;
         this.queue = new ImageDownloadQueue(queueVolume);
-        //prepareDialog();
     }
 
     @Override

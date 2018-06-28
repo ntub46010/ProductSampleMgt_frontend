@@ -207,10 +207,6 @@ public class OrderCreateActivity extends OrderEditActivity {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
                 dlgUpload.dismiss();
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();

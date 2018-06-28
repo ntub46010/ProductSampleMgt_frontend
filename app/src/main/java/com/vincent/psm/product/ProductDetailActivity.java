@@ -3,6 +3,8 @@ package com.vincent.psm.product;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vincent.psm.ImageActivity;
 import com.vincent.psm.R;
 import com.vincent.psm.broadcast_helper.manager.RequestManager;
 import com.vincent.psm.data.Tile;
@@ -29,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.vincent.psm.data.DataHelper.Comma;
 import static com.vincent.psm.data.DataHelper.KEY_AMOUNT;
 import static com.vincent.psm.data.DataHelper.KEY_CART_ID;
 import static com.vincent.psm.data.DataHelper.KEY_COLOR;
@@ -65,7 +69,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView imgProduct;
     private TextView txtProductName, txtPrice, txtId, txtMaterial, txtColor, txtSize, txtPs, txtStock, txtSafeStock;
     private ProgressBar prgBar;
-    private FloatingActionButton fabAddCart, fabAddOrder;
+    private FloatingActionButton fabAddCart, fabAddOrder, fabEdit;
 
     private String id;
     private int currentCartAmount = 0, currentOrderAmount = 0, amount = 0;
@@ -75,6 +79,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private Tile tile;
     private ArrayList<String> productAdmins;
 
+    public static ArrayList<Bitmap> images;
     private boolean isShown = false;
 
     @Override
@@ -111,6 +116,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         prgBar = findViewById(R.id.prgBar);
         fabAddCart = findViewById(R.id.fabAddCart);
         fabAddOrder = findViewById(R.id.fabAddOrder);
+        fabEdit = findViewById(R.id.fabEdit);
 
         layProductDetail.setVisibility(View.INVISIBLE);
 
@@ -127,6 +133,17 @@ public class ProductDetailActivity extends AppCompatActivity {
                 addToOrder();
             }
         });
+
+        fabEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(activity, ProductUpdateActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_ID, id);
+                it.putExtras(bundle);
+                startActivity(it);
+            }
+        });
     }
 
     @Override
@@ -141,15 +158,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         prgBar.setVisibility(View.VISIBLE);
         fabAddCart.hide();
         fabAddOrder.hide();
+        fabEdit.hide();
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         //購物車或訂單內數量
@@ -173,10 +186,10 @@ public class ProductDetailActivity extends AppCompatActivity {
                                 obj.getString(KEY_LENGTH),
                                 obj.getString(KEY_WIDTH),
                                 obj.getString(KEY_THICK),
-                                obj.getString(KEY_PRICE),
+                                obj.getInt(KEY_PRICE),
                                 obj.getString(KEY_PS),
-                                obj.getString(KEY_STOCK),
-                                obj.getString(KEY_SAFE_STOCK),
+                                obj.getInt(KEY_STOCK),
+                                obj.getInt(KEY_SAFE_STOCK),
                                 obj.getInt(KEY_ONSALE) == 1
                         );
                         imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
@@ -209,22 +222,34 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void showData() {
         imgProduct.setImageBitmap(tile.getImg());
         txtProductName.setText(tile.getName());
-        txtPrice.setText("$ " + tile.getPrice());
+        txtPrice.setText("$ " + Comma(tile.getPrice()));
         txtId.setText(tile.getId());
         txtMaterial.setText(tile.getMaterial());
         txtColor.setText(tile.getColor());
         txtSize.setText(getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));
         txtPs.setText(tile.getPs());
-        txtStock.setText(tile.getStock());
-        txtSafeStock.setText(tile.getSafeStock());
+        txtStock.setText(Comma(tile.getStock()));
+        txtSafeStock.setText(Comma(tile.getSafeStock()));
+        images = new ArrayList<>();
+        images.add(tile.getImg());
 
         if (authority == 1)
             fabAddCart.show();
         else if (authority == 2)
             fabAddOrder.show();
+        else if (authority == 3)
+            fabEdit.show();
 
-        fabAddCart.show();
-        fabAddOrder.show();
+        imgProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(activity, ImageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("CurrentIndex", 0);
+                it.putExtras(bundle);
+                startActivity(it);
+            }
+        });
 
         layProductDetail.setVisibility(View.VISIBLE);
         prgBar.setVisibility(View.GONE);
@@ -265,11 +290,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException{
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         currentCartAmount = amount; //更新車內已有數量
@@ -330,18 +350,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if(resObj.getBoolean(KEY_SUCCESS)) {
                         currentOrderAmount = amount; //更新訂單內已有數量
                         if (currentOrderAmount != 0) {
                             Toast.makeText(activity, "訂單已更新", Toast.LENGTH_SHORT).show();
-
-                            //發送追加產品推播給倉管
 
                             //發送庫存不足推播給管理員
                             if (resObj.getBoolean(KEY_IS_LOWER)) {
@@ -349,7 +362,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                                     RequestManager.getInstance(ProductDetailActivity.this).prepareNotification(
                                             admin,
                                             getString(R.string.title_stock_lower),
-                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), tile.getStock()),
+                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), String.valueOf(tile.getStock())),
                                             null
                                     );
                                 }

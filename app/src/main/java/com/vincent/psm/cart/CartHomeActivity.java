@@ -40,7 +40,6 @@ import static com.vincent.psm.data.DataHelper.KEY_CUSTOMER_PHONE;
 import static com.vincent.psm.data.DataHelper.KEY_ID;
 import static com.vincent.psm.data.DataHelper.KEY_SALES;
 import static com.vincent.psm.data.DataHelper.KEY_SALES_ID;
-import static com.vincent.psm.data.DataHelper.KEY_SALES_NAME;
 import static com.vincent.psm.data.DataHelper.KEY_STATUS;
 import static com.vincent.psm.data.DataHelper.KEY_SUCCESS;
 import static com.vincent.psm.data.DataHelper.KEY_CREATE_TIME;
@@ -134,7 +133,6 @@ public class CartHomeActivity extends AppCompatActivity {
             }
         });
 
-
         fabCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,11 +159,6 @@ public class CartHomeActivity extends AppCompatActivity {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         JSONArray ary = resObj.getJSONArray(KEY_CARTS);
@@ -175,9 +168,8 @@ public class CartHomeActivity extends AppCompatActivity {
                                     obj.getString(KEY_ID),
                                     obj.getString(KEY_CART_NAME),
                                     obj.getInt(KEY_TOTAL),
-                                    obj.getString(KEY_SALES_NAME),
-                                    obj.getString(KEY_SALES_ID),
-                                    obj.getString(KEY_CREATE_TIME)
+                                    obj.getString(KEY_CREATE_TIME),
+                                    obj.getString(KEY_SALES_ID)
                             ));
                         }
                         showData();
@@ -241,11 +233,6 @@ public class CartHomeActivity extends AppCompatActivity {
         conn = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();

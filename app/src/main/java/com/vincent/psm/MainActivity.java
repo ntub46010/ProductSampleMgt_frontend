@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(activity, ProductHomeActivity.class));
                 break;
             case 1:
-                startActivity(new Intent(activity, ProductMgtActivity.class));
-
                 if (authority == 3)
                     startActivity(new Intent(activity, ProductMgtActivity.class));
                  else
@@ -72,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case 2:
-                startActivity(new Intent(activity, CartHomeActivity.class));
-
                 if (authority == 1)
                     startActivity(new Intent(activity, CartHomeActivity.class));
                  else
@@ -81,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case 3:
-                startActivity(new Intent(activity, OrderHomeActivity.class));
-
                 if (authority == 1 || authority == 2)
                     startActivity(new Intent(activity, OrderHomeActivity.class));
                  else
@@ -119,12 +113,6 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("否", null)
                         .show();
-                break;
-            case 7:
-                startActivity(new Intent(activity, BroadcastActivity.class));
-                break;
-            case 8:
-                startActivity(new Intent(activity, ImageUploadActivity.class));
                 break;
         }
     }

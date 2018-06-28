@@ -27,9 +27,7 @@ public class MainFunctionAdapter extends BaseAdapter {
                 R.drawable.fun_order,
                 R.drawable.fun_notification,
                 R.drawable.fun_profile,
-                R.drawable.fun_logout/*,
-                R.drawable.fun_management,
-                R.drawable.fun_management*/
+                R.drawable.fun_logout
         };
 
         titles = new String[] {
@@ -39,9 +37,7 @@ public class MainFunctionAdapter extends BaseAdapter {
                 "訂單",
                 "通知",
                 "個人資料",
-                "登出"/*,
-                "推播測試",
-                "上傳圖片測試"*/
+                "登出"
         };
     }
 

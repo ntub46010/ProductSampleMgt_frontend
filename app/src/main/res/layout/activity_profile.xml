@@ -37,7 +37,7 @@
                     <TextView
                         android:id="@+id/txtName"
                         style="@style/txt_product_info"
-                        android:text="OOO"/>
+                        android:textIsSelectable="true"/>
                 </TableRow>
                 <TableRow
                     android:layout_margin="3dp">
@@ -47,7 +47,7 @@
                     <TextView
                         android:id="@+id/txtPhone"
                         style="@style/txt_product_info"
-                        android:text="OOO"/>
+                        android:textIsSelectable="true"/>
                 </TableRow>
                 <TableRow
                     android:layout_margin="3dp">
@@ -57,7 +57,7 @@
                     <TextView
                         android:id="@+id/txtEmail"
                         style="@style/txt_product_info"
-                        android:text="OOO"/>
+                        android:textIsSelectable="true"/>
                 </TableRow>
                 <TableRow
                     android:layout_margin="3dp">
@@ -67,7 +67,7 @@
                     <TextView
                         android:id="@+id/txtIdentity"
                         style="@style/txt_product_info"
-                        android:text="OOO"/>
+                        android:textIsSelectable="true"/>
                 </TableRow>
             </TableLayout>
 

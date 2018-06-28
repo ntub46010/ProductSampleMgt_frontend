@@ -122,11 +122,6 @@ public class ProductHomeActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (resObj.length() == 0) {
-                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                            prgBar.setVisibility(View.GONE);
-                            return;
-                        }
                         try {
                             if (resObj.getBoolean(KEY_STATUS)) {
                                 if(resObj.getBoolean(KEY_SUCCESS)) {
@@ -141,7 +136,7 @@ public class ProductHomeActivity extends AppCompatActivity {
                                                 obj.getString(KEY_LENGTH),
                                                 obj.getString(KEY_WIDTH),
                                                 obj.getString(KEY_THICK),
-                                                obj.getString(KEY_PRICE)
+                                                obj.getInt(KEY_PRICE)
                                         ));
                                     }
                                 }else {

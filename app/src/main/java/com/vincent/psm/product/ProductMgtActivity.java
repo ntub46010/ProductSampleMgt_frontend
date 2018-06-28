@@ -82,19 +82,24 @@ public class ProductMgtActivity extends AppCompatActivity {
         lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //跳出商品編輯畫面
-                adapter.pressPosition = position;
-                adapter.dialog.show();
+                //跳出商品詳情畫面
+                Tile tile = (Tile) adapter.getItem(position);
+                Intent it = new Intent(activity, ProductDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_ID, tile.getId());
+                bundle.putString(KEY_NAME, tile.getName());
+                it.putExtras(bundle);
+                startActivity(it);
             }
         });
 
+        fabPost.hide();
         fabPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ProductMgtActivity.this, ProductPostActivity.class));
             }
         });
-        fabPost.hide();
     }
 
     @Override
@@ -116,11 +121,6 @@ public class ProductMgtActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (resObj.length() == 0) {
-                        Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
-                        return;
-                    }
                         try {
                             if (resObj.getBoolean(KEY_STATUS)) {
                                 if (resObj.getBoolean(KEY_SUCCESS)) {
@@ -132,8 +132,8 @@ public class ProductMgtActivity extends AppCompatActivity {
                                                 obj.getString(KEY_ID),
                                                 obj.getString(KEY_PHOTO),
                                                 obj.getString(KEY_NAME),
-                                                obj.getString(KEY_STOCK),
-                                                obj.getString(KEY_SAFE_STOCK),
+                                                obj.getInt(KEY_STOCK),
+                                                obj.getInt(KEY_SAFE_STOCK),
                                                 obj.getInt(KEY_ONSALE) == 1
                                         ));
                                     }

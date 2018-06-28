@@ -208,11 +208,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         conn = new MyOkHttp(OrderDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
             public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    prgBar.setVisibility(View.GONE);
-                    return;
-                }
                 if (resObj.getBoolean(KEY_STATUS)) {
                     if (resObj.getBoolean(KEY_SUCCESS)) {
                         JSONObject objOrderInfo = resObj.getJSONObject(KEY_ORDER_INFO);
@@ -243,7 +238,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                                     obj.getString(KEY_LENGTH),
                                     obj.getString(KEY_WIDTH),
                                     obj.getString(KEY_THICK),
-                                    obj.getString(KEY_PRICE),
+                                    obj.getInt(KEY_PRICE),
                                     obj.getInt(KEY_AMOUNT),
                                     obj.getInt(KEY_SUBTOTAL)
                             ));
@@ -273,8 +268,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtCustomerName.setText(order.getCustomerName());
         txtCustomerPhone.setText(order.getCustomerPhone());
         txtContactPerson.setText(getString(R.string.txt_contact, order.getContactPerson(), order.getContactPhone()));
-        txtProductTotal.setText("$ " + Comma(String.valueOf(order.getTotal())));
-        txtDeliverFee.setText("$ " + Comma(String.valueOf(order.getDeliverFee())));
+        txtProductTotal.setText("$ " + Comma(order.getTotal()));
+        txtDeliverFee.setText("$ " + Comma(order.getDeliverFee()));
         txtCondition.setText(order.getCondition());
         txtPreDeliverDate.setText(order.getPredictDeliverDate());
         txtActDeliverDate.setText(order.getActualDeliverDate());
@@ -303,9 +298,6 @@ public class OrderDetailActivity extends AppCompatActivity {
             fabUpdate.show();
             fabAdd.show();
         }
-
-        fabUpdate.show();
-        fabAdd.show();
 
         prgBar.setVisibility(View.GONE);
         layOrderInfo.setVisibility(View.VISIBLE);

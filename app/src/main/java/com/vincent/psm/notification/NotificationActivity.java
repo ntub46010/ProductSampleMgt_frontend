@@ -112,11 +112,6 @@ public class NotificationActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (resObj.length() == 0) {
-                            Toast.makeText(activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                            prgBar.setVisibility(View.GONE);
-                            return;
-                        }
                         notifications = new ArrayList<>();
                         try {
                             if (resObj.getBoolean(KEY_STATUS)) {

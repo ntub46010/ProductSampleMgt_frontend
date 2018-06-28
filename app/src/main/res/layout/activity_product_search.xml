@@ -10,11 +10,11 @@
     <include layout="@layout/content_checking_toolbar" />
 
     <FrameLayout
-        android:id="@+id/laySearchOption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/laySearchOption"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -38,7 +38,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:text="編號"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:checked="true"/>
                 <RadioButton
                     android:id="@+id/rdoName"
                     android:layout_width="wrap_content"

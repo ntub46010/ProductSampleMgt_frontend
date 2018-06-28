@@ -121,10 +121,10 @@ public class ProductDisplayAdapter extends RecyclerView.Adapter<ProductDisplayAd
             dataViewHolder.txtProductSize.setText(context.getString(R.string.txt_product_size, tile.getLength(), tile.getWidth(), tile.getThick()));
             dataViewHolder.txtProductPrice.setText("$ " + Comma(tile.getPrice()));
         }else if (tiles.get(i).getSubTotal() != -1) { //購物車明細
-            dataViewHolder.txtProductSize.setText(Comma(String.valueOf(tile.getAmount())) + " / " + tile.getStock() + " 個");
-            dataViewHolder.txtProductPrice.setText("$ " + Comma(String.valueOf(tile.getSubTotal())));
+            dataViewHolder.txtProductSize.setText(Comma(tile.getAmount()) + " / " + tile.getStock() + " 個");
+            dataViewHolder.txtProductPrice.setText("$ " + Comma(tile.getSubTotal()));
 
-            if (tile.getAmount() > Integer.parseInt(tile.getStock())) {
+            if (tile.getAmount() > tile.getStock()) {
                 dataViewHolder.txtProductSize.setTextColor(Color.parseColor("#FF5050"));
                 dataViewHolder.txtProductSize.setTypeface(Typeface.DEFAULT_BOLD);
             }else
