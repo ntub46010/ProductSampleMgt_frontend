@@ -85,15 +85,14 @@ public class MyOkHttp {
             @Override
             public void onResponse(Call call, final Response response) {
                 //連線成功
-                if (safely) { //主程式需呼叫runOnUiThread
-                    accessResponse(response);
-                }else {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            accessResponse(response);
-                        }
-                    });
+                try {
+                    taskListener.onFinished(new JSONObject(response.body().string()));
+                }catch (JSONException e) {
+                    //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                }catch (IOException e) {
+                    //Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }catch (NetworkOnMainThreadException e) {
+                    //Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -104,7 +103,7 @@ public class MyOkHttp {
                     @Override
                     public void run() {
                         //連線失敗
-                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
                 e.printStackTrace();
@@ -114,22 +113,6 @@ public class MyOkHttp {
 
     public void setHeader(Map<String, String> header) {
         this.header = header;
-    }
-
-    public void setSafely(boolean safely) {
-        this.safely = safely;
-    }
-
-    private void accessResponse(Response response) {
-        try {
-            taskListener.onFinished(new JSONObject(response.body().string()));
-        }catch (JSONException e) {
-            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
-        }catch (IOException e) {
-            Toast.makeText(activity, "IOException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }catch (NetworkOnMainThreadException e) {
-            Toast.makeText(activity, "NetworkOnMainThreadException\n" + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void cancel() {

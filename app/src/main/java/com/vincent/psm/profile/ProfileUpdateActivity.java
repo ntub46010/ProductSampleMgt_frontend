@@ -120,18 +120,27 @@ public class ProfileUpdateActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                dlgUpload.dismiss();
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dlgUpload.dismiss();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

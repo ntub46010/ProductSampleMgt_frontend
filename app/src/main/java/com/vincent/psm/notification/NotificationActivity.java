@@ -144,7 +144,6 @@ public class NotificationActivity extends AppCompatActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_USER_ID, userId);
-            conn.setSafely(true);
             conn.execute(getString(R.string.link_list_notifications), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();

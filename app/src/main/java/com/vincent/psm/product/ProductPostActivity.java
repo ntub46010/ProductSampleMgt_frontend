@@ -48,28 +48,37 @@ public class ProductPostActivity extends ProductEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
-                        JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
-                        materials = new ArrayList<>();
-                        colors = new ArrayList<>();
-                        materials.add("請選擇");
-                        colors.add("請選擇");
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
+                                    JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
+                                    materials = new ArrayList<>();
+                                    colors = new ArrayList<>();
+                                    materials.add("請選擇");
+                                    colors.add("請選擇");
 
-                        for (int i=0; i<aryMaterial.length(); i++)
-                            materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
-                        for (int i=0; i<aryColor.length(); i++)
-                            colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+                                    for (int i=0; i<aryMaterial.length(); i++)
+                                        materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
+                                    for (int i=0; i<aryColor.length(); i++)
+                                        colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
 
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         conn.execute(getString(R.string.link_show_specification));
@@ -109,25 +118,34 @@ public class ProductPostActivity extends ProductEditActivity {
     protected void uploadProduct() {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                dlgUpload.dismiss();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dlgUpload.dismiss();
 
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                        Intent it = new Intent(activity, ProductDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(KEY_ID, obj.getString(KEY_ID));
-                        bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
-                        it.putExtras(bundle);
-                        startActivity(it);
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "刊登失敗", Toast.LENGTH_SHORT).show();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                                    Intent it = new Intent(activity, ProductDetailActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(KEY_ID, obj.getString(KEY_ID));
+                                    bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
+                                    it.putExtras(bundle);
+                                    startActivity(it);
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "刊登失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

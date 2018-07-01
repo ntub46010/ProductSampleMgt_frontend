@@ -104,60 +104,69 @@ public class ProductUpdateActivity extends ProductEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        //載入規格清單
-                        JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
-                        JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
-                        materials = new ArrayList<>();
-                        colors = new ArrayList<>();
-                        materials.add("請選擇");
-                        colors.add("請選擇");
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    //載入規格清單
+                                    JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
+                                    JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
+                                    materials = new ArrayList<>();
+                                    colors = new ArrayList<>();
+                                    materials.add("請選擇");
+                                    colors.add("請選擇");
 
-                        for (int i=0; i<aryMaterial.length(); i++)
-                            materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
-                        for (int i=0; i<aryColor.length(); i++)
-                            colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
+                                    for (int i=0; i<aryMaterial.length(); i++)
+                                        materials.add(aryMaterial.getJSONObject(i).getString(KEY_MATERIAL));
+                                    for (int i=0; i<aryColor.length(); i++)
+                                        colors.add(aryColor.getJSONObject(i).getString(KEY_COLOR));
 
-                        //載入產品管理員
-                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
-                        productAdmins = new ArrayList<>();
-                        for (int i = 0; i < aryAdmin.length(); i++)
-                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
+                                    //載入產品管理員
+                                    JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                                    productAdmins = new ArrayList<>();
+                                    for (int i = 0; i < aryAdmin.length(); i++)
+                                        productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
 
-                        //載入產品詳情
-                        JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                        tile = new Tile(
-                                objProduct.getString(KEY_ID),
-                                objProduct.getString(KEY_PHOTO),
-                                objProduct.getString(KEY_NAME),
-                                objProduct.getString(KEY_MATERIAL),
-                                objProduct.getString(KEY_COLOR),
-                                objProduct.getString(KEY_LENGTH),
-                                objProduct.getString(KEY_WIDTH),
-                                objProduct.getString(KEY_THICK),
-                                objProduct.getInt(KEY_PRICE),
-                                objProduct.getString(KEY_PS),
-                                objProduct.getInt(KEY_STOCK),
-                                objProduct.getInt(KEY_SAFE_STOCK),
-                                objProduct.getInt(KEY_ONSALE) == 1
-                        );
-                        photo = objProduct.getString(KEY_PHOTO);
+                                    //載入產品詳情
+                                    JSONObject objProduct = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                                    tile = new Tile(
+                                            objProduct.getString(KEY_ID),
+                                            objProduct.getString(KEY_PHOTO),
+                                            objProduct.getString(KEY_NAME),
+                                            objProduct.getString(KEY_MATERIAL),
+                                            objProduct.getString(KEY_COLOR),
+                                            objProduct.getString(KEY_LENGTH),
+                                            objProduct.getString(KEY_WIDTH),
+                                            objProduct.getString(KEY_THICK),
+                                            objProduct.getInt(KEY_PRICE),
+                                            objProduct.getString(KEY_PS),
+                                            objProduct.getInt(KEY_STOCK),
+                                            objProduct.getInt(KEY_SAFE_STOCK),
+                                            objProduct.getInt(KEY_ONSALE) == 1
+                                    );
+                                    photo = objProduct.getString(KEY_PHOTO);
 
-                        imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
-                            @Override
-                            public void onFinished() {
-                                showData();
+                                    imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
+                                        @Override
+                                        public void onFinished() {
+                                            showData();
+                                        }
+                                    });
+                                    imageLoader.execute(tile);
+                                }else {
+                                    Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                             }
-                        });
-                        imageLoader.execute(tile);
-                    }else {
-                        Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -239,42 +248,51 @@ public class ProductUpdateActivity extends ProductEditActivity {
     protected void uploadProduct() {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException{
-                dlgUpload.dismiss();
+            public void onFinished(final JSONObject resObj) throws JSONException{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dlgUpload.dismiss();
 
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        if (editMode == 1 || editMode == 2) {
-                            Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    if (editMode == 1 || editMode == 2) {
+                                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
 
-                            //發送庫存不足推播給管理員
-                            if (resObj.getBoolean(KEY_IS_LOWER)) {
-                                for (String admin : productAdmins) {
-                                    RequestManager.getInstance(ProductUpdateActivity.this).prepareNotification(
-                                            admin,
-                                            getString(R.string.title_stock_lower),
-                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), tile.getStock()),
-                                            null
-                                    );
+                                        //發送庫存不足推播給管理員
+                                        if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                            for (String admin : productAdmins) {
+                                                RequestManager.getInstance(ProductUpdateActivity.this).prepareNotification(
+                                                        admin,
+                                                        getString(R.string.title_stock_lower),
+                                                        getString(R.string.text_stock_lower, tile.getName(), tile.getId(), tile.getStock()),
+                                                        null
+                                                );
+                                            }
+                                        }
+
+                                        Intent it = new Intent(activity, ProductDetailActivity.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString(KEY_ID, tile.getId());
+                                        bundle.putString(KEY_NAME, tile.getName());
+                                        it.putExtras(bundle);
+                                        startActivity(it);
+                                    }else if (editMode == 3) {
+                                        Toast.makeText(activity, "下架成功", Toast.LENGTH_SHORT).show();
+                                    }
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                                 }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                             }
-
-                            Intent it = new Intent(activity, ProductDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString(KEY_ID, tile.getId());
-                            bundle.putString(KEY_NAME, tile.getName());
-                            it.putExtras(bundle);
-                            startActivity(it);
-                        }else if (editMode == 3) {
-                            Toast.makeText(activity, "下架成功", Toast.LENGTH_SHORT).show();
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

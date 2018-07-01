@@ -126,28 +126,37 @@ public class OrderHomeActivity extends AppCompatActivity {
         orders = new ArrayList<>();
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray ary = resObj.getJSONArray(KEY_ORDERS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            orders.add(new Order(
-                                    obj.getString(KEY_ORDER_ID),
-                                    obj.getString(KEY_CUSTOMER_NAME),
-                                    obj.getInt(KEY_PRODUCT_TOTAL),
-                                    obj.getString(KEY_PRE_DELIVER_DATE),
-                                    obj.getString(KEY_CONDITION)
-                            ));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray ary = resObj.getJSONArray(KEY_ORDERS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        orders.add(new Order(
+                                                obj.getString(KEY_ORDER_ID),
+                                                obj.getString(KEY_CUSTOMER_NAME),
+                                                obj.getInt(KEY_PRODUCT_TOTAL),
+                                                obj.getString(KEY_PRE_DELIVER_DATE),
+                                                obj.getString(KEY_CONDITION)
+                                        ));
+                                    }
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有訂單", Toast.LENGTH_SHORT).show();
+                                    prgBar.setVisibility(View.GONE);
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有訂單", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

@@ -164,47 +164,56 @@ public class CartDetailActivity extends AppCompatActivity {
         tiles = new ArrayList<>();
         conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    //購物車摘要
-                    if (resObj.has(KEY_CART_INFO)) {
-                        JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
-                        cart = new Cart(
-                                objCartInfo.getString(KEY_SALES_NAME),
-                                objCartInfo.getString(KEY_CUSTOMER_NAME),
-                                objCartInfo.getString(KEY_CUSTOMER_PHONE),
-                                objCartInfo.getString(KEY_CONTACT_PERSON),
-                                objCartInfo.getString(KEY_CONTACT_PHONE),
-                                objCartInfo.getInt(KEY_TOTAL)
-                        );
-                    }else {
-                        Toast.makeText(activity, "購物車不存在", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
-                        return;
-                    }
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                //購物車摘要
+                                if (resObj.has(KEY_CART_INFO)) {
+                                    JSONObject objCartInfo = resObj.getJSONObject(KEY_CART_INFO);
+                                    cart = new Cart(
+                                            objCartInfo.getString(KEY_SALES_NAME),
+                                            objCartInfo.getString(KEY_CUSTOMER_NAME),
+                                            objCartInfo.getString(KEY_CUSTOMER_PHONE),
+                                            objCartInfo.getString(KEY_CONTACT_PERSON),
+                                            objCartInfo.getString(KEY_CONTACT_PHONE),
+                                            objCartInfo.getInt(KEY_TOTAL)
+                                    );
+                                }else {
+                                    Toast.makeText(activity, "購物車不存在", Toast.LENGTH_SHORT).show();
+                                    prgBar.setVisibility(View.GONE);
+                                    return;
+                                }
 
-                    if (resObj.getBoolean(KEY_SUCCESS)) { //若無KEY_CART_INFO，後續也不必執行
-                        //購物車明細
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            tiles.add(new Tile(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_PHOTO),
-                                    obj.getString(KEY_NAME),
-                                    obj.getInt(KEY_AMOUNT),
-                                    obj.getInt(KEY_SUBTOTAL),
-                                    obj.getInt(KEY_STOCK)
-                            ));
+                                if (resObj.getBoolean(KEY_SUCCESS)) { //若無KEY_CART_INFO，後續也不必執行
+                                    //購物車明細
+                                    JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        tiles.add(new Tile(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_PHOTO),
+                                                obj.getString(KEY_NAME),
+                                                obj.getInt(KEY_AMOUNT),
+                                                obj.getInt(KEY_SUBTOTAL),
+                                                obj.getInt(KEY_STOCK)
+                                        ));
+                                    }
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "購物車內無產品", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "購物車內無產品", Toast.LENGTH_SHORT).show();
-                        showData();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -342,22 +351,31 @@ public class CartDetailActivity extends AppCompatActivity {
         if (!isInfoValid())
             return;
 
-        conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
-                        cartName = cart.getCartName();
-                        recyProduct.setVisibility(View.INVISIBLE);
-                        adapter.destroy(false);
-                        loadData(true);
-                    }else {
-                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
+                                    cartName = cart.getCartName();
+                                    recyProduct.setVisibility(View.INVISIBLE);
+                                    adapter.destroy(false);
+                                    loadData(true);
+                                }else {
+                                    Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -375,21 +393,30 @@ public class CartDetailActivity extends AppCompatActivity {
     }
 
     private void deleteCart() {
-        conn = new MyOkHttp(CartDetailActivity.this, new MyOkHttp.TaskListener() {
+        conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        if (cartId.equals(defaultCartId))
-                            defaultCartId = "";
-                        Toast.makeText(activity, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "商品不存在", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    if (cartId.equals(defaultCartId))
+                                        defaultCartId = "";
+                                    Toast.makeText(activity, "已刪除購物車：" + cartName, Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "商品不存在", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

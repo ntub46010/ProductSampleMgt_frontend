@@ -94,25 +94,34 @@ public class ProfileActivity extends AppCompatActivity {
         user = null;
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONObject obj = resObj.getJSONObject(KEY_PROFILE);
-                        user = new User(
-                                obj.getString(KEY_NAME),
-                                obj.getString(KEY_PHONE),
-                                obj.getString(KEY_EMAIL),
-                                obj.getInt(KEY_AUTHORITY),
-                                obj.getString(KEY_IDENTITY),
-                                obj.getString(KEY_PASSWORD)
-                        );
-                    }else {
-                        Toast.makeText(activity, "使用者不存在", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONObject obj = resObj.getJSONObject(KEY_PROFILE);
+                                    user = new User(
+                                            obj.getString(KEY_NAME),
+                                            obj.getString(KEY_PHONE),
+                                            obj.getString(KEY_EMAIL),
+                                            obj.getInt(KEY_AUTHORITY),
+                                            obj.getString(KEY_IDENTITY),
+                                            obj.getString(KEY_PASSWORD)
+                                    );
+                                }else {
+                                    Toast.makeText(activity, "使用者不存在", Toast.LENGTH_SHORT).show();
+                                }
+                                showData();
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    showData();
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

@@ -76,44 +76,53 @@ public class OrderCreateActivity extends OrderEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        //客戶
-                        JSONArray aryCustomerName = resObj.getJSONArray(KEY_CUSTOMERS);
-                        customers = new ArrayList<>();
-                        customerNames = new ArrayList<>();
-                        for (int i = 0; i < aryCustomerName.length(); i++) {
-                            JSONObject obj = aryCustomerName.getJSONObject(i);
-                            customers.add(new Customer(
-                                    obj.getInt(KEY_ID),
-                                    obj.getString(KEY_CUSTOMER_NAME),
-                                    obj.getString(KEY_CUSTOMER_PHONE),
-                                    obj.getString(KEY_CUSTOMER_ADDRESS)
-                            ));
-                            customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    //客戶
+                                    JSONArray aryCustomerName = resObj.getJSONArray(KEY_CUSTOMERS);
+                                    customers = new ArrayList<>();
+                                    customerNames = new ArrayList<>();
+                                    for (int i = 0; i < aryCustomerName.length(); i++) {
+                                        JSONObject obj = aryCustomerName.getJSONObject(i);
+                                        customers.add(new Customer(
+                                                obj.getInt(KEY_ID),
+                                                obj.getString(KEY_CUSTOMER_NAME),
+                                                obj.getString(KEY_CUSTOMER_PHONE),
+                                                obj.getString(KEY_CUSTOMER_ADDRESS)
+                                        ));
+                                        customerNames.add(obj.getString(KEY_CUSTOMER_NAME));
+                                    }
+
+                                    //載入倉管人員
+                                    JSONArray aryWarehouse = resObj.getJSONArray(KEY_WAREHOUSE);
+                                    warehouses = new ArrayList<>();
+                                    for (int i = 0; i < aryWarehouse.length(); i++)
+                                        warehouses.add(aryWarehouse.getJSONObject(i).getString(KEY_ID));
+
+                                    //載入產品管理員
+                                    JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                                    productAdmins = new ArrayList<>();
+                                    for (int i = 0; i < aryAdmin.length(); i++)
+                                        productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
+
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
-                        //載入倉管人員
-                        JSONArray aryWarehouse = resObj.getJSONArray(KEY_WAREHOUSE);
-                        warehouses = new ArrayList<>();
-                        for (int i = 0; i < aryWarehouse.length(); i++)
-                            warehouses.add(aryWarehouse.getJSONObject(i).getString(KEY_ID));
-
-                        //載入產品管理員
-                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
-                        productAdmins = new ArrayList<>();
-                        for (int i = 0; i < aryAdmin.length(); i++)
-                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
-
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有任何客戶或倉管人員", Toast.LENGTH_SHORT).show();
-                        showData();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         conn.execute(getString(R.string.link_show_staff));
@@ -159,31 +168,40 @@ public class OrderCreateActivity extends OrderEditActivity {
     private void prepareUpload() {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        uploadOrder();
-                    }else {
-                        dlgUpload.dismiss();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    uploadOrder();
+                                }else {
+                                    dlgUpload.dismiss();
 
-                        StringBuffer msg = new StringBuffer();
-                        msg.append("以下產品庫存量不足：\n");
+                                    StringBuffer msg = new StringBuffer();
+                                    msg.append("以下產品庫存量不足：\n");
 
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            msg.append(obj.getString(KEY_NAME)).append("\n");
+                                    JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        msg.append(obj.getString(KEY_NAME)).append("\n");
+                                    }
+
+                                    AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
+                                    msgbox.setTitle(toolbarTitle)
+                                            .setMessage(msg.toString().substring(0, msg.length() - 1))
+                                            .setCancelable(true)
+                                            .show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
-                        AlertDialog.Builder msgbox = new AlertDialog.Builder(activity);
-                        msgbox.setTitle(toolbarTitle)
-                                .setMessage(msg.toString().substring(0, msg.length() - 1))
-                                .setCancelable(true)
-                                .show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -205,46 +223,55 @@ public class OrderCreateActivity extends OrderEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                dlgUpload.dismiss();
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dlgUpload.dismiss();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
 
-                        //發送新訂單推播給倉管人員
-                        for (String warehouse: warehouses) {
-                            RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
-                                    warehouse,
-                                    getString(R.string.title_new_order),
-                                    getString(R.string.text_new_order, order.getCustomerName()),
-                                    null
-                            );
+                                    //發送新訂單推播給倉管人員
+                                    for (String warehouse: warehouses) {
+                                        RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
+                                                warehouse,
+                                                getString(R.string.title_new_order),
+                                                getString(R.string.text_new_order, order.getCustomerName()),
+                                                null
+                                        );
 
-                            //發送庫存不足推播給管理員
-                            if (resObj.getBoolean(KEY_IS_LOWER)) {
-                                for (String admin : productAdmins) {
-                                    RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
-                                            admin,
-                                            getString(R.string.title_stock_lower),
-                                            getString(R.string.text_some_stock_lower),
-                                            null
-                                    );
+                                        //發送庫存不足推播給管理員
+                                        if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                            for (String admin : productAdmins) {
+                                                RequestManager.getInstance(OrderCreateActivity.this).prepareNotification(
+                                                        admin,
+                                                        getString(R.string.title_stock_lower),
+                                                        getString(R.string.text_some_stock_lower),
+                                                        null
+                                                );
+                                            }
+                                        }
+                                    }
+
+                                    Intent it = new Intent(activity, OrderDetailActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(KEY_ORDER_ID, String.valueOf(resObj.getInt(KEY_ORDER_ID)));
+                                    it.putExtras(bundle);
+                                    startActivity(it);
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "建立失敗", Toast.LENGTH_SHORT).show();
                                 }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                             }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
-                        Intent it = new Intent(activity, OrderDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(KEY_ORDER_ID, String.valueOf(resObj.getInt(KEY_ORDER_ID)));
-                        it.putExtras(bundle);
-                        startActivity(it);
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "建立失敗", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

@@ -122,11 +122,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!orderId.equals(defaultOrderId))
-                    Toast.makeText(activity, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
+                if (authority == 2) {
+                    defaultOrderId = orderId;
+                    defaultOrderName = order.getCustomerName();
 
-                defaultOrderId = orderId;
-                defaultOrderName = order.getCustomerName();
+                    if (!orderId.equals(defaultOrderId))
+                        Toast.makeText(activity, "已選取訂單：" + order.getCustomerName(), Toast.LENGTH_SHORT).show();
+                }
 
                 Intent it = new Intent(activity, ProductDetailActivity.class);
                 Bundle bundle = new Bundle();
@@ -207,50 +209,58 @@ public class OrderDetailActivity extends AppCompatActivity {
         prgBar.setVisibility(View.VISIBLE);
         conn = new MyOkHttp(OrderDetailActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONObject objOrderInfo = resObj.getJSONObject(KEY_ORDER_INFO);
-                        order = new Order(
-                                objOrderInfo.getString(KEY_ORDER_ID),
-                                objOrderInfo.getString(KEY_CUSTOMER_NAME),
-                                objOrderInfo.getString(KEY_CUSTOMER_PHONE),
-                                objOrderInfo.getString(KEY_CONTACT_PERSON),
-                                objOrderInfo.getString(KEY_CONTACT_PHONE),
-                                objOrderInfo.getInt(KEY_PRODUCT_TOTAL),
-                                objOrderInfo.getInt(KEY_DELIVER_FEE),
-                                objOrderInfo.getString(KEY_CONDITION),
-                                objOrderInfo.getString(KEY_PRE_DELIVER_DATE),
-                                objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
-                                objOrderInfo.getString(KEY_DELIVER_PLACE),
-                                objOrderInfo.getString(KEY_PS),
-                                objOrderInfo.getString(KEY_SALES_NAME),
-                                objOrderInfo.getString(KEY_SALES_ID)
-                        );
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {if (resObj.getBoolean(KEY_STATUS)) {
+                            if (resObj.getBoolean(KEY_SUCCESS)) {
+                                JSONObject objOrderInfo = resObj.getJSONObject(KEY_ORDER_INFO);
+                                order = new Order(
+                                        objOrderInfo.getString(KEY_ORDER_ID),
+                                        objOrderInfo.getString(KEY_CUSTOMER_NAME),
+                                        objOrderInfo.getString(KEY_CUSTOMER_PHONE),
+                                        objOrderInfo.getString(KEY_CONTACT_PERSON),
+                                        objOrderInfo.getString(KEY_CONTACT_PHONE),
+                                        objOrderInfo.getInt(KEY_PRODUCT_TOTAL),
+                                        objOrderInfo.getInt(KEY_DELIVER_FEE),
+                                        objOrderInfo.getString(KEY_CONDITION),
+                                        objOrderInfo.getString(KEY_PRE_DELIVER_DATE),
+                                        objOrderInfo.getString(KEY_ACT_DELIVER_DATE),
+                                        objOrderInfo.getString(KEY_DELIVER_PLACE),
+                                        objOrderInfo.getString(KEY_PS),
+                                        objOrderInfo.getString(KEY_SALES_NAME),
+                                        objOrderInfo.getString(KEY_SALES_ID)
+                                );
 
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        tiles = new ArrayList<>();
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            tiles.add(new Tile(
-                                    obj.getString(KEY_PRODUCT_ID),
-                                    obj.getString(KEY_NAME),
-                                    obj.getString(KEY_LENGTH),
-                                    obj.getString(KEY_WIDTH),
-                                    obj.getString(KEY_THICK),
-                                    obj.getInt(KEY_PRICE),
-                                    obj.getInt(KEY_AMOUNT),
-                                    obj.getInt(KEY_SUBTOTAL)
-                            ));
+                                JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                tiles = new ArrayList<>();
+                                for (int i = 0; i < ary.length(); i++) {
+                                    JSONObject obj = ary.getJSONObject(i);
+                                    tiles.add(new Tile(
+                                            obj.getString(KEY_PRODUCT_ID),
+                                            obj.getString(KEY_NAME),
+                                            obj.getString(KEY_LENGTH),
+                                            obj.getString(KEY_WIDTH),
+                                            obj.getString(KEY_THICK),
+                                            obj.getInt(KEY_PRICE),
+                                            obj.getInt(KEY_AMOUNT),
+                                            obj.getInt(KEY_SUBTOTAL)
+                                    ));
+                                }
+                                showData();
+                            }else {
+                                Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
+                                prgBar.setVisibility(View.GONE);
+                            }
+                        }else {
+                            Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                         }
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "訂單不存在", Toast.LENGTH_SHORT).show();
-                        prgBar.setVisibility(View.GONE);
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

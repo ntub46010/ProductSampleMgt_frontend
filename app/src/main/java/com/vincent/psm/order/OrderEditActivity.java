@@ -157,37 +157,42 @@ public abstract class OrderEditActivity extends AppCompatActivity {
             loadData();
     }
 
-    protected void loadContactData(Activity activity, int id) {
+    protected void loadContactData(final Activity activity, int id) {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.length() == 0) {
-                    Toast.makeText(OrderEditActivity.this.activity, "沒有網路連線", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray aryContactPerson = resObj.getJSONArray(KEY_CONTACTS);
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray aryContactPerson = resObj.getJSONArray(KEY_CONTACTS);
 
-                        contacts = new ArrayList<>();
-                        contactPersons = new ArrayList<>();
-                        contactPersons.add("請選擇");
-                        for (int i = 0; i < aryContactPerson.length(); i++) {
-                            JSONObject obj = aryContactPerson.getJSONObject(i);
-                            contacts.add(new Contact(
-                                    obj.getInt(KEY_ID),
-                                    obj.getString(KEY_CONTACT_PERSON),
-                                    obj.getString(KEY_CONTACT_PHONE)
-                            ));
-                            contactPersons.add(obj.getString(KEY_CONTACT_PERSON) + "／" + obj.getString(KEY_CONTACT_PHONE));
+                                    contacts = new ArrayList<>();
+                                    contactPersons = new ArrayList<>();
+                                    contactPersons.add("請選擇");
+                                    for (int i = 0; i < aryContactPerson.length(); i++) {
+                                        JSONObject obj = aryContactPerson.getJSONObject(i);
+                                        contacts.add(new Contact(
+                                                obj.getInt(KEY_ID),
+                                                obj.getString(KEY_CONTACT_PERSON),
+                                                obj.getString(KEY_CONTACT_PHONE)
+                                        ));
+                                        contactPersons.add(obj.getString(KEY_CONTACT_PERSON) + "／" + obj.getString(KEY_CONTACT_PHONE));
+                                    }
+                                    showContactData();
+                                }else {
+                                    Toast.makeText(OrderEditActivity.this.activity, "沒有聯絡人", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(OrderEditActivity.this.activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        showContactData();
-                    }else {
-                        Toast.makeText(OrderEditActivity.this.activity, "沒有聯絡人", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(OrderEditActivity.this.activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

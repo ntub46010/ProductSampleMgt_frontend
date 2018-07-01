@@ -162,50 +162,59 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        //購物車或訂單內數量
-                        currentCartAmount = resObj.getInt(KEY_CART_AMOUNT);
-                        currentOrderAmount = resObj.getInt(KEY_ORDER_AMOUNT);
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    //購物車或訂單內數量
+                                    currentCartAmount = resObj.getInt(KEY_CART_AMOUNT);
+                                    currentOrderAmount = resObj.getInt(KEY_ORDER_AMOUNT);
 
-                        //載入產品管理員
-                        JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
-                        productAdmins = new ArrayList<>();
-                        for (int i = 0; i < aryAdmin.length(); i++)
-                            productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
+                                    //載入產品管理員
+                                    JSONArray aryAdmin = resObj.getJSONArray(KEY_ProductAdmin);
+                                    productAdmins = new ArrayList<>();
+                                    for (int i = 0; i < aryAdmin.length(); i++)
+                                        productAdmins.add(aryAdmin.getJSONObject(i).getString(KEY_ID));
 
-                        //產品詳情
-                        JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
-                        tile = new Tile(
-                                obj.getString(KEY_ID),
-                                obj.getString(KEY_PHOTO),
-                                obj.getString(KEY_NAME),
-                                obj.getString(KEY_MATERIAL),
-                                obj.getString(KEY_COLOR),
-                                obj.getString(KEY_LENGTH),
-                                obj.getString(KEY_WIDTH),
-                                obj.getString(KEY_THICK),
-                                obj.getInt(KEY_PRICE),
-                                obj.getString(KEY_PS),
-                                obj.getInt(KEY_STOCK),
-                                obj.getInt(KEY_SAFE_STOCK),
-                                obj.getInt(KEY_ONSALE) == 1
-                        );
-                        imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
-                            @Override
-                            public void onFinished() {
-                                showData();
+                                    //產品詳情
+                                    JSONObject obj = resObj.getJSONObject(KEY_PRODUCT_INFO);
+                                    tile = new Tile(
+                                            obj.getString(KEY_ID),
+                                            obj.getString(KEY_PHOTO),
+                                            obj.getString(KEY_NAME),
+                                            obj.getString(KEY_MATERIAL),
+                                            obj.getString(KEY_COLOR),
+                                            obj.getString(KEY_LENGTH),
+                                            obj.getString(KEY_WIDTH),
+                                            obj.getString(KEY_THICK),
+                                            obj.getInt(KEY_PRICE),
+                                            obj.getString(KEY_PS),
+                                            obj.getInt(KEY_STOCK),
+                                            obj.getInt(KEY_SAFE_STOCK),
+                                            obj.getInt(KEY_ONSALE) == 1
+                                    );
+                                    imageLoader = new ImageDownloader(getString(R.string.link_image), new ImageDownloader.TaskListener() {
+                                        @Override
+                                        public void onFinished() {
+                                            showData();
+                                        }
+                                    });
+                                    imageLoader.execute(tile);
+                                }else {
+                                    Toast.makeText(activity, "商品不存在或沒有產品管理員", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                             }
-                        });
-                        imageLoader.execute(tile);
-                    }else {
-                        Toast.makeText(activity, "商品不存在或沒有產品管理員", Toast.LENGTH_SHORT).show();
-                        showData();
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -289,20 +298,29 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void uploadToCart() {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException{
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        currentCartAmount = amount; //更新車內已有數量
-                        if (currentCartAmount != 0)
-                            Toast.makeText(activity, "購物車已更新", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(activity, "已從購物車移除", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    currentCartAmount = amount; //更新車內已有數量
+                                    if (currentCartAmount != 0)
+                                        Toast.makeText(activity, "購物車已更新", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(activity, "已從購物車移除", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -349,32 +367,41 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void uploadToOrder() {
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        currentOrderAmount = amount; //更新訂單內已有數量
-                        if (currentOrderAmount != 0) {
-                            Toast.makeText(activity, "訂單已更新", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    currentOrderAmount = amount; //更新訂單內已有數量
+                                    if (currentOrderAmount != 0) {
+                                        Toast.makeText(activity, "訂單已更新", Toast.LENGTH_SHORT).show();
 
-                            //發送庫存不足推播給管理員
-                            if (resObj.getBoolean(KEY_IS_LOWER)) {
-                                for (String admin : productAdmins) {
-                                    RequestManager.getInstance(ProductDetailActivity.this).prepareNotification(
-                                            admin,
-                                            getString(R.string.title_stock_lower),
-                                            getString(R.string.text_stock_lower, tile.getName(), tile.getId(), String.valueOf(tile.getStock())),
-                                            null
-                                    );
+                                        //發送庫存不足推播給管理員
+                                        if (resObj.getBoolean(KEY_IS_LOWER)) {
+                                            for (String admin : productAdmins) {
+                                                RequestManager.getInstance(ProductDetailActivity.this).prepareNotification(
+                                                        admin,
+                                                        getString(R.string.title_stock_lower),
+                                                        getString(R.string.text_stock_lower, tile.getName(), tile.getId(), String.valueOf(tile.getStock())),
+                                                        null
+                                                );
+                                            }
+                                        }
+                                    }else
+                                        Toast.makeText(activity, "已從訂單移除", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
                                 }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
                             }
-                        }else
-                            Toast.makeText(activity, "已從訂單移除", Toast.LENGTH_SHORT).show();
-                    }else {
-                        Toast.makeText(activity, "操作失敗", Toast.LENGTH_SHORT).show();
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

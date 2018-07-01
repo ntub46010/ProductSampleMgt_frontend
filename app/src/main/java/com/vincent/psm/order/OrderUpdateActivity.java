@@ -193,7 +193,6 @@ public class OrderUpdateActivity extends OrderEditActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ORDER_ID, orderId);
-            conn.setSafely(true);
             conn.execute(getString(R.string.link_show_editing_order), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
@@ -274,29 +273,38 @@ public class OrderUpdateActivity extends OrderEditActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                dlgUpload.dismiss();
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dlgUpload.dismiss();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    Toast.makeText(activity, "編輯成功", Toast.LENGTH_SHORT).show();
 
-                        //發送新訂單狀態給負責業務
-                        if (newConditionId != conditionId) {
-                            RequestManager.getInstance(OrderUpdateActivity.this).prepareNotification(
-                                    salesId,
-                                    getString(R.string.title_order_condition),
-                                    getString(R.string.text_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
-                                    null
-                            );
+                                    //發送新訂單狀態給負責業務
+                                    if (newConditionId != conditionId) {
+                                        RequestManager.getInstance(OrderUpdateActivity.this).prepareNotification(
+                                                salesId,
+                                                getString(R.string.title_order_condition),
+                                                getString(R.string.text_order_condition_changed, order.getCustomerName(), conditionNames.get(newConditionId)),
+                                                null
+                                        );
+                                    }
+
+                                    finish();
+                                }else {
+                                    Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-
-                        finish();
-                    }else {
-                        Toast.makeText(activity, "編輯失敗", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

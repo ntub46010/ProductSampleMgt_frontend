@@ -77,45 +77,55 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException{
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        if (isNormalLogin) {
-                            JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
-                            loginUserId = obj.getString(KEY_ID);
-                            authority = obj.getInt(KEY_AUTHORITY);
-                            it = new Intent(activity, MainActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
-                            bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
-                            it.putExtras(bundle);
+            public void onFinished(final JSONObject resObj) throws JSONException{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
 
-                            writeAutoLoginRecord(account, password);
-                            accessToken(account);
-                        }else {
-                            FirebaseDatabase.getInstance().getReference()
-                                    .child(DATABASE_USERS)
-                                    .child(account)
-                                    .removeValue();
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(5000);
-                                    }catch (InterruptedException e) {
-                                        e.printStackTrace();
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    if (isNormalLogin) {
+                                        JSONObject obj = resObj.getJSONObject(KEY_USER_INFO);
+                                        loginUserId = obj.getString(KEY_ID);
+                                        authority = obj.getInt(KEY_AUTHORITY);
+                                        it = new Intent(activity, MainActivity.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString(KEY_NAME, obj.getString(KEY_NAME));
+                                        bundle.putString(KEY_IDENTITY, obj.getString(KEY_IDENTITY));
+                                        it.putExtras(bundle);
+
+                                        writeAutoLoginRecord(account, password);
+                                        accessToken(account);
+                                    }else {
+                                        FirebaseDatabase.getInstance().getReference()
+                                                .child(DATABASE_USERS)
+                                                .child(account)
+                                                .removeValue();
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    Thread.sleep(5000);
+                                                }catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                hdrDeleteToken.sendMessage(hdrDeleteToken.obtainMessage());
+                                            }
+                                        }).start();
                                     }
-                                    hdrDeleteToken.sendMessage(hdrDeleteToken.obtainMessage());
+                                }else {
+                                    Toast.makeText(activity, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
+                                    displayWidget(true);
                                 }
-                            }).start();
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    }else {
-                        Toast.makeText(activity, "帳號或密碼錯誤", Toast.LENGTH_SHORT).show();
-                        displayWidget(true);
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

@@ -102,7 +102,7 @@ public class ProductSearchActivity extends AppCompatActivity {
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         prgBar = findViewById(R.id.prgBar);
 
-        btnSubmit.setImageResource(R.drawable.icon_search);
+        btnSubmit.setImageResource(R.drawable.icon_search_small);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,28 +186,37 @@ public class ProductSearchActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
-                        JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
-                        materials = new ArrayList<>();
-                        colors = new ArrayList<>();
-                        materials.add(new Specification(0, "請選擇"));
-                        colors.add(new Specification(0, "請選擇"));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray aryMaterial = resObj.getJSONArray(KEY_MATERIALS);
+                                    JSONArray aryColor = resObj.getJSONArray(KEY_COLORS);
+                                    materials = new ArrayList<>();
+                                    colors = new ArrayList<>();
+                                    materials.add(new Specification(0, "請選擇"));
+                                    colors.add(new Specification(0, "請選擇"));
 
-                        for (int i = 0; i < aryMaterial.length(); i++)
-                            materials.add(new Specification(i, aryMaterial.getJSONObject(i).getString(KEY_MATERIAL)));
-                        for (int i = 0; i < aryColor.length(); i++)
-                            colors.add(new Specification(i, aryColor.getJSONObject(i).getString(KEY_COLOR)));
+                                    for (int i = 0; i < aryMaterial.length(); i++)
+                                        materials.add(new Specification(i, aryMaterial.getJSONObject(i).getString(KEY_MATERIAL)));
+                                    for (int i = 0; i < aryColor.length(); i++)
+                                        colors.add(new Specification(i, aryColor.getJSONObject(i).getString(KEY_COLOR)));
 
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有任何材質與顏色", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         conn.execute(getString(R.string.link_show_specification));
@@ -236,30 +245,42 @@ public class ProductSearchActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if(resObj.getBoolean(KEY_SUCCESS)) {
-                        tiles = new ArrayList<>();
-                        JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            tiles.add(new Tile(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_PHOTO),
-                                    obj.getString(KEY_NAME),
-                                    obj.getString(KEY_LENGTH),
-                                    obj.getString(KEY_WIDTH),
-                                    obj.getString(KEY_THICK),
-                                    obj.getInt(KEY_PRICE)
-                            ));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if(resObj.getBoolean(KEY_SUCCESS)) {
+                                    tiles = new ArrayList<>();
+                                    JSONArray ary = resObj.getJSONArray(KEY_PRODUCTS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        tiles.add(new Tile(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_PHOTO),
+                                                obj.getString(KEY_NAME),
+                                                obj.getString(KEY_LENGTH),
+                                                obj.getString(KEY_WIDTH),
+                                                obj.getString(KEY_THICK),
+                                                obj.getInt(KEY_PRICE)
+                                        ));
+                                    }
+                                    showProduct();
+                                }else {
+                                    Toast.makeText(activity, "沒有符合的產品", Toast.LENGTH_SHORT).show();
+                                }
+                                prgBar.setVisibility(View.GONE);
+                                btnSubmit.setVisibility(View.VISIBLE);
+                                isShown = true;
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        showProduct();
-                    }else {
-                        Toast.makeText(activity, "沒有符合的產品", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -282,10 +303,7 @@ public class ProductSearchActivity extends AppCompatActivity {
         recyProduct.setAdapter(adapter);
         recyProduct.setVisibility(View.VISIBLE);
 
-        prgBar.setVisibility(View.GONE);
-        btnSubmit.setVisibility(View.VISIBLE);
         tiles = null;
-        isShown = true;
     }
 
     @Override

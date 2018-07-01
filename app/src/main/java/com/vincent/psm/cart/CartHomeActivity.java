@@ -158,27 +158,36 @@ public class CartHomeActivity extends AppCompatActivity {
         carts = new ArrayList<>();
         conn = new MyOkHttp(activity, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        JSONArray ary = resObj.getJSONArray(KEY_CARTS);
-                        for (int i = 0; i < ary.length(); i++) {
-                            JSONObject obj = ary.getJSONObject(i);
-                            carts.add(new Cart(
-                                    obj.getString(KEY_ID),
-                                    obj.getString(KEY_CART_NAME),
-                                    obj.getInt(KEY_TOTAL),
-                                    obj.getString(KEY_CREATE_TIME),
-                                    obj.getString(KEY_SALES_ID)
-                            ));
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    JSONArray ary = resObj.getJSONArray(KEY_CARTS);
+                                    for (int i = 0; i < ary.length(); i++) {
+                                        JSONObject obj = ary.getJSONObject(i);
+                                        carts.add(new Cart(
+                                                obj.getString(KEY_ID),
+                                                obj.getString(KEY_CART_NAME),
+                                                obj.getInt(KEY_TOTAL),
+                                                obj.getString(KEY_CREATE_TIME),
+                                                obj.getString(KEY_SALES_ID)
+                                        ));
+                                    }
+                                    showData();
+                                }else {
+                                    Toast.makeText(activity, "沒有購物車", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        showData();
-                    }else {
-                        Toast.makeText(activity, "沒有購物車", Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {
@@ -232,17 +241,26 @@ public class CartHomeActivity extends AppCompatActivity {
 
         conn = new MyOkHttp(CartHomeActivity.this, new MyOkHttp.TaskListener() {
             @Override
-            public void onFinished(JSONObject resObj) throws JSONException {
-                if (resObj.getBoolean(KEY_STATUS)) {
-                    if (resObj.getBoolean(KEY_SUCCESS)) {
-                        Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
-                        loadData(true);
-                    }else {
-                        Toast.makeText(activity, "建立購物車失敗", Toast.LENGTH_SHORT).show();
+            public void onFinished(final JSONObject resObj) throws JSONException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (resObj.getBoolean(KEY_STATUS)) {
+                                if (resObj.getBoolean(KEY_SUCCESS)) {
+                                    Toast.makeText(activity, "建立成功", Toast.LENGTH_SHORT).show();
+                                    loadData(true);
+                                }else {
+                                    Toast.makeText(activity, "建立購物車失敗", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }else {
-                    Toast.makeText(activity, "伺服器發生例外", Toast.LENGTH_SHORT).show();
-                }
+                });
             }
         });
         try {

@@ -154,7 +154,6 @@ public class ProductMgtActivity extends AppCompatActivity {
         try {
             JSONObject reqObj = new JSONObject();
             reqObj.put(KEY_ONSALE, false);
-            conn.setSafely(true);
             conn.execute(getString(R.string.link_list_products), reqObj.toString());
         }catch (JSONException e) {
             e.printStackTrace();
